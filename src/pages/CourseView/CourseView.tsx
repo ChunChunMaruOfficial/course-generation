@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronRight, ArrowRight, Bell, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/Button/button";
 import { Progress } from "@/components/Progress/Progress";
+import {motion} from 'framer-motion'
 import styles from "./CourseView.module.css";
 
 type ViewMode = "outline" | "map";
@@ -22,6 +23,29 @@ interface Module {
 const CourseView = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [selectedModuleId, setSelectedModuleId] = useState(1);
+
+
+
+
+
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const activeIndex = viewMode === "outline" ? 0 : 1;
+    if (!container) return;
+
+    const child = container.children[activeIndex] as HTMLElement | undefined;
+    if (child) {
+      const { offsetLeft, offsetWidth } = child;
+      setHighlightProps({ left: offsetLeft +3, width: offsetWidth });
+    }
+  }, [viewMode]);
+
+
+
+
 
   const courseData = {
     title: "Продвинутый Node.js: Масштабируемые Приложения",
@@ -62,7 +86,6 @@ const CourseView = () => {
   };
   return (
     <div className={styles.root}>
-      {/* Global Header */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link to="/" className={styles.navLink}>Генератор Курсов</Link>
@@ -77,13 +100,10 @@ const CourseView = () => {
 
       <div className={styles.pageInner}>
         <div className={styles.layoutGrid}>
-          {/* Main Content - LEFT (wider) */}
           <main className={styles.main}>
             <div className={styles.card}>
-              {/* Module Title */}
               <h1 className={styles.pageTitle}>Модуль {selectedModule.id}: {selectedModule.title}</h1>
 
-              {/* Lesson List */}
               <div className={styles.lessonsList}>
                 {selectedModule.lessons.map((lesson) => (
                   <div key={lesson.id} className={styles.lessonRow}>
@@ -108,7 +128,6 @@ const CourseView = () => {
             </div>
           </main>
 
-          {/* Sidebar - RIGHT (narrower) */}
           <aside className={styles.aside}>
             <div className={styles.card}>
               <div className={styles.sidebarHeader}>
@@ -122,10 +141,45 @@ const CourseView = () => {
                 </div>
               </div>
 
-              <div className={styles.viewToggle}>
+
+
+              <div className={styles.viewToggle} style={{ position: "relative" }}>
+                <motion.div
+                  style={{
+                    position: "absolute",
+                    top: '10%',
+                    left: highlightProps.left,
+                    width: highlightProps.width,
+                    height: "80%",
+                    backgroundColor: "var(--primary-light)", // или другой стиль выделения
+                    borderRadius: "10px",
+                    zIndex: 0,
+                  }}
+                  animate={{ left: highlightProps.left, width: highlightProps.width }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+                <div ref={containerRef}  style={{ position: "relative", zIndex: 1, display: "flex", width: '100%' }}>
+                  <button
+                    onClick={() => setViewMode("outline")}
+                    className={styles.toggleBtn}
+                    style={{color: viewMode == 'outline' ? 'var(--primary)' : ''}}
+                  >
+                    План
+                  </button>
+                  <button
+                    onClick={() => setViewMode("map")}
+                    className={styles.toggleBtn}
+                    style={{color: viewMode == 'map' ? 'var(--primary)' : ''}}
+                  >
+                    Карта
+                  </button>
+                </div>
+              </div>
+
+              {/* <div className={styles.viewToggle}>
                 <button onClick={() => setViewMode("outline")} className={`${styles.toggleBtn} ${viewMode === "outline" ? styles.active : ''}`}>План</button>
                 <button onClick={() => setViewMode("map")} className={`${styles.toggleBtn} ${viewMode === "map" ? styles.active : ''}`}>Карта</button>
-              </div>
+              </div> */}
 
               <div className={styles.modulesList}>
                 {courseData.modules.map((module) => {

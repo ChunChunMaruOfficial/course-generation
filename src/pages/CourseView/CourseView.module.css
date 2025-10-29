@@ -31,7 +31,7 @@
 .card {
 	background: var(--card);
 	border-radius: 1rem;
-	box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 	padding: 1.5rem;
 }
 
@@ -222,10 +222,17 @@
 }
 
 .viewToggle {
+	--tw-space-y-reverse: 0;
+	margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+	margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+	padding: .25rem;
+	background-color: var(--secondary);
+	border-radius: var(--radius);
 	display: flex;
 	gap: 0.5rem;
 	margin: 0.75rem 0;
 }
+
 
 .toggleBtn {
 	flex: 1;
@@ -233,12 +240,13 @@
 	border-radius: 0.5rem;
 	background: transparent;
 	border: 1px solid transparent;
+	font-size: .875rem;
+    line-height: 1.25rem;
+	font-weight: 500;
+	width: 50%;
+	align-items: center;
 	cursor: pointer;
-}
-
-.toggleBtn.active {
-	background: var(--primary-light);
-	color: var(--primary);
+	color: var(--muted-foreground);
 }
 
 .modulesList {
@@ -259,7 +267,7 @@
 
 .moduleRow.active {
 	background: var(--primary-light);
-	border-color: rgba(0,0,0,0.04);
+	border-color: rgba(0, 0, 0, 0.04);
 }
 
 .moduleLeft {
