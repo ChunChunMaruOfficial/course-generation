@@ -1,0 +1,125 @@
+/* Base Button Styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.button svg {
+  pointer-events: none;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* Variant: Default */
+.buttonDefault {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.buttonDefault:hover {
+  background-color: hsl(23, 98%, 44%);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Variant: Destructive */
+.buttonDestructive {
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.buttonDestructive:hover {
+  background-color: hsl(0, 84.2%, 55%);
+}
+
+/* Variant: Outline */
+.buttonOutline {
+  border: 1px solid var(--input);
+  background-color: var(--background);
+}
+
+.buttonOutline:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Variant: Secondary */
+.buttonSecondary {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+}
+
+.buttonSecondary:hover {
+  background-color: hsl(210, 17%, 92%);
+}
+
+/* Variant: Ghost */
+.buttonGhost {
+  background-color: transparent;
+}
+
+.buttonGhost:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+
+/* Variant: Link */
+.buttonLink {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  background-color: transparent;
+}
+
+.buttonLink:hover {
+  text-decoration: none;
+}
+
+/* Size: Default */
+.sizeDefault {
+  height: 2.5rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Size: Small */
+.sizeSm {
+  height: 2.25rem;
+  border-radius: 0.375rem;
+  padding: 0 0.75rem;
+}
+
+/* Size: Large */
+.sizeLg {
+  height: 2.75rem;
+  border-radius: 0.375rem;
+  padding: 0 2rem;
+}
+
+/* Size: Icon */
+.sizeIcon {
+  height: 2.5rem;
+  width: 2.5rem;
+  padding: 0;
+}

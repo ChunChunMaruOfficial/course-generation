@@ -1,0 +1,15 @@
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.label[data-disabled] {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.label[data-invalid] {
+  color: var(--destructive);
+}

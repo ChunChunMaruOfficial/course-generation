@@ -1,0 +1,26 @@
+.root {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--background, #f3f4f6);
+}
+
+.container {
+	text-align: center;
+}
+
+.title {
+	font-size: 2.25rem;
+	font-weight: 700;
+}
+
+.message {
+	font-size: 1.125rem;
+	color: var(--muted-foreground);
+}
+
+.link {
+	color: var(--blue-500, #3b82f6);
+	text-decoration: underline;
+}
