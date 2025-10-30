@@ -6,17 +6,41 @@ import { Input } from "@/components/Input/Input";
 import { Label } from "@/components/Label/Label";
 import { Checkbox } from "@/components/Checkbox/Checkbox";
 import styles from "./CourseGenerator.module.css";
+import loadgif from '../../assets/loading.gif';
+import { useSelector, useDispatch } from 'react-redux';
+import { completingLesson } from '../../counter/answerSlice'
 
 const CourseGenerator = () => {
+  const count = useSelector((state:any) => state.counter.value);
   const navigate = useNavigate();
   const [topic, setTopic] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [answerQuestions, setAnswerQuestions] = useState(false);
 
 
-  const handleGenerate = () => {
-    // отправка данных на сервер
-    if (topic.trim()) {
+  async function handleGenerate() {
+    setIsLoading(true);
+    try {
+      const response = await fetch('http://localhost:3000/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ topic }) // промт в тело
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Ответ от сервера:', data.result);
+      setIsLoading(false);
       navigate("/course");
+
+    } catch (error) {
+      console.error('Ошибка при запросе к серверу:', error);
+      setIsLoading(false);
     }
   };
 
@@ -46,11 +70,10 @@ const CourseGenerator = () => {
               </label>
             </div>
           </div>
-
-          <Button onClick={handleGenerate} disabled={!topic.trim()} size="lg" className={styles.generateButton}>
+          {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim()} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />
             Сгенерировать
-          </Button>
+          </Button>}
         </div>
       </div>
     </div>
