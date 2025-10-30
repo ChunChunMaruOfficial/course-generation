@@ -7,12 +7,12 @@ import { Label } from "@/components/Label/Label";
 import { Checkbox } from "@/components/Checkbox/Checkbox";
 import styles from "./CourseGenerator.module.css";
 import loadgif from '../../assets/loading.gif';
-import { useSelector, useDispatch } from 'react-redux';
-import { completingLesson } from '../../counter/answerSlice'
+import { useDispatch } from 'react-redux';
+import { setcourse } from '../../counter/answerSlice'
 
 const CourseGenerator = () => {
-  const count = useSelector((state:any) => state.counter.value);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [topic, setTopic] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [answerQuestions, setAnswerQuestions] = useState(false);
@@ -26,7 +26,7 @@ const CourseGenerator = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ topic }) // промт в тело
+        body: JSON.stringify({ topic }) 
       });
 
       if (!response.ok) {
@@ -34,8 +34,9 @@ const CourseGenerator = () => {
       }
 
       const data = await response.json();
-      console.log('Ответ от сервера:', data.result);
+      console.log('Ответ от сервера:', JSON.parse(data.result)); ////////
       setIsLoading(false);
+      dispatch(setcourse( JSON.parse(data.result.replace('`', ''))));
       navigate("/course");
 
     } catch (error) {
@@ -43,8 +44,6 @@ const CourseGenerator = () => {
       setIsLoading(false);
     }
   };
-
-
 
   return (
     <div className={styles.root}>

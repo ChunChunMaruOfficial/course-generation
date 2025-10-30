@@ -102,6 +102,8 @@
 	font-size: 1.25rem;
 	font-weight: 700;
 	color: var(--foreground);
+
+	margin-bottom: 20px;
 }
 
 .lessonsList {
@@ -115,6 +117,9 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.75rem 0;
+}
+
+.lessonRow:not(.lessonRow:last-of-type) {
 	border-bottom: 1px solid var(--border);
 }
 
@@ -241,7 +246,7 @@
 	background: transparent;
 	border: 1px solid transparent;
 	font-size: .875rem;
-    line-height: 1.25rem;
+	line-height: 1.25rem;
 	font-weight: 500;
 	width: 50%;
 	align-items: center;

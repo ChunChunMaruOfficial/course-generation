@@ -12,6 +12,7 @@ const answerSlice = createSlice({
   reducers: {
     setcourse(state, action) {
       state.course = action.payload
+      console.log('Redux course set:', state.course); 
     },
     completingLesson(state, action) {
       const { moduleId, lessonId } = action.payload;
@@ -22,5 +23,5 @@ const answerSlice = createSlice({
 
 });
 
-export const { completingLesson } = answerSlice.actions;
+export const { completingLesson,setcourse } = answerSlice.actions;
 export default answerSlice.reducer;
