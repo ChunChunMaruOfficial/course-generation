@@ -13,6 +13,19 @@
 	/* max-w-3xl ~ 48rem; using slightly larger for comfort */
 }
 
+h1.title{
+  background: linear-gradient(90deg, #000, #fff, #000);
+  background-size: 80%;
+  animation: animate 4s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes animate {
+  0% { background-position: -500%; }
+  100% { background-position: 500%; }
+}
+
 .card {
 	border-radius: 1rem;
 	padding: 2rem;

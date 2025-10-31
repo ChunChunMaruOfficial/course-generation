@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/Button/button";
@@ -11,22 +11,38 @@ import { setcourse } from '../../counter/answerSlice'
 import type { Question } from "../../interfaces/Question";
 
 import exampleQuestions from '../../examples/Questions.json'
-
+//exampleQuestions.questions
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [topic, setTopic] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
-  const [Questions, setQuestions] = useState<Question[]>(exampleQuestions.questions);
+  const [Questions, setQuestions] = useState<Question[]>([]);
   const [Answers, setAnswers] = useState<number[]>([])
+  const [exampleText, setexampleText] = useState<string>('')
+
+
+
+  useEffect(() => {
+    async function start() {
+      const response = await fetch('http://localhost:3000/getexample', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ topic, answerQuestions })
+      });
+      const data = await response.json();
+      setexampleText(data)
+    }
+    start()
+  }, [])
 
 
   async function handleGenerate() {
     setIsLoading(true);
     if (answerQuestions) {
-
-
       try {
         const response = await fetch('http://localhost:3000/api/generateQuestions', {
           method: 'POST',
@@ -43,6 +59,7 @@ const CourseGenerator = () => {
         const data = await response.json();
         console.log('Вопросы от сервера:', data.result); ////////
         setIsLoading(false);
+        setAnswerQuestions(false)
         setQuestions(JSON.parse(data.result.trim()).questions)
 
 
@@ -86,25 +103,25 @@ const CourseGenerator = () => {
             <p className={styles.subtitle}>Напишите тему ниже, чтобы получить готовый мини-курс</p>
           </div>
 
-          <div className={styles.inputContainer}>
+          {(Questions.length == 0 && <><div className={styles.inputContainer}>
             <Label htmlFor="topic" className={styles.formLabel}>
               Что я могу помочь вам изучить?
             </Label>
-            <div className={styles.inputgroup} data-hint={`Пример: я ночью плачу и дрочу`}>
+            <div className={styles.inputgroup} data-hint={`Пример: ${exampleText}`}>
               <input value={topic} onChange={e => setTopic(e.target.value)} type="text" className={styles.inputfield} id="name" placeholder=' ' />
               <label htmlFor="name" className={styles.inputlabel}>Введите тему</label>
             </div>
-            {/* <Input id="topic" placeholder="Введите тему" className={styles.formInput} /> */}
           </div>
 
-          <div className={styles.checkboxContainer}>
-            <div className={styles.checkboxRow}>
-              <Checkbox id="questions" checked={answerQuestions} onCheckedChange={checked => setAnswerQuestions(checked as boolean)} />
-              <label htmlFor="questions" className={styles.checkboxLabel}>
-                Ответить на вопросы для улучшения курса
-              </label>
+            <div className={styles.checkboxContainer}>
+              <div className={styles.checkboxRow}>
+                <Checkbox id="questions" checked={answerQuestions} onCheckedChange={checked => setAnswerQuestions(checked as boolean)} />
+                <label htmlFor="questions" className={styles.checkboxLabel}>
+                  Ответить на вопросы для улучшения курса
+                </label>
+              </div>
             </div>
-          </div>
+          </>)}
 
           {Questions.map((v, i) => (
             <div key={i} className={styles.questionContainer}>
