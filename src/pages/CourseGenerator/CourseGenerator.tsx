@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/Button/button";
-import { Input } from "@/components/Input/Input";
 import { Label } from "@/components/Label/Label";
 import { Checkbox } from "@/components/Checkbox/Checkbox";
 import styles from "./CourseGenerator.module.css";
@@ -11,13 +10,16 @@ import { useDispatch } from 'react-redux';
 import { setcourse } from '../../counter/answerSlice'
 import type { Question } from "../../interfaces/Question";
 
+import exampleQuestions from '../../examples/Questions.json'
+
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [topic, setTopic] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
-  const [Questions, setQuestions] = useState<Question[]>([]);
+  const [Questions, setQuestions] = useState<Question[]>(exampleQuestions.questions);
+  const [Answers, setAnswers] = useState<number[]>([])
 
 
   async function handleGenerate() {
@@ -104,13 +106,20 @@ const CourseGenerator = () => {
             </div>
           </div>
 
-          {Questions.map(v => (
-            <div className={styles.questionContainer}>
-              <h1>{v.id}. {v.question}</h1>
-              <span>{v.options.map(v1 => (<p>{v1}</p>))}</span>
+          {Questions.map((v, i) => (
+            <div key={i} className={styles.questionContainer}>
+              <h1 className={styles.title}>{v.id}. {v.question}</h1>
+              <span>
+                {v.options.map((v1, i1) => (<>
+                  <input key={i1} name={v.id.toString()} checked={Answers[i] == i1} onChange={() => setAnswers(a => {
+                    const newAnswers = [...a];
+                    newAnswers[i] = i1;
+                    return newAnswers;
+                  })} type="radio" id={`${i}-${i1}`} /> <label className={styles.customradio + ' ' + styles.label} htmlFor={`${i}-${i1}`}>{v1}</label>
+                </>))}
+              </span>
             </div>
           ))}
-
 
           {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim()} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />
