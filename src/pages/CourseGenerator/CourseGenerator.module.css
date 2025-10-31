@@ -105,3 +105,79 @@
 	transform: translateX(-50%);
 	height: 100px;
 }
+
+.inputgroup {
+	position: relative;
+	margin-block: 40px;
+}
+
+.inputfield {
+	width: 100%;
+	padding: 15px;
+	background-color: var(--background);
+	font-size: 24px;
+	border: 2px solid var(--primary);
+	border-radius: 4px;
+	outline: none;
+	transition: border-color 0.3s;
+}
+
+.inputlabel {
+	position: absolute;
+	left: 15px;
+	top: 11px;
+	font-size: 24px;
+	color: var(--primary);
+	transition: all 0.3s ease;
+	pointer-events: none;
+	background-color: transparent;
+}
+
+.inputfield:focus {
+	border-color: var(--primary);
+}
+
+.inputfield:focus+.inputlabel,
+.inputfield:not(:placeholder-shown)+.inputlabel {
+	top: -10px;
+	left: 10px;
+	font-size: 12px;
+	color: var(--primary);
+	background-color: var(--background);
+	padding: 0 5px;
+}
+
+.inputgroup::after {
+	content: attr(data-hint);
+	position: absolute;
+	left: 2px;
+	bottom: -18px;
+	font-size: 12px;
+	color: black;
+	opacity: 0;
+	transform: translateY(-5px);
+	transition: all 0.2s ease;
+}
+
+.inputgroup:focus-within::after {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.questionContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+
+.questionContainer>span {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+}
+
+.questionContainer>span>p {
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	padding: 1rem;
+}

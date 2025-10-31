@@ -9,39 +9,69 @@ import styles from "./CourseGenerator.module.css";
 import loadgif from '../../assets/loading.gif';
 import { useDispatch } from 'react-redux';
 import { setcourse } from '../../counter/answerSlice'
+import type { Question } from "../../interfaces/Question";
 
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [topic, setTopic] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [answerQuestions, setAnswerQuestions] = useState(false);
+  const [topic, setTopic] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
+  const [Questions, setQuestions] = useState<Question[]>([]);
 
 
   async function handleGenerate() {
     setIsLoading(true);
-    try {
-      const response = await fetch('http://localhost:3000/api/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ topic }) 
-      });
+    if (answerQuestions) {
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/generateQuestions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ topic, answerQuestions })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Вопросы от сервера:', data.result); ////////
+        setIsLoading(false);
+        setQuestions(JSON.parse(data.result.trim()).questions)
+
+
+      } catch (error) {
+        console.error('Ошибка при запросе к серверу:', error);
+        setIsLoading(false);
       }
+    } else {
+      try {
+        const response = await fetch('http://localhost:3000/api/generateCourse', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ topic })
+        });
 
-      const data = await response.json();
-      console.log('Ответ от сервера:', JSON.parse(data.result)); ////////
-      setIsLoading(false);
-      dispatch(setcourse( JSON.parse(data.result.replace('`', ''))));
-      navigate("/course");
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
 
-    } catch (error) {
-      console.error('Ошибка при запросе к серверу:', error);
-      setIsLoading(false);
+        const data = await response.json();
+        console.log('Ответ от сервера:', JSON.parse(data.result.trim())); ////////
+        setIsLoading(false);
+        dispatch(setcourse(JSON.parse(data.result.replace('`', '')))); //проверка на формат и блаблабла
+        navigate("/course");
+
+      } catch (error) {
+        console.error('Ошибка при запросе к серверу:', error);
+        setIsLoading(false);
+      }
     }
   };
 
@@ -50,7 +80,7 @@ const CourseGenerator = () => {
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.header}>
-            <h1 className={styles.title}>Что я могу помочь вам изучить?</h1>
+            <h1 className={styles.title}>SelfSpark</h1>
             <p className={styles.subtitle}>Напишите тему ниже, чтобы получить готовый мини-курс</p>
           </div>
 
@@ -58,7 +88,11 @@ const CourseGenerator = () => {
             <Label htmlFor="topic" className={styles.formLabel}>
               Что я могу помочь вам изучить?
             </Label>
-            <Input id="topic" placeholder="Введите тему" value={topic} onChange={e => setTopic(e.target.value)} className={styles.formInput} />
+            <div className={styles.inputgroup} data-hint={`Пример: я ночью плачу и дрочу`}>
+              <input value={topic} onChange={e => setTopic(e.target.value)} type="text" className={styles.inputfield} id="name" placeholder=' ' />
+              <label htmlFor="name" className={styles.inputlabel}>Введите тему</label>
+            </div>
+            {/* <Input id="topic" placeholder="Введите тему" className={styles.formInput} /> */}
           </div>
 
           <div className={styles.checkboxContainer}>
@@ -69,6 +103,15 @@ const CourseGenerator = () => {
               </label>
             </div>
           </div>
+
+          {Questions.map(v => (
+            <div className={styles.questionContainer}>
+              <h1>{v.id}. {v.question}</h1>
+              <span>{v.options.map(v1 => (<p>{v1}</p>))}</span>
+            </div>
+          ))}
+
+
           {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim()} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />
             Сгенерировать
