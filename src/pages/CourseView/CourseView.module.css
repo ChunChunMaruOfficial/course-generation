@@ -98,6 +98,18 @@
 	}
 }
 
+.lessonItem {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+
+}
+
+
+.lessonItem:not(.lessonRow:last-of-type) {
+	border-bottom: 1px solid var(--border);
+}
+
 .pageTitle {
 	font-size: 1.25rem;
 	font-weight: 700;
@@ -117,10 +129,6 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.75rem 0;
-}
-
-.lessonRow:not(.lessonRow:last-of-type) {
-	border-bottom: 1px solid var(--border);
 }
 
 .lessonLeft {

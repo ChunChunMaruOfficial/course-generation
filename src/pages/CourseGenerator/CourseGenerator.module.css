@@ -284,6 +284,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: 15px;
+	animation: highlight 1s ease;
+	transition: .3s ease-in-out;
+	padding: 2px;
+	border-radius: 10px;
 }
 
 .questionContainer>span {
@@ -358,4 +362,13 @@ input[type="radio"]:checked+label.customradio::after {
 /* В состоянии наведения меняем цвет границы */
 label.customradio:hover::before {
 	border-color: var(--primary-dark);
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(255, 236, 179, 0.5);
+  }
+  100% {
+    background-color: transparent;
+  }
 }

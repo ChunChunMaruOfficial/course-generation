@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/Button/button";
@@ -11,7 +11,7 @@ import { setcourse } from '../../counter/answerSlice'
 import type { Question } from "../../interfaces/Question";
 
 import exampleQuestions from '../../examples/Questions.json'
-//exampleQuestions.questions
+//
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,8 +19,9 @@ const CourseGenerator = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
   const [Questions, setQuestions] = useState<Question[]>([]);
-  const [Answers, setAnswers] = useState<number[]>([])
+  const [Answers, setAnswers] = useState<(number | undefined)[]>(Array(Questions.length).fill(undefined));
   const [exampleTexts, setexampleTexts] = useState<string[]>([])
+  const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
 
 
 
@@ -41,6 +42,27 @@ const CourseGenerator = () => {
 
 
   async function handleGenerate() {
+
+    if (Questions.length > 0 && Answers.includes(undefined)) {
+      const idx = Answers.findIndex(v => v === undefined);
+      console.log(idx);
+      console.log(QuestionRefs);
+      const element = QuestionRefs.current[idx];
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        element.style.backgroundColor = 'rgba(255, 0, 0, 0.1)';
+        setTimeout(() => {
+          element.style.backgroundColor = 'transparent';
+        }, 2000);
+      }
+
+      return 0;
+    }
+
+
+    console.log(Questions.length);
+    console.log(Answers);
+
     setIsLoading(true);
     if (answerQuestions) {
       try {
@@ -55,12 +77,16 @@ const CourseGenerator = () => {
         if (!response.ok) {
           throw new Error(`Server error: ${response.status}`);
         }
-
         const data = await response.json();
         console.log('Вопросы от сервера:', data.result); ////////
         setIsLoading(false);
         setAnswerQuestions(false)
         setQuestions(JSON.parse(data.result.trim()).questions)
+        setAnswers(v => {
+          const newAnswers = [...v];
+          newAnswers.length = JSON.parse(data.result.trim()).questions.length;
+          return newAnswers;
+        });
 
 
       } catch (error) {
@@ -69,9 +95,12 @@ const CourseGenerator = () => {
       }
     } else {
       try {
-        let beasnwrs:string[] = []
+        let beasnwrs: string[] = []
+
+
+
         if (Answers.length > 0) {
-          Questions.map((v, i) => beasnwrs.push(`${v.question} - ${v.options[Answers[i]]}`))
+          Questions.map((v, i) => beasnwrs.push(`${v.question} - ${v.options[Answers[i] ?? 9]}`))
         }
 
         const response = await fetch('http://localhost:3000/api/generateCourse', {
@@ -127,13 +156,15 @@ const CourseGenerator = () => {
           )}
 
           {Questions.map((v, i) => (
-            <div key={i} className={styles.questionContainer}>
+            <div ref={el => { QuestionRefs.current[i] = el }} key={i} className={styles.questionContainer}>
               <h1 className={styles.title}>{v.id}. {v.question}</h1>
               <span>
                 {v.options.map((v1, i1) => (<>
                   <input key={i1} name={v.id.toString()} checked={Answers[i] == i1} onChange={() => setAnswers(a => {
                     const newAnswers = [...a];
                     newAnswers[i] = i1;
+                    console.log(Answers);
+                    
                     return newAnswers;
                   })} type="radio" id={`${i}-${i1}`} /> <label className={styles.customradio + ' ' + styles.label} htmlFor={`${i}-${i1}`}>{v1}</label>
                 </>))}
@@ -141,7 +172,7 @@ const CourseGenerator = () => {
             </div>
           ))}
 
-          {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim()} size="lg" className={styles.generateButton}>
+          {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim() || Questions.length < 0} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />
             Сгенерировать {answerQuestions ? 'вопросы' : 'курс'}
           </Button>}

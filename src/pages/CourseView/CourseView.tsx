@@ -3,18 +3,18 @@ import { ChevronRight, ArrowRight, Bell, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/Button/button";
 import { Progress } from "@/components/Progress/Progress";
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion'
 import styles from "./CourseView.module.css";
 import { useSelector } from "react-redux";
 import type { Module } from "../../interfaces/Module";
 import type { Lesson } from "../../interfaces/Lesson";
 type ViewMode = "outline" | "map";
 
-  
+
 const CourseView = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [selectedModuleId, setSelectedModuleId] = useState(1);
-  const course = useSelector((state:any) => state.answer.course);
+  const course = useSelector((state: any) => state.answer.course);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
@@ -27,7 +27,7 @@ const CourseView = () => {
     const child = container.children[activeIndex] as HTMLElement | undefined;
     if (child) {
       const { offsetLeft, offsetWidth } = child;
-      setHighlightProps({ left: offsetLeft +3, width: offsetWidth });
+      setHighlightProps({ left: offsetLeft + 3, width: offsetWidth });
     }
   }, [viewMode]);
 
@@ -60,23 +60,28 @@ const CourseView = () => {
 
               <div className={styles.lessonsList}>
                 {selectedModule.lessons.map((lesson: Lesson) => (
-                  <div key={lesson.id} className={styles.lessonRow}>
-                    <div className={styles.lessonLeft}>
+                  <div className={styles.lessonItem} key={lesson.id}>
+                    <div key={lesson.id} className={styles.lessonRow}>
+                      <div className={styles.lessonLeft}>
+                        {lesson.completed ? (
+                          <div className={`${styles.lessonStatus} ${styles.completed}`}><Check className={styles.iconSmall} /></div>
+                        ) : (
+                          <div className={`${styles.lessonStatus} ${styles.number}`}>{lesson.id}</div>
+                        )}
+
+                        <span className={`${styles.lessonTitle} ${lesson.completed ? styles.muted : ''}`}>{lesson.title}</span>
+                      </div>
+
                       {lesson.completed ? (
-                        <div className={`${styles.lessonStatus} ${styles.completed}`}><Check className={styles.iconSmall} /></div>
+                        <span className={styles.lessonCompleted}>Завершено</span>
                       ) : (
-                        <div className={`${styles.lessonStatus} ${styles.number}`}>{lesson.id}</div>
+                        <button className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></button>
                       )}
 
-                      <span className={`${styles.lessonTitle} ${lesson.completed ? styles.muted : ''}`}>{lesson.title}</span>
                     </div>
-
-                    {lesson.completed ? (
-                      <span className={styles.lessonCompleted}>Завершено</span>
-                    ) : (
-                      <button className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></button>
-                    )}
-                    
+                    <div className={styles.lessonMeta}>
+                      
+                    </div>
                   </div>
                 ))}
               </div>
@@ -106,25 +111,25 @@ const CourseView = () => {
                     left: highlightProps.left,
                     width: highlightProps.width,
                     height: "80%",
-                    backgroundColor: "var(--primary-light)", 
+                    backgroundColor: "var(--primary-light)",
                     borderRadius: "10px",
                     zIndex: 0,
                   }}
                   animate={{ left: highlightProps.left, width: highlightProps.width }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
-                <div ref={containerRef}  style={{ position: "relative", zIndex: 1, display: "flex", width: '100%' }}>
+                <div ref={containerRef} style={{ position: "relative", zIndex: 1, display: "flex", width: '100%' }}>
                   <button
                     onClick={() => setViewMode("outline")}
                     className={styles.toggleBtn}
-                    style={{color: viewMode == 'outline' ? 'var(--primary)' : ''}}
+                    style={{ color: viewMode == 'outline' ? 'var(--primary)' : '' }}
                   >
                     План
                   </button>
                   <button
                     onClick={() => setViewMode("map")}
                     className={styles.toggleBtn}
-                    style={{color: viewMode == 'map' ? 'var(--primary)' : ''}}
+                    style={{ color: viewMode == 'map' ? 'var(--primary)' : '' }}
                   >
                     Карта
                   </button>
