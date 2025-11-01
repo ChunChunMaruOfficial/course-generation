@@ -20,7 +20,7 @@ const CourseGenerator = () => {
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
   const [Questions, setQuestions] = useState<Question[]>([]);
   const [Answers, setAnswers] = useState<number[]>([])
-  const [exampleText, setexampleText] = useState<string>('')
+  const [exampleTexts, setexampleTexts] = useState<string[]>([])
 
 
 
@@ -34,7 +34,7 @@ const CourseGenerator = () => {
         body: JSON.stringify({ topic, answerQuestions })
       });
       const data = await response.json();
-      setexampleText(data)
+      setexampleTexts(data.result)
     }
     start()
   }, [])
@@ -69,12 +69,17 @@ const CourseGenerator = () => {
       }
     } else {
       try {
+        let beasnwrs:string[] = []
+        if (Answers.length > 0) {
+          Questions.map((v, i) => beasnwrs.push(`${v.question} - ${v.options[Answers[i]]}`))
+        }
+
         const response = await fetch('http://localhost:3000/api/generateCourse', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ topic })
+          body: JSON.stringify({ topic, answers: beasnwrs })
         });
 
         if (!response.ok) {
@@ -98,30 +103,28 @@ const CourseGenerator = () => {
     <div className={styles.root}>
       <div className={styles.container}>
         <div className={styles.card}>
-          <div className={styles.header}>
-            <h1 className={styles.title}>SelfSpark</h1>
-            <p className={styles.subtitle}>Напишите тему ниже, чтобы получить готовый мини-курс</p>
-          </div>
+          <h1 className={styles.title}>SelfSpark</h1>
 
-          {(Questions.length == 0 && <><div className={styles.inputContainer}>
+          <div className={styles.inputContainer}>
             <Label htmlFor="topic" className={styles.formLabel}>
               Что я могу помочь вам изучить?
             </Label>
-            <div className={styles.inputgroup} data-hint={`Пример: ${exampleText}`}>
+            <div className={styles.inputgroup}>
               <input value={topic} onChange={e => setTopic(e.target.value)} type="text" className={styles.inputfield} id="name" placeholder=' ' />
-              <label htmlFor="name" className={styles.inputlabel}>Введите тему</label>
+              <label htmlFor="name" className={styles.inputlabel}>Введите {Questions.length > 0 && 'другую'} тему</label>
             </div>
           </div>
+          <p className={styles.subtitle}>Пользователи часто интересуются: <span className={styles.exampleTexts}>{exampleTexts.map((v, i) => (<p key={i}>{v}</p>))}</span></p>
 
-            <div className={styles.checkboxContainer}>
-              <div className={styles.checkboxRow}>
-                <Checkbox id="questions" checked={answerQuestions} onCheckedChange={checked => setAnswerQuestions(checked as boolean)} />
-                <label htmlFor="questions" className={styles.checkboxLabel}>
-                  Ответить на вопросы для улучшения курса
-                </label>
-              </div>
+          {(Questions.length == 0 && <div className={styles.checkboxContainer}>
+            <div className={styles.checkboxRow}>
+              <Checkbox id="questions" checked={answerQuestions} onCheckedChange={checked => setAnswerQuestions(checked as boolean)} />
+              <label htmlFor="questions" className={styles.checkboxLabel}>
+                Ответить на вопросы для улучшения курса
+              </label>
             </div>
-          </>)}
+          </div>
+          )}
 
           {Questions.map((v, i) => (
             <div key={i} className={styles.questionContainer}>
@@ -140,7 +143,7 @@ const CourseGenerator = () => {
 
           {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim()} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />
-            Сгенерировать
+            Сгенерировать {answerQuestions ? 'вопросы' : 'курс'}
           </Button>}
         </div>
       </div>

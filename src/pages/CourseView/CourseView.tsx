@@ -76,6 +76,7 @@ const CourseView = () => {
                     ) : (
                       <button className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></button>
                     )}
+                    
                   </div>
                 ))}
               </div>
