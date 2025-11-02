@@ -23,7 +23,8 @@ const CourseGenerator = () => {
   const [Answers, setAnswers] = useState<(number | undefined)[]>(Array(Questions.length).fill(undefined));
   const [exampleTexts, setexampleTexts] = useState<string[]>([])
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
-
+  const [activeIndex, setActiveIndex] = useState(0);
+  const tabWidth = 100; // ширина одной вкладки в px
 
 
   useEffect(() => {
@@ -99,8 +100,6 @@ const CourseGenerator = () => {
       try {
         let beasnwrs: string[] = []
 
-
-
         if (Answers.length > 0) {
           Questions.map((v, i) => beasnwrs.push(`${v.question} - ${v.options[Answers[i] ?? 9]}`))
         }
@@ -128,7 +127,7 @@ const CourseGenerator = () => {
         const data = await response.json();
         navigate("/course");
         setIsLoading(false);
-        
+
         dispatch(setcourse(JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim().replace('`', '')))); //проверка на формат и блаблабла
 
       } catch (error) {
@@ -142,8 +141,33 @@ const CourseGenerator = () => {
     <div className={styles.root}>
       <div className={styles.container}>
         <div className={styles.card}>
-          <h1 className={styles.title}>SelfSpark</h1>
+          <div className={styles.top}>
+            <h1 className={styles.title}>SelfSpark</h1>
+            <div className={styles.tabs}>
+              <button
+                className={`${styles.tabButton} ${activeIndex === 0 ? styles.active : ""}`}
+                onClick={() => setActiveIndex(0)}
+              >
+                Быстро
+              </button>
+              <button
+                className={`${styles.tabButton} ${activeIndex === 1 ? styles.active : ""}`}
+                onClick={() => setActiveIndex(1)}
+              >
+                Подробно
+              </button>
 
+              {/* Глайдер */}
+              <span
+                className={styles.glider}
+                style={{
+                  width:activeIndex ? (tabWidth + 50) : tabWidth,
+                  transform: `translateX(${activeIndex * tabWidth}px)`,
+
+                }}
+              ></span>
+            </div>
+          </div>
           <div className={styles.inputContainer}>
             <Label htmlFor="topic" className={styles.formLabel}>
               Что я могу помочь вам изучить?

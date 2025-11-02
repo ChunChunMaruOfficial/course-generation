@@ -188,7 +188,7 @@
 .exampleTexts>span {
 	display: block;
 	height: 60px;
-	animation: animate 52s infinite;
+	animation: animate 150s infinite;
 	color: var(--foreground);
 }
 
@@ -201,7 +201,6 @@
 		text-wrap: wrap;
 		display: flex;
 		align-items: center;
-		/* вертикальное выравнивание */
 		width: 100%;
 	}
 
@@ -440,4 +439,58 @@ label.customradio:hover::before {
 	100% {
 		background-color: transparent;
 	}
+}
+
+/* Styles.module.css */
+.tabs {
+	width: max-content;
+	display: flex;
+	position: relative;
+	background: #fff;
+	/* box-shadow: 0 0 1px rgba(24, 94, 224, 0.15), 0 6px 12px rgba(24, 94, 224, 0.15); */
+	padding: 0.25rem;
+	border-radius: 20px;
+	overflow: hidden;
+	border: 1px solid var(--primary);
+}
+
+.tabButton {
+	height: 54px;
+	width: 100px;
+	font-size: 1rem;
+	font-weight: 600;
+	border-radius: 10px;
+	cursor: pointer;
+	background: transparent;
+	border: none;
+	z-index: 2;
+	transition: color 0.15s;
+	position: relative;
+}
+
+.tabButton:hover {
+	color: var(--primary);
+}
+
+.active {
+	color: var(--primary);
+}
+
+/* Глайдер */
+.glider {
+	position: absolute;
+	height: 100%;
+	background-color:  var(--primary);
+	opacity: .07;
+	top: 0;
+	left:  0;
+	transition: transform 0.25s ease-out;
+	z-index: 1;
+}
+
+.top{
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
 }
