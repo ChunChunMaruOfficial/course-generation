@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux';
 import { setcourse } from '../../counter/answerSlice'
 import type { Question } from "../../interfaces/Question";
 
-import exampleQuestions from '../../examples/Questions.json'
+// import exampleQuestions from '../../examples/Questions.json'
 //
 const CourseGenerator = () => {
   const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { ChevronRight, ArrowRight, Bell, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/Button/button";
 import { Progress } from "@/components/Progress/Progress";
-import { AnimatePresence, motion, transform } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import styles from "./CourseView.module.css";
 import { useSelector } from "react-redux";
 import type { Module } from "../../interfaces/Module";
@@ -16,7 +16,6 @@ import code from '../../assets/svg/code.svg'
 import arrowmore from '../../assets/svg/arrowmore.svg'
 import { useDispatch } from 'react-redux';
 import { setcourse } from '../../counter/answerSlice'
-import menu from '../../assets/svg/menu.svg'
 
 
 const lessonscontent: Theme[] = [{
@@ -47,15 +46,15 @@ const pageVariants = {
   }
 };
 
-const tempdata = [
-  '123123123',
-  '123123123',
-  '123123123',
-  '123123123',
-  '123123123',
-  '123123123'
+// const tempdata = [
+//   '123123123',
+//   '123123123',
+//   '123123123',
+//   '123123123',
+//   '123123123',
+//   '123123123'
 
-]
+// ]
 
 const cardVariants = {
   initial: {
@@ -78,7 +77,7 @@ const CourseView = () => {
   const storecourse = useSelector((state: any) => state.answer.course);
   const dispatch = useDispatch();
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
-  const [sidebaripened, setsidebaripened] = useState<boolean | null>(null);
+ // const [sidebaripened, setsidebaripened] = useState<boolean | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState(0);
 
   const [course, setCourse] = useState<CourseData>(storecourse);
@@ -157,7 +156,7 @@ const CourseView = () => {
               {course && course.modules && course.modules.length > 0 ? (<><h1 className={styles.pageTitle}>Модуль {course.modules[selectedModuleId].id}: {course.modules[selectedModuleId].title}</h1>
 
                 <div className={styles.lessonsList}>
-                  {course.modules[selectedModuleId].lessons.map((lesson: Lesson, index: number) => (
+                  {course.modules[selectedModuleId].lessons.map((lesson: Lesson) => (
                     <div className={styles.lessonItem}
                       style={{ boxShadow: expandedLessonId === lesson.id ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
                       onClick={() => {
