@@ -8,7 +8,7 @@
 	border-bottom: 1px solid var(--border);
 	position: sticky;
 	top: 0;
-	z-index: 50;
+	z-index: 2;
 }
 
 .headerInner {
@@ -84,6 +84,23 @@
 	max-width: 1120px;
 	margin: 0 auto;
 	padding: 1rem;
+}
+
+.sidebar{
+	position: absolute;
+	top: 0;
+	z-index: 3;
+	background: var(--card);
+	border-right: 1px solid var(--border);
+	width: 280px;
+	transition: transform 0.3s ease-in-out;
+	height: 100vh;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar>p {
+	padding: 1rem;
+	border-bottom: 1px solid var(--border);
 }
 
 .layoutGrid {
@@ -333,6 +350,12 @@
 	border-radius: 0.5rem;
 	background: transparent;
 	border: 1px solid transparent;
+	transition: .3s ease-in-out;
+}
+
+.moduleRow:hover {
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+	cursor: pointer;
 }
 
 .moduleRow.active {

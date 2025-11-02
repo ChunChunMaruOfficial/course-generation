@@ -174,7 +174,7 @@
 
 .subtitle {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: center;
 	gap: 10px;
 }
@@ -187,9 +187,30 @@
 .exampleTexts>p {
 	display: block;
 	height: 60px;
-	line-height: 60px;
 	animation: animate 52s infinite;
+	color: var(--foreground);
 }
+
+@media (max-width: 768px) {
+	.exampleTexts>p {
+		font-size: 12px;
+		text-align: center;
+		justify-content: center;
+		text-wrap: wrap;
+		display: flex;
+		align-items: center;
+		/* вертикальное выравнивание */
+		width: 100%;
+	}
+
+	.subtitle {
+		margin-top: 15px;
+		flex-direction: column;
+		border: 1px solid var(--border);
+		padding-block: 15px;
+	}
+}
+
 
 @keyframes animate {
 	0% {

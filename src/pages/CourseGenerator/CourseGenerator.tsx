@@ -126,13 +126,10 @@ const CourseGenerator = () => {
         }
 
         const data = await response.json();
-        console.log(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim());
-        console.log(data.result); 
-        console.log('Ответ от сервера:', JSON.parse(data.result.trim())); ////////
+        navigate("/course");
         setIsLoading(false);
         
-        dispatch(setcourse(JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim()))); //проверка на формат и блаблабла
-        navigate("/course");
+        dispatch(setcourse(JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim().replace('`', '')))); //проверка на формат и блаблабла
 
       } catch (error) {
         console.error('Ошибка при запросе к серверу:', error);

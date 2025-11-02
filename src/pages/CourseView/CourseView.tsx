@@ -3,7 +3,7 @@ import { ChevronRight, ArrowRight, Bell, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/Button/button";
 import { Progress } from "@/components/Progress/Progress";
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, transform } from 'framer-motion'
 import styles from "./CourseView.module.css";
 import { useSelector } from "react-redux";
 import type { Module } from "../../interfaces/Module";
@@ -16,6 +16,9 @@ import code from '../../assets/svg/code.svg'
 import arrowmore from '../../assets/svg/arrowmore.svg'
 import { useDispatch } from 'react-redux';
 import { setcourse } from '../../counter/answerSlice'
+import menu from '../../assets/svg/menu.svg'
+
+
 const lessonscontent: Theme[] = [{
   name: 'Создание и вызов функции',
   img: book,
@@ -44,12 +47,38 @@ const pageVariants = {
   }
 };
 
+const tempdata = [
+  '123123123',
+  '123123123',
+  '123123123',
+  '123123123',
+  '123123123',
+  '123123123'
+
+]
+
+const cardVariants = {
+  initial: {
+    opacity: 0,
+    transform: 'translateX(-15px)'
+  },
+  animate: {
+    opacity: 1,
+    transform: 'none'
+  },
+  exit: {
+    opacity: 0,
+    transform: 'translateX(15px)'
+  }
+};
+
 
 
 const CourseView = () => {
   const storecourse = useSelector((state: any) => state.answer.course);
   const dispatch = useDispatch();
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
+  const [sidebaripened, setsidebaripened] = useState<boolean | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState(0);
 
   const [course, setCourse] = useState<CourseData>(storecourse);
@@ -96,10 +125,17 @@ const CourseView = () => {
   };
   return (
     <div className={styles.root}>
+      {/* <div className={`${styles.sidebar} ${sidebaripened ? styles.open : sidebaripened === false ? styles.closed : ''}`}>
+        <h2 className={styles.pageTitle}>Мои курсы</h2>
+        {tempdata.map(v => (
+          <p>{v}</p>))}
+      </div> */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
-          <Link to="/" className={styles.navLink}>Генератор Курсов</Link>
-
+          <div>
+            {/* <img src={menu} alt="" /> */}
+            <Link to="/" className={styles.navLink}>SelfSpark</Link>
+          </div>
           <div className={styles.headerUtility}>
             <span className={styles.metaText}>{course.progress}% / 100% дневного лимита</span>
             <Button variant="ghost" size="icon"><Bell className={styles.iconSmall} /></Button>
@@ -111,7 +147,13 @@ const CourseView = () => {
       <div className={styles.pageInner}>
         <div className={styles.layoutGrid}>
           <main className={styles.main}>
-            <div className={styles.card}>
+            <motion.div className={styles.card}
+              variants={cardVariants}
+              initial={'initial'}
+              animate={'animate'}
+              exit={'exit'}
+              transition={{ duration: .5 }}
+            >
               {course && course.modules && course.modules.length > 0 ? (<><h1 className={styles.pageTitle}>Модуль {course.modules[selectedModuleId].id}: {course.modules[selectedModuleId].title}</h1>
 
                 <div className={styles.lessonsList}>
@@ -205,7 +247,7 @@ const CourseView = () => {
                     </div>
                   ))}
                 </div></>) : (<p>щащащащащ</p>)}
-            </div>
+            </motion.div>
           </main>
 
           <aside className={styles.aside}>
