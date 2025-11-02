@@ -10,17 +10,20 @@ import { useDispatch } from 'react-redux';
 import { setcourse } from '../../counter/answerSlice'
 import type { Question } from "../../interfaces/Question";
 
-// import exampleQuestions from '../../examples/Questions.json'
-//
+//import exampleQuestions from '../../examples/Questions.json'
+
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [topic, setTopic] = useState<string>("");
+  const [topic, setTopic] = useState<string>("как правильно играть в майнкрафт");
   const [offtop, setofftop] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
   const [Questions, setQuestions] = useState<Question[]>([]);
-  const [Answers, setAnswers] = useState<(number | undefined)[]>(Array(Questions.length).fill(undefined));
+  const [Answers, setAnswers] = useState<(number[] | undefined)[]>(
+    Array.from({ length: Questions.length }, () => [])
+  );
+
   const [exampleTexts, setexampleTexts] = useState<string[]>([])
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
   const [activeIndex, setActiveIndex] = useState(0);
@@ -44,9 +47,12 @@ const CourseGenerator = () => {
 
 
   async function handleGenerate() {
+console.log(Answers[2]);
+console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
 
-    if (Questions.length > 0 && Answers.includes(undefined)) {
-      const idx = Answers.findIndex(v => v === undefined);
+    if (Questions.length > 0 && (Answers.some(v => v!= undefined && v.length == 0) || Answers.includes(undefined))) {
+
+      const idx = Answers.findIndex((v: any) => v == undefined || v.length < 1)
       console.log(idx);
       console.log(QuestionRefs);
       const element = QuestionRefs.current[idx];
@@ -100,8 +106,8 @@ const CourseGenerator = () => {
       try {
         let beasnwrs: string[] = []
 
-        if (Answers.length > 0) {
-          Questions.map((v, i) => beasnwrs.push(`${v.question} - ${v.options[Answers[i] ?? 9]}`))
+        if (Answers.some(v => v!= undefined && v.length > 0)) {
+          Questions.map((v, i) => beasnwrs.push(`${v.question} - ${Answers[i]!.join(', ')}`))
         }
 
         const bodyObj: { topic: string, answers?: string[] } = { topic };
@@ -142,7 +148,12 @@ const CourseGenerator = () => {
       <div className={styles.container}>
         <div className={styles.card}>
           <div className={styles.top}>
-            <h1 className={styles.title}>SelfSpark</h1>
+            <div className={styles.lefttop}>
+              <h1 className={styles.title}>SelfSpark</h1>
+              <Label htmlFor="topic" className={styles.formLabel}>
+                Что я могу помочь вам изучить?
+              </Label>
+            </div>
             <div className={styles.tabs}>
               <button
                 className={`${styles.tabButton} ${activeIndex === 0 ? styles.active : ""}`}
@@ -161,7 +172,7 @@ const CourseGenerator = () => {
               <span
                 className={styles.glider}
                 style={{
-                  width:activeIndex ? (tabWidth + 50) : tabWidth,
+                  width: activeIndex ? (tabWidth + 50) : tabWidth,
                   transform: `translateX(${activeIndex * tabWidth}px)`,
 
                 }}
@@ -169,9 +180,6 @@ const CourseGenerator = () => {
             </div>
           </div>
           <div className={styles.inputContainer}>
-            <Label htmlFor="topic" className={styles.formLabel}>
-              Что я могу помочь вам изучить?
-            </Label>
             <div className={styles.inputgroup}>
               <input value={topic} onChange={e => setTopic(e.target.value)} type="text" className={styles.inputfield} id="name" placeholder=' ' />
               <label htmlFor="name" className={styles.inputlabel}>Введите {Questions.length > 0 && 'другую'} тему</label>
@@ -193,16 +201,43 @@ const CourseGenerator = () => {
             <div ref={el => { QuestionRefs.current[i] = el }} key={i} className={styles.questionContainer}>
               <h1 className={styles.title}>{v.id}. {v.question}</h1>
               <span>
-                {v.options.map((v1, i1) => (<>
-                  <input key={i1} name={v.id.toString()} checked={Answers[i] == i1} onChange={() => setAnswers(a => {
-                    const newAnswers = [...a];
-                    newAnswers[i] = i1;
-                    console.log(Answers);
+                {v.options.map((v1, i1) => (
+                  <>
+                    <input
+                      type="checkbox"
+                      id={`${i}-${i1}`}
+                      checked={Answers[i]?.includes(i1) ?? false}
+                      onChange={() => {
+                        setAnswers(a => {
+                          const newAnswers = [...a];
+                          // Берем текущий массив отмеченных опций вопроса
+                          const current = newAnswers[i] ? [...newAnswers[i]] : [];
+                          const indexInCurrent = current.indexOf(i1);
+                          if (indexInCurrent === -1) {
+                            // Добавить выбранный
+                            current.push(i1);
+                          } else {
+                            // Убрать, если уже выбран
+                            current.splice(indexInCurrent, 1);
+                          }
+                          newAnswers[i] = current;
+                          return newAnswers;
+                        });
+                        console.log(Answers);
 
-                    return newAnswers;
-                  })} type="radio" id={`${i}-${i1}`} /> <label className={styles.customradio + ' ' + styles.label} htmlFor={`${i}-${i1}`}>{v1}</label>
-                </>))}
+                      }}
+                      name={`${v.id}-${i1}`}
+                    />
+                    <label
+                      className={`${styles.customradio} ${styles.label}`}
+                      htmlFor={`${i}-${i1}`}
+                    >
+                      {v1}
+                    </label>
+                  </>
+                ))}
               </span>
+
             </div>
           ))}
 

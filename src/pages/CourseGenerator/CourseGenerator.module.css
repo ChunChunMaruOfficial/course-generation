@@ -370,8 +370,9 @@
 }
 
 /* Скрываем стандартный радиобатон */
-input[type="radio"] {
+input[type="checkbox"] {
 	position: absolute;
+	left: -100px;
 	opacity: 0;
 	width: 1.25rem;
 	height: 1.25rem;
@@ -399,7 +400,7 @@ label.customradio::before {
 	transform: translateY(-50%);
 	width: 1.25rem;
 	height: 1.25rem;
-	border-radius: 50%;
+	border-radius: 20%;
 	border: 2px solid var(--primary);
 	background-color: white;
 	transition: border-color 0.2s ease;
@@ -415,14 +416,14 @@ label.customradio::after {
 	transform: translateY(-50%) scale(0);
 	width: 0.65rem;
 	height: 0.65rem;
-	border-radius: 50%;
+	border-radius: 15%;
 	background-color: var(--primary);
 	transition: transform 0.2s ease;
 	box-sizing: border-box;
 }
 
 /* Отмеченный радиобатон — показываем внутренний круг */
-input[type="radio"]:checked+label.customradio::after {
+input[type="checkbox"]:checked+label.customradio::after {
 	transform: translateY(-50%) scale(1);
 }
 
@@ -445,13 +446,14 @@ label.customradio:hover::before {
 .tabs {
 	width: max-content;
 	display: flex;
+	height: min-content;
 	position: relative;
 	background: #fff;
 	/* box-shadow: 0 0 1px rgba(24, 94, 224, 0.15), 0 6px 12px rgba(24, 94, 224, 0.15); */
 	padding: 0.25rem;
-	border-radius: 20px;
+	border-radius: 10px;
 	overflow: hidden;
-	border: 1px solid var(--primary);
+	border: 2px solid var(--primary);
 }
 
 .tabButton {
@@ -464,12 +466,14 @@ label.customradio:hover::before {
 	background: transparent;
 	border: none;
 	z-index: 2;
-	transition: color 0.15s;
+	transition: 0.15s ease-in-out;
 	position: relative;
+	color: var(--muted-foreground);
 }
 
 .tabButton:hover {
 	color: var(--primary);
+	opacity: .7;
 }
 
 .active {
@@ -484,13 +488,20 @@ label.customradio:hover::before {
 	opacity: .07;
 	top: 0;
 	left:  0;
-	transition: transform 0.25s ease-out;
+	transition: 0.25s ease-out;
 	z-index: 1;
 }
 
 .top{
 	display: flex;
 	width: 100%;
-	align-items: center;
+	flex-direction: row;
 	justify-content: space-between;
+	align-items: flex-end;
+}
+
+.top>.lefttop{
+	display: flex;
+	flex-direction: column;
+	
 }
