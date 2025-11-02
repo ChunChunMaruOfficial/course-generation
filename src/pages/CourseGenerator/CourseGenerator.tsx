@@ -16,6 +16,7 @@ const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [topic, setTopic] = useState<string>("");
+  const [offtop, setofftop] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
   const [Questions, setQuestions] = useState<Question[]>([]);
@@ -78,13 +79,14 @@ const CourseGenerator = () => {
           throw new Error(`Server error: ${response.status}`);
         }
         const data = await response.json();
-        console.log('Вопросы от сервера:', data.result); ////////
         setIsLoading(false);
         setAnswerQuestions(false)
-        setQuestions(JSON.parse(data.result.trim()).questions)
+        const parsed = JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim());
+        console.log(parsed); ////////
+        setQuestions(parsed.questions)
         setAnswers(v => {
           const newAnswers = [...v];
-          newAnswers.length = JSON.parse(data.result.trim()).questions.length;
+          newAnswers.length = parsed.questions.length;
           return newAnswers;
         });
 
@@ -103,7 +105,7 @@ const CourseGenerator = () => {
           Questions.map((v, i) => beasnwrs.push(`${v.question} - ${v.options[Answers[i] ?? 9]}`))
         }
 
-        const bodyObj:{topic: string, answers?: string[]} = { topic };
+        const bodyObj: { topic: string, answers?: string[] } = { topic };
 
         if (beasnwrs) {
           bodyObj.answers = beasnwrs;
@@ -124,9 +126,12 @@ const CourseGenerator = () => {
         }
 
         const data = await response.json();
+        console.log(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim());
+        console.log(data.result); 
         console.log('Ответ от сервера:', JSON.parse(data.result.trim())); ////////
         setIsLoading(false);
-        dispatch(setcourse(JSON.parse(data.result.trim().replace('`', '')))); //проверка на формат и блаблабла
+        
+        dispatch(setcourse(JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim()))); //проверка на формат и блаблабла
         navigate("/course");
 
       } catch (error) {
@@ -179,6 +184,13 @@ const CourseGenerator = () => {
               </span>
             </div>
           ))}
+
+          {(Questions.length > 0 && <div style={{ marginBottom: 40 }} className={styles.inputContainer}>
+            <div className={styles.inputgroup}>
+              <input value={offtop} onChange={e => setofftop(e.target.value)} type="text" className={styles.inputfield + " " + styles.inputfield2} id="name" placeholder=' ' />
+              <label htmlFor="name" className={styles.inputlabel + " " + styles.inputlabel2}>У вас есть примечания для курса?</label>
+            </div>
+          </div>)}
 
           {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim() || Questions.length < 0} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />

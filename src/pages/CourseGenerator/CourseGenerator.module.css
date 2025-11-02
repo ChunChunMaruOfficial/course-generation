@@ -121,6 +121,12 @@
 	transition: border-color 0.3s;
 }
 
+.inputfield2 {
+	border: 2px solid var(--foreground);
+}
+
+
+
 .inputlabel {
 	position: absolute;
 	left: 15px;
@@ -132,8 +138,16 @@
 	background-color: transparent;
 }
 
+.inputlabel2 {
+	color: var(--foreground);
+}
+
 .inputfield:focus {
 	border-color: var(--primary);
+}
+
+.inputfield2:focus {
+	border-color: var(--foreground);
 }
 
 .inputfield:focus+.inputlabel,
@@ -157,8 +171,9 @@
 	transform: translateY(-5px);
 	transition: all 0.2s ease;
 }
-.subtitle{
-		display: flex;
+
+.subtitle {
+	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 10px;
@@ -177,99 +192,129 @@
 }
 
 @keyframes animate {
-    0% {
-        transform: translateY(0);
-    }
-    3.33% {
-        transform: translateY(-100%);
-    }
-    6.66% {
-        transform: translateY(-200%);
-    }
-    9.99% {
-        transform: translateY(-300%);
-    }
-    13.32% {
-        transform: translateY(-400%);
-    }
-    16.65% {
-        transform: translateY(-500%);
-    }
-    19.98% {
-        transform: translateY(-600%);
-    }
-    23.31% {
-        transform: translateY(-700%);
-    }
-    26.64% {
-        transform: translateY(-800%);
-    }
-    29.97% {
-        transform: translateY(-900%);
-    }
-    33.3% {
-        transform: translateY(-1000%);
-    }
-    36.63% {
-        transform: translateY(-1100%);
-    }
-    39.96% {
-        transform: translateY(-1200%);
-    }
-    43.29% {
-        transform: translateY(-1300%);
-    }
-    46.62% {
-        transform: translateY(-1400%);
-    }
-    49.95% {
-        transform: translateY(-1500%);
-    }
-    53.28% {
-        transform: translateY(-1600%);
-    }
-    56.61% {
-        transform: translateY(-1700%);
-    }
-    59.94% {
-        transform: translateY(-1800%);
-    }
-    63.27% {
-        transform: translateY(-1900%);
-    }
-    66.6% {
-        transform: translateY(-2000%);
-    }
-    69.93% {
-        transform: translateY(-2100%);
-    }
-    73.26% {
-        transform: translateY(-2200%);
-    }
-    76.59% {
-        transform: translateY(-2300%);
-    }
-    79.92% {
-        transform: translateY(-2400%);
-    }
-    83.25% {
-        transform: translateY(-2500%);
-    }
-    86.58% {
-        transform: translateY(-2600%);
-    }
-    89.91% {
-        transform: translateY(-2700%);
-    }
-    93.24% {
-        transform: translateY(-2800%);
-    }
-    96.57% {
-        transform: translateY(-2900%);
-    }
-    100% {
-        transform: translateY(-3000%);
-    }
+	0% {
+		transform: translateY(0);
+	}
+
+	3.33% {
+		transform: translateY(-100%);
+	}
+
+	6.66% {
+		transform: translateY(-200%);
+	}
+
+	9.99% {
+		transform: translateY(-300%);
+	}
+
+	13.32% {
+		transform: translateY(-400%);
+	}
+
+	16.65% {
+		transform: translateY(-500%);
+	}
+
+	19.98% {
+		transform: translateY(-600%);
+	}
+
+	23.31% {
+		transform: translateY(-700%);
+	}
+
+	26.64% {
+		transform: translateY(-800%);
+	}
+
+	29.97% {
+		transform: translateY(-900%);
+	}
+
+	33.3% {
+		transform: translateY(-1000%);
+	}
+
+	36.63% {
+		transform: translateY(-1100%);
+	}
+
+	39.96% {
+		transform: translateY(-1200%);
+	}
+
+	43.29% {
+		transform: translateY(-1300%);
+	}
+
+	46.62% {
+		transform: translateY(-1400%);
+	}
+
+	49.95% {
+		transform: translateY(-1500%);
+	}
+
+	53.28% {
+		transform: translateY(-1600%);
+	}
+
+	56.61% {
+		transform: translateY(-1700%);
+	}
+
+	59.94% {
+		transform: translateY(-1800%);
+	}
+
+	63.27% {
+		transform: translateY(-1900%);
+	}
+
+	66.6% {
+		transform: translateY(-2000%);
+	}
+
+	69.93% {
+		transform: translateY(-2100%);
+	}
+
+	73.26% {
+		transform: translateY(-2200%);
+	}
+
+	76.59% {
+		transform: translateY(-2300%);
+	}
+
+	79.92% {
+		transform: translateY(-2400%);
+	}
+
+	83.25% {
+		transform: translateY(-2500%);
+	}
+
+	86.58% {
+		transform: translateY(-2600%);
+	}
+
+	89.91% {
+		transform: translateY(-2700%);
+	}
+
+	93.24% {
+		transform: translateY(-2800%);
+	}
+
+	96.57% {
+		transform: translateY(-2900%);
+	}
+
+	100% {
+		transform: translateY(-3000%);
+	}
 }
 
 
@@ -365,10 +410,11 @@ label.customradio:hover::before {
 }
 
 @keyframes highlight {
-  0% {
-    background-color: rgba(255, 236, 179, 0.5);
-  }
-  100% {
-    background-color: transparent;
-  }
+	0% {
+		background-color: rgba(255, 236, 179, 0.5);
+	}
+
+	100% {
+		background-color: transparent;
+	}
 }

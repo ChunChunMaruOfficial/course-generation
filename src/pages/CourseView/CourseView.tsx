@@ -9,11 +9,13 @@ import { useSelector } from "react-redux";
 import type { Module } from "../../interfaces/Module";
 import type { Lesson } from "../../interfaces/Lesson";
 import type { Theme } from "../../interfaces/Theme";
+import type { CourseData } from "../../interfaces/CourseData";
 import book from '../../assets/svg/book.svg'
 import video from '../../assets/svg/video.svg'
 import code from '../../assets/svg/code.svg'
 import arrowmore from '../../assets/svg/arrowmore.svg'
-
+import { useDispatch } from 'react-redux';
+import { setcourse } from '../../counter/answerSlice'
 const lessonscontent: Theme[] = [{
   name: 'Создание и вызов функции',
   img: book,
@@ -42,13 +44,34 @@ const pageVariants = {
   }
 };
 
+
+
 const CourseView = () => {
+  const storecourse = useSelector((state: any) => state.answer.course);
+  const dispatch = useDispatch();
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
-  const [selectedModuleId, setSelectedModuleId] = useState(1);
-  const course = useSelector((state: any) => state.answer.course);
+  const [selectedModuleId, setSelectedModuleId] = useState(0);
+
+  const [course, setCourse] = useState<CourseData>(storecourse);
   const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
+
+  useEffect(() => {
+    console.log(course);
+
+    if (!(course && course.modules && course.modules.length)) {
+      async function getcourse() {
+        const response = await fetch('http://localhost:3000/course')
+        const data = await response.json()
+        console.log(data)
+        dispatch(setcourse(JSON.parse(data.result)))
+        setCourse(JSON.parse(data.result))
+
+      }
+      getcourse()
+    }
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -62,7 +85,9 @@ const CourseView = () => {
     }
   }, [viewMode]);
 
-  const selectedModule = course.modules.find((m: Module) => m.id === selectedModuleId) || course.modules[0];
+
+
+
 
   const getModuleProgress = (module: Module) => {
     const completed = module.lessons.filter((l: Lesson) => l.completed).length;
@@ -87,94 +112,99 @@ const CourseView = () => {
         <div className={styles.layoutGrid}>
           <main className={styles.main}>
             <div className={styles.card}>
-              <h1 className={styles.pageTitle}>Модуль {selectedModule.id}: {selectedModule.title}</h1>
+              {course && course.modules && course.modules.length > 0 ? (<><h1 className={styles.pageTitle}>Модуль {course.modules[selectedModuleId].id}: {course.modules[selectedModuleId].title}</h1>
 
-              <div className={styles.lessonsList}>
-                {selectedModule.lessons.map((lesson: Lesson, index: number) => (
-                  <div className={styles.lessonItem}
-                    style={{ boxShadow: expandedLessonId === (index + 1) ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
-                    onClick={() =>
-                      setExpandedLessonId((prev) =>
-                        prev === lesson.id ? null : lesson.id
-                      )
-                    }
-                    key={lesson.id}>
-                    <div key={lesson.id} className={styles.lessonRow}>
-                      <div className={styles.lessonLeft}>
-                        {lesson.completed ? (
-                          <div className={`${styles.lessonStatus} ${styles.completed}`}><Check className={styles.iconSmall} /></div>
-                        ) : (
-                          <div className={`${styles.lessonStatus} ${styles.number}`}>{lesson.id}</div>
-                        )}
+                <div className={styles.lessonsList}>
+                  {course.modules[selectedModuleId].lessons.map((lesson: Lesson, index: number) => (
+                    <div className={styles.lessonItem}
+                      style={{ boxShadow: expandedLessonId === lesson.id ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
+                      onClick={() => {
+                        setExpandedLessonId((prev) =>
+                          prev === lesson.id ? null : lesson.id
+                        )
+                        console.log(expandedLessonId);
 
-                        <span className={`${styles.lessonTitle} ${lesson.completed ? styles.muted : ''}`}>{lesson.title}</span>
-                      </div>
+                      }
 
-                      {expandedLessonId === lesson.id ? (<motion.p
 
-                        variants={pageVariants}
-                        initial={'initial'}
-                        animate={'animate'}
-                        exit={'exit'}
-                        className={styles.lessonProgress + " " + styles.progressValue}>0/{lessonscontent.length}</motion.p>) : lesson.completed ? (
-                          <motion.span
-                            variants={pageVariants}
-                            initial={'initial'}
-                            animate={'animate'}
-                            exit={'exit'}
-                            className={styles.lessonCompleted}>Завершено</motion.span>
-                        ) : (
-                        <motion.button
+                      }
+                      key={lesson.id}>
+                      <div key={lesson.id} className={styles.lessonRow}>
+                        <div className={styles.lessonLeft}>
+                          {lesson.completed ? (
+                            <div className={`${styles.lessonStatus} ${styles.completed}`}><Check className={styles.iconSmall} /></div>
+                          ) : (
+                            <div className={`${styles.lessonStatus} ${styles.number}`}>{lesson.id}</div>
+                          )}
+
+                          <span className={`${styles.lessonTitle} ${lesson.completed ? styles.muted : ''}`}>{lesson.title}</span>
+                        </div>
+
+                        {expandedLessonId === lesson.id ? (<motion.p
+
                           variants={pageVariants}
                           initial={'initial'}
                           animate={'animate'}
                           exit={'exit'}
-                          className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></motion.button>
-                      )
-                      }
+                          className={styles.lessonProgress + " " + styles.progressValue}>0/{lessonscontent.length}</motion.p>) : lesson.completed ? (
+                            <motion.span
+                              variants={pageVariants}
+                              initial={'initial'}
+                              animate={'animate'}
+                              exit={'exit'}
+                              className={styles.lessonCompleted}>Завершено</motion.span>
+                          ) : (
+                          <motion.button
+                            variants={pageVariants}
+                            initial={'initial'}
+                            animate={'animate'}
+                            exit={'exit'}
+                            className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></motion.button>
+                        )
+                        }
 
+                      </div>
+                      <AnimatePresence>
+                        {expandedLessonId === lesson.id && (
+                          <motion.div
+                            initial={{
+                              height: 0
+                            }}
+                            animate={{
+                              height: 'auto'
+                            }}
+                            exit={{
+                              height: 0
+                            }}
+                            transition={{ duration: .3 }}
+                            className={styles.lessonMeta}>
+                            <p className={styles.sidebarMeta}>Здесь типо можнео описание вставить</p>
+
+                            <div
+                              className={styles.themeList}>
+                              {lessonscontent.map((v, i) => (
+                                <div
+                                  className={styles.theme}
+                                  key={i}>
+                                  <div className={styles.left}>
+                                    <div className={styles.complete} />
+                                    <p className={styles.sidebarMeta}>1.{i + 1}</p>
+                                    <p className={styles.progressValue}>{v.name}</p>
+                                  </div>
+                                  <div className={styles.right}>
+                                    <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>
+                                    <img src={arrowmore} alt="" />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
-                    <AnimatePresence>
-                      {expandedLessonId === lesson.id && (
-                        <motion.div
-                          initial={{
-                            height: 0
-                          }}
-                          animate={{
-                            height: 'auto'
-                          }}
-                          exit={{
-                            height: 0
-                          }}
-                          transition={{ duration: .3 }}
-                          className={styles.lessonMeta}>
-                          <p className={styles.sidebarMeta}>Здесь типо можнео описание вставить</p>
-
-                          <div
-                            className={styles.themeList}>
-                            {lessonscontent.map((v, i) => (
-                              <div
-                                className={styles.theme}
-                                key={i}>
-                                <div className={styles.left}>
-                                  <div className={styles.complete} />
-                                  <p className={styles.sidebarMeta}>1.{i + 1}</p>
-                                  <p className={styles.progressValue}>{v.name}</p>
-                                </div>
-                                <div className={styles.right}>
-                                  <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>
-                                  <img src={arrowmore} alt="" />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div></>) : (<p>щащащащащ</p>)}
             </div>
           </main>
 
@@ -226,13 +256,13 @@ const CourseView = () => {
                 </div>
               </div>
 
-              <div className={styles.modulesList}>
+              {course && course.modules && course.modules.length > 0 ? (<div className={styles.modulesList}>
                 {course.modules.map((module: Module) => {
                   const progress = getModuleProgress(module);
-                  const isActive = module.id === selectedModuleId;
+                  const isActive = module.id === (selectedModuleId + 1);
 
                   return (
-                    <button key={module.id} onClick={() => setSelectedModuleId(module.id)} className={`${styles.moduleRow} ${isActive ? styles.active : ''}`}>
+                    <button key={module.id} onClick={() => { setSelectedModuleId(module.id - 1); setExpandedLessonId(null) }} className={`${styles.moduleRow} ${isActive ? styles.active : ''}`}>
                       <div className={styles.moduleLeft}>
                         <span className={`${styles.moduleBadge} ${isActive ? styles.active : ''}`}>{module.id}</span>
                         <span className={styles.moduleTitle}>{module.title}</span>
@@ -246,7 +276,7 @@ const CourseView = () => {
                     </button>
                   );
                 })}
-              </div>
+              </div>) : (<p>щащащащащ</p>)}
             </div>
           </aside>
         </div>
