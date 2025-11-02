@@ -174,7 +174,7 @@
 
 .subtitle {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	align-items: center;
 	gap: 10px;
 }
@@ -182,9 +182,10 @@
 .exampleTexts {
 	overflow: hidden;
 	height: 60px;
+	line-height: 60px;
 }
 
-.exampleTexts>p {
+.exampleTexts>span {
 	display: block;
 	height: 60px;
 	animation: animate 52s infinite;
@@ -192,7 +193,8 @@
 }
 
 @media (max-width: 768px) {
-	.exampleTexts>p {
+	.exampleTexts>span {
+		line-height: 18px;
 		font-size: 12px;
 		text-align: center;
 		justify-content: center;

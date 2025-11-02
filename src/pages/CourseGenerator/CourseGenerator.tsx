@@ -153,7 +153,7 @@ const CourseGenerator = () => {
               <label htmlFor="name" className={styles.inputlabel}>Введите {Questions.length > 0 && 'другую'} тему</label>
             </div>
           </div>
-          <p className={styles.subtitle}>Пользователи часто интересуются: <span className={styles.exampleTexts}>{exampleTexts.map((v, i) => (<p key={i}>{v}</p>))}</span></p>
+          <p className={styles.subtitle}>Пользователи часто интересуются: <span className={styles.exampleTexts}>{exampleTexts.map((v, i) => (<span key={i}>{v}</span>))}</span></p>
 
           {(Questions.length == 0 && <div className={styles.checkboxContainer}>
             <div className={styles.checkboxRow}>
