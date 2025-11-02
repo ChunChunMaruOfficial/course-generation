@@ -103,12 +103,20 @@ const CourseGenerator = () => {
           Questions.map((v, i) => beasnwrs.push(`${v.question} - ${v.options[Answers[i] ?? 9]}`))
         }
 
+        const bodyObj:{topic: string, answers?: string[]} = { topic };
+
+        if (beasnwrs) {
+          bodyObj.answers = beasnwrs;
+        }
+
+        const body = JSON.stringify(bodyObj);
+
         const response = await fetch('http://localhost:3000/api/generateCourse', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ topic, answers: beasnwrs })
+          body: body
         });
 
         if (!response.ok) {
@@ -118,7 +126,7 @@ const CourseGenerator = () => {
         const data = await response.json();
         console.log('Ответ от сервера:', JSON.parse(data.result.trim())); ////////
         setIsLoading(false);
-        dispatch(setcourse(JSON.parse(data.result.replace('`', '')))); //проверка на формат и блаблабла
+        dispatch(setcourse(JSON.parse(data.result.trim().replace('`', '')))); //проверка на формат и блаблабла
         navigate("/course");
 
       } catch (error) {
@@ -164,7 +172,7 @@ const CourseGenerator = () => {
                     const newAnswers = [...a];
                     newAnswers[i] = i1;
                     console.log(Answers);
-                    
+
                     return newAnswers;
                   })} type="radio" id={`${i}-${i1}`} /> <label className={styles.customradio + ' ' + styles.label} htmlFor={`${i}-${i1}`}>{v1}</label>
                 </>))}

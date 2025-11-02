@@ -3,19 +3,50 @@ import { ChevronRight, ArrowRight, Bell, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/Button/button";
 import { Progress } from "@/components/Progress/Progress";
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import styles from "./CourseView.module.css";
 import { useSelector } from "react-redux";
 import type { Module } from "../../interfaces/Module";
 import type { Lesson } from "../../interfaces/Lesson";
+import type { Theme } from "../../interfaces/Theme";
+import book from '../../assets/svg/book.svg'
+import video from '../../assets/svg/video.svg'
+import code from '../../assets/svg/code.svg'
+import arrowmore from '../../assets/svg/arrowmore.svg'
+
+const lessonscontent: Theme[] = [{
+  name: 'Создание и вызов функции',
+  img: book,
+  type: 'Теория'
+}, {
+  name: 'Стрелочные функции',
+  img: video,
+  type: 'Источник'
+}, {
+  name: 'Практика: калькулятор',
+  img: code,
+  type: 'Практика'
+}]
+
 type ViewMode = "outline" | "map";
 
+const pageVariants = {
+  initial: {
+    opacity: 0
+  },
+  animate: {
+    opacity: 1
+  },
+  exit: {
+    opacity: 0
+  }
+};
 
 const CourseView = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [selectedModuleId, setSelectedModuleId] = useState(1);
   const course = useSelector((state: any) => state.answer.course);
-
+  const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
 
@@ -59,8 +90,15 @@ const CourseView = () => {
               <h1 className={styles.pageTitle}>Модуль {selectedModule.id}: {selectedModule.title}</h1>
 
               <div className={styles.lessonsList}>
-                {selectedModule.lessons.map((lesson: Lesson) => (
-                  <div className={styles.lessonItem} key={lesson.id}>
+                {selectedModule.lessons.map((lesson: Lesson, index: number) => (
+                  <div className={styles.lessonItem}
+                    style={{ boxShadow: expandedLessonId === (index + 1) ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
+                    onClick={() =>
+                      setExpandedLessonId((prev) =>
+                        prev === lesson.id ? null : lesson.id
+                      )
+                    }
+                    key={lesson.id}>
                     <div key={lesson.id} className={styles.lessonRow}>
                       <div className={styles.lessonLeft}>
                         {lesson.completed ? (
@@ -72,16 +110,68 @@ const CourseView = () => {
                         <span className={`${styles.lessonTitle} ${lesson.completed ? styles.muted : ''}`}>{lesson.title}</span>
                       </div>
 
-                      {lesson.completed ? (
-                        <span className={styles.lessonCompleted}>Завершено</span>
-                      ) : (
-                        <button className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></button>
-                      )}
+                      {expandedLessonId === lesson.id ? (<motion.p
+
+                        variants={pageVariants}
+                        initial={'initial'}
+                        animate={'animate'}
+                        exit={'exit'}
+                        className={styles.lessonProgress + " " + styles.progressValue}>0/{lessonscontent.length}</motion.p>) : lesson.completed ? (
+                          <motion.span
+                            variants={pageVariants}
+                            initial={'initial'}
+                            animate={'animate'}
+                            exit={'exit'}
+                            className={styles.lessonCompleted}>Завершено</motion.span>
+                        ) : (
+                        <motion.button
+                          variants={pageVariants}
+                          initial={'initial'}
+                          animate={'animate'}
+                          exit={'exit'}
+                          className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></motion.button>
+                      )
+                      }
 
                     </div>
-                    <div className={styles.lessonMeta}>
-                      
-                    </div>
+                    <AnimatePresence>
+                      {expandedLessonId === lesson.id && (
+                        <motion.div
+                          initial={{
+                            height: 0
+                          }}
+                          animate={{
+                            height: 'auto'
+                          }}
+                          exit={{
+                            height: 0
+                          }}
+                          transition={{ duration: .3 }}
+                          className={styles.lessonMeta}>
+                          <p className={styles.sidebarMeta}>Здесь типо можнео описание вставить</p>
+
+                          <div
+                            className={styles.themeList}>
+                            {lessonscontent.map((v, i) => (
+                              <div
+                                className={styles.theme}
+                                key={i}>
+                                <div className={styles.left}>
+                                  <div className={styles.complete} />
+                                  <p className={styles.sidebarMeta}>1.{i + 1}</p>
+                                  <p className={styles.progressValue}>{v.name}</p>
+                                </div>
+                                <div className={styles.right}>
+                                  <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>
+                                  <img src={arrowmore} alt="" />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ))}
               </div>

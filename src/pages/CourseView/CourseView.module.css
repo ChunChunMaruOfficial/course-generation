@@ -102,12 +102,69 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
-
+	border-radius: 16px;
+	padding: 20px;
+	transition: .3s ease-in-out;
 }
 
+.lessonItem:hover {
+	cursor: pointer;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
 
-.lessonItem:not(.lessonRow:last-of-type) {
+.lessonProgress {
+	padding: 3px 7px;
+	background-color: rgba(0, 0, 0, 0.05);
+	border-radius: 12px;
+}
+
+.theme {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding-block: 10px;
+	border-bottom: 1px solid #f1f1f1;
+}
+
+.lessonMeta {
+	overflow: hidden;
+}
+
+.theme>div {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	align-items: center;
+}
+
+.right>p {
+	color: #5878c1;
+	background-color: rgba(88, 120, 193, 0.1);
+	padding: 3px 7px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	border-radius: 12px;
+}
+
+.right>p>img {
+	height: 22px;
+}
+
+.lessonItem:not(.lessonItem:last-of-type) {
 	border-bottom: 1px solid var(--border);
+}
+
+.theme:nth-of-type(2)>.right>p {
+	color: rgb(222, 166, 64);
+	background-color: rgba(222, 166, 64, 0.1);
+}
+
+.theme:nth-of-type(3)>.right>p {
+	color: rgb(66, 165, 112);
+	background-color: rgb(66, 165, 112, 0.1);
 }
 
 .pageTitle {
@@ -128,7 +185,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0.75rem 0;
+	padding-bottom: 0.75rem;
 }
 
 .lessonLeft {
@@ -320,4 +377,26 @@
 .moduleMeta {
 	font-size: 0.75rem;
 	color: var(--muted-foreground);
+}
+
+
+.left {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	align-items: center;
+}
+
+.right {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.complete {
+	width: 14px;
+	height: 14px;
+	border-radius: 99px;
+	background: transparent;
+	border: 1px solid var(--border);
 }
