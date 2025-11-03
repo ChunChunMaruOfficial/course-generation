@@ -134,7 +134,8 @@ console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
         navigate("/course");
         setIsLoading(false);
 
-        dispatch(addcourse(JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim().replace('`', '')))); //проверка на формат и блаблабла
+        dispatch(addcourse(JSON.parse(
+          data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim().replace('`', '')))); //проверка на формат и блаблабла
 
       } catch (error) {
         console.error('Ошибка при запросе к серверу:', error);
