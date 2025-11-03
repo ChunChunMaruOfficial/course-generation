@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/Checkbox/Checkbox";
 import styles from "./CourseGenerator.module.css";
 import loadgif from '../../assets/loading.gif';
 import { useDispatch } from 'react-redux';
-import { setcourse } from '../../counter/answerSlice'
+import { addcourse } from '../../counter/answerSlice'
 import type { Question } from "../../interfaces/Question";
 
 //import exampleQuestions from '../../examples/Questions.json'
@@ -134,7 +134,7 @@ console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
         navigate("/course");
         setIsLoading(false);
 
-        dispatch(setcourse(JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim().replace('`', '')))); //проверка на формат и блаблабла
+        dispatch(addcourse(JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim().replace('`', '')))); //проверка на формат и блаблабла
 
       } catch (error) {
         console.error('Ошибка при запросе к серверу:', error);
