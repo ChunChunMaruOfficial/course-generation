@@ -17,7 +17,7 @@ import arrowmore from '../../assets/svg/arrowmore.svg'
 import { useDispatch } from 'react-redux';
 import { setcourse } from '../../counter/answerSlice'
 import menu from '../../assets/svg/menu.svg'
-import MyLoader from '../../assets/skeletons'
+import Skeleton from 'react-loading-skeleton';
 
 const lessonscontent: Theme[] = [{
   name: 'Создание и вызов функции',
@@ -319,9 +319,20 @@ const CourseView = () => {
               </div>
             </div>
           </aside>
+          <section className="user-card">
+            <div className="user-avatar">
+              {!isLoading && <Skeleton circle={true} height={80} width={80} />}
+            </div>
+            <h3 className="user-name">
+              {!isLoading && <Skeleton width={120} />}
+            </h3>
+            <p className="user-info">
+              {!isLoading && <Skeleton count={3} /> }
+            </p>
+          </section>
         </div>
       </div>)}
-      {isLoading && (<MyLoader ></MyLoader>)}
+      {!isLoading && (<Skeleton count={3} />)}
     </div>
   );
 };
