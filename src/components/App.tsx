@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import CourseGenerator from "../pages/CourseGenerator/CourseGenerator";
 import CourseView from "../pages/CourseView/CourseView";
 import NotFound from "../pages/NotFound/NotFound";
+import ModulePage from '../pages/ModulePage/ModulePage'
 
 const queryClient = new QueryClient();
 
@@ -18,7 +19,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<CourseGenerator />} />
           <Route path="/course" element={<CourseView />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL ROUTE */}
+          <Route path="/theory" element={<ModulePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
