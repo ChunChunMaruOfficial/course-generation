@@ -1,28 +1,50 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from './ModulePage.module.css'
 import { Card } from "@/components/Card/Card";
 import ka from '../../assets/pic/ka.jpg'
 import lh from '../../assets/pic/lh.jpg'
+import Header from "@/components/Header/header";
+import DynamicTextRender from "./DynamicTextRender";
+import { Button } from "@/components/Button/button";
+import { useSelector } from "react-redux";
+import type { Lesson } from "@/interfaces/Lesson";
+import type { Module } from "@/interfaces/Module";
+
+
 
 
 export default function ModulePage() {
     const [selectedwords, setselectedwords] = useState<string[]>([])
-    const text = `Lorem ipsum dolor sit, amet consectetur {adipisicing elit}. Tempora ex in Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet quod alias facilis iusto nemo dicta consequatur {animi} illum quaerat distinctio natus ad laborum, eaque harum sed aut culpa at temporibus. {Lorem ipsum} dolor sit amet consectetur adipisicing elit. Laudantium {enim itaque} porro est illum eos ad laborum {dolorem}, dolorum, repellat cumque quas nulla, unde quos repudiandae! Eum sapiente dolore nesciunt?`;
+    const [selectedText, setSelectedText] = useState('');
+    const cardRef = useRef<HTMLDivElement>(null)
+    const text = `Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя).`;
+    const [contenttext, setcontenttext] = useState<string[]>([text, text])
+    const storecourse = useSelector((state: any) => state.answer.course);
 
-    const moduledata = {
+    const moduledata = useMemo(() => ({
         title: 'F1',
         parts: [
-            {
-                title: 'name of part',
-                pic: ka,
-                content: `Lorem ipsum dolor sit, amet consectetur {adipisicing elit}. Tempora ex in Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet quod alias facilis iusto nemo dicta consequatur {animi} illum quaerat distinctio natus ad laborum, eaque harum sed aut culpa at temporibus. {Lorem ipsum} dolor sit amet consectetur adipisicing elit. Laudantium {enim itaque} porro est illum eos ad laborum {dolorem}, dolorum, repellat cumque quas nulla, unde quos repudiandae! Eum sapiente dolore nesciunt?`
-            },
-            {
-                title: 'name of part',
-                pic: ka,
-                content: `Lorem ipsum dolor sit, amet consectetur {adipisicing elit}. Tempora ex in Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet quod alias facilis iusto nemo dicta consequatur {animi} illum quaerat distinctio natus ad laborum, eaque harum sed aut culpa at temporibus. {Lorem ipsum} dolor sit amet consectetur adipisicing elit. Laudantium {enim itaque} porro est illum eos ad laborum {dolorem}, dolorum, repellat cumque quas nulla, unde quos repudiandae! Eum sapiente dolore nesciunt?`
-            }
+            { title: 'name of part', pic: ka, content: contenttext[0] },
+            { title: 'name of part', pic: lh, content: contenttext[1] }
         ]
+    }), [contenttext]);
+
+    async function Getexplanation() {
+        const target = selectedText
+        const response = await fetch('http://localhost:3000/api/generateexplanation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ topic: selectedText })
+        });
+        const data = await response.json();
+        setselectedwords(words =>
+            words.map(str =>
+                str === target ? `${str} - ${data.result}` : str
+            )
+        );
+
     }
 
 
@@ -35,22 +57,11 @@ export default function ModulePage() {
         }
     ];
 
-    const [selectedText, setSelectedText] = useState('');
+
     const [showmenu, setShowMenu] = useState<boolean>(false);
 
     const menuRef = useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("tab-1");
-
-    function formatText(text: string) {
-        const parts = text.split(/({.*?})/g);
-        return parts.map((part, i) =>
-            part.startsWith('{') && part.endsWith('}') ? (
-                <span key={i} onClick={() => !selectedwords.includes(part.slice(1, -1)) && setselectedwords(sw => [...sw, part.slice(1, -1)])} className={styles.highlight}>{part.slice(1, -1)}</span>
-            ) : (
-                part
-            )
-        );
-    }
 
     useEffect(() => {
         const handleSelectionChange = () => {
@@ -68,9 +79,8 @@ export default function ModulePage() {
             } else {
                 console.log('Выделенный текст:', selection.toString());
                 if (menuRef.current) {
-                    const menuWidth = menuRef.current.offsetWidth;
-                    menuRef.current.style.left = `${event.clientX - menuWidth / 2}px`;
-                    menuRef.current.style.top = `${event.clientY + 12}px`
+                    menuRef.current.style.left = `${event.clientX}px`;
+                    menuRef.current.style.top = `${event.clientY + 5}px`
                 }
                 setShowMenu(true)
             }
@@ -85,41 +95,77 @@ export default function ModulePage() {
         };
     }, []);
 
+    const selectasimp = () => {
+        moduledata.parts.forEach(part => {
+            part.content = part.content.replace(selectedText, `[${selectedText}]`);
+            console.log(part.content);
+
+        });
+
+        setcontenttext(partdata => {
+            const nwpd = partdata.map(part => {
+                return part.replace(selectedText, `[${selectedText}]`);
+            });
+            return nwpd;
+        });
+
+
+
+    }
+
+    const sidebarRef = useRef<HTMLDivElement>(null)
+    const menubuttonRef = useRef<HTMLImageElement>(null)
+    const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
+    const [courseId, setcourseId] = useState<number>(0);
+
     return (
-        <div className={styles.parent}>
-            <Card className={styles.container}>
-                <h1>{moduledata.title}</h1>
-                {moduledata.parts.map((v, i) => (<div><h2>{v.title}</h2><span><p>{ formatText(v.content)}</p><img src={v.pic} alt="" /></span></div>))}
-                <h2>{selectedText}</h2>
-            </Card>
+        <div onClick={(e) => {
+            if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node) && menubuttonRef.current && !menubuttonRef.current.contains(e.target as Node)) {
+                setsidebarispened((prev) => (prev === true ? false : null));
+            }
+            if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
+                setShowMenu(false)
+            }
+        }}>
+            <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setcourseId={setcourseId} setsidebarispened={setsidebarispened}></Header>
+            <div className={styles.parent}>
+                <Card ref={cardRef} className={styles.container}>
+                    <h1>{moduledata.title}</h1>
+                    {moduledata.parts.map((v, i) => (<div><h2>{v.title}</h2><span>
+                        <DynamicTextRender text={contenttext[i]} setselectedwords={setselectedwords} />
+                        <img src={v.pic} alt="" /></span></div>))}
+                    <h2>{selectedText}</h2>
+                </Card>
 
-            <div className={styles.folder}>
-                <div className={styles.tabs}>
-                    {tabsData.map(({ id, label }) => (
-                        <button
-                            key={id}
-                            className={`${styles.tab} ${activeTab === id ? styles.active : ""}`}
-                            onClick={() => setActiveTab(id)}
-                        >
-                            {label}
-                        </button>
-                    ))}
-                </div>
-                <div className={styles.content}>
-                    {tabsData.map(({ id, content }) => (
-                        <div key={id} className={`${styles.content__inner} ${activeTab === id ? styles.active : ""}`}>
-                            <div className={styles.page}>
-                                {content.map(v => (<p>{v}</p>))}
+                <div className={styles.folder}>
+                    <div className={styles.tabs}>
+                        {tabsData.map(({ id, label }) => (
+                            <button
+                                key={id}
+                                className={`${styles.tab} ${activeTab === id ? styles.active : ""}`}
+                                onClick={() => setActiveTab(id)}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </div>
+                    <div className={styles.content}>
+                        {activeTab == "tab-1" ? storecourse.length > 0 && storecourse[0].modules.map((v: Module, i: number) => (
+                            <div className={styles.roadmapitem} key={i}>
+                                <div className={styles.leftpart}><p>{v.title}</p>
+                                    <span>{v.lessons.map((v1: Lesson, i) => (<p key={i}>{v1.title}</p>))}</span>
+                                </div>
+                                <div className={styles.rightpart}>
+                                    <hr />
+                                    <span></span>
+                                    <hr />
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        )) : selectedwords.map((v,i) => (<p key={i}>{v}</p>))}
+                    </div>
                 </div>
+                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { selectasimp(); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(); !selectedwords.includes(selectedText) && setselectedwords(sw => [...sw, selectedText]); setShowMenu(false) }}>объяснить</button></div>
             </div>
-
-            <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button>Выделить как важное</button> <button onClick={() => { !selectedwords.includes(selectedText) && setselectedwords(sw => [...sw, selectedText]); setShowMenu(false) }}>объяснить</button></div>
-
-
-
 
         </div>
     );

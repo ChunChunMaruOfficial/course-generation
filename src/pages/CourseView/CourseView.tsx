@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronRight, ArrowRight, Bell, Check } from "lucide-react";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/Button/button";
+import { ChevronRight, ArrowRight, Check } from "lucide-react";
 import { Progress } from "@/components/Progress/Progress";
 import { AnimatePresence, motion } from 'framer-motion'
 import styles from "./CourseView.module.css";
@@ -9,15 +7,13 @@ import { useSelector } from "react-redux";
 import type { Module } from "../../interfaces/Module";
 import type { Lesson } from "../../interfaces/Lesson";
 import type { Theme } from "../../interfaces/Theme";
-import type { CourseData } from "../../interfaces/CourseData";
 import book from '../../assets/svg/book.svg'
 import video from '../../assets/svg/video.svg'
 import code from '../../assets/svg/code.svg'
 import arrowmore from '../../assets/svg/arrowmore.svg'
-import { useDispatch } from 'react-redux';
-import { setcourse } from '../../counter/answerSlice'
-import menu from '../../assets/svg/menu.svg'
-// import Skeleton from 'react-loading-skeleton';
+
+import Header from "@/components/Header/header";
+
 
 const lessonscontent: Theme[] = [{
   name: 'Создание и вызов функции',
@@ -64,7 +60,6 @@ const cardVariants = {
 
 const CourseView = () => {
   const storecourse = useSelector((state: any) => state.answer.course);
-  const dispatch = useDispatch();
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState(0);
@@ -77,25 +72,7 @@ const CourseView = () => {
   const [isLoading, setisLoading] = useState<boolean>(true)
 
 
-  useEffect(() => {
 
-    if (!storecourse[0] || !storecourse[0].modules || !storecourse[0].modules.length) {
-      async function getcourse() {
-
-        const response = await fetch('http://localhost:3000/courses')
-        const data = await response.json()
-        console.log(data)
-        const parsedCourses = data.result.map((item: string) => {
-          const cleaned = item.trim().replace('```', '').replace('json', '').replace('```', '')
-          console.log(cleaned);
-          return JSON.parse(cleaned);
-        });
-
-        dispatch(setcourse(parsedCourses));
-      }
-      getcourse()
-    }
-  }, []);
 
   useEffect(() => { storecourse.length > 0 && setisLoading(false) }, [storecourse])
 
@@ -122,24 +99,7 @@ const CourseView = () => {
         setsidebarispened((prev) => (prev === true ? false : null));
       }
     }} className={styles.root}>
-      <div ref={sidebarRef} className={`${styles.sidebar} ${sidebarispened ? styles.sidebaropen : sidebarispened === false ? styles.sidebarclosed : ''}`}>
-        <h2 className={styles.pageTitle}>Мои курсы</h2>
-        {storecourse.map((v: CourseData, i: number) => (
-          <p key={i} onClick={() => { setcourseId(i); setsidebarispened(false); }}>{v.title}</p>))}
-      </div>
-      <header className={styles.header}>
-        <div className={styles.headerInner}>
-          <div>
-            <img ref={menubuttonRef} onClick={() => setsidebarispened(true)} src={menu} alt="" />
-            <Link to="/" className={styles.navLink}>SelfSpark</Link>
-          </div>
-          <div className={styles.headerUtility}>
-            {/* <span className={styles.metaText}>{course.progress}% / 100% дневного лимита</span> */}
-            <Button variant="ghost" size="icon"><Bell className={styles.iconSmall} /></Button>
-            <Button variant="default" size="sm">Улучшить</Button>
-          </div>
-        </div>
-      </header>
+      <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setcourseId={setcourseId} setsidebarispened={setsidebarispened}></Header>
 
       {!isLoading && (<div className={styles.pageInner}>
         <div className={styles.layoutGrid}>
@@ -319,21 +279,9 @@ const CourseView = () => {
               </div>
             </div>
           </aside>
-          {/* <section className="user-card">
-            <div className="user-avatar">
-              {!isLoading && <Skeleton circle={true} height={80} width={80} />}
-            </div>
-            <h3 className="user-name">
-              {!isLoading && <Skeleton width={120} />}
-            </h3>
-            <p className="user-info">
-              {!isLoading && <Skeleton count={3} /> }
-            </p>
-          </section> */}
         </div>
       </div>
-    )}
-      {/* {!isLoading && (<Skeleton count={3} />)} */}
+      )}
     </div>
   );
 };

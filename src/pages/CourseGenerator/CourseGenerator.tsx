@@ -47,10 +47,10 @@ const CourseGenerator = () => {
 
 
   async function handleGenerate() {
-console.log(Answers[2]);
-console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
+    console.log(Answers[2]);
+    console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
 
-    if (Questions.length > 0 && (Answers.some(v => v!= undefined && v.length == 0) || Answers.includes(undefined))) {
+    if (Questions.length > 0 && (Answers.some(v => v != undefined && v.length == 0) || Answers.includes(undefined))) {
 
       const idx = Answers.findIndex((v: any) => v == undefined || v.length < 1)
       console.log(idx);
@@ -88,7 +88,7 @@ console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
         const data = await response.json();
         setIsLoading(false);
         setAnswerQuestions(false)
-        const parsed = JSON.parse(data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim());
+        const parsed = JSON.parse(data.result.trim().replaceAll('```', '').replace('json', '').trim());
         console.log(parsed); ////////
         setQuestions(parsed.questions)
         setAnswers(v => {
@@ -106,7 +106,7 @@ console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
       try {
         let beasnwrs: string[] = []
 
-        if (Answers.some(v => v!= undefined && v.length > 0)) {
+        if (Answers.some(v => v != undefined && v.length > 0)) {
           Questions.map((v, i) => beasnwrs.push(`${v.question} - ${Answers[i]!.join(', ')}`))
         }
 
@@ -135,7 +135,7 @@ console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
         setIsLoading(false);
 
         dispatch(addcourse(JSON.parse(
-          data.result.trim().replace('```', '').replace('json', '').replace('```', '').trim().replace('`', '')))); //проверка на формат и блаблабла
+          data.result.trim().replaceAll('`', '').replace('json', '')))); //проверка на формат и блаблабла
 
       } catch (error) {
         console.error('Ошибка при запросе к серверу:', error);
