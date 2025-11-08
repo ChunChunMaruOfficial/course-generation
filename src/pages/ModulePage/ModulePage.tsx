@@ -17,7 +17,7 @@ export default function ModulePage() {
     const [selectedwords, setselectedwords] = useState<string[]>([])
     const [selectedText, setSelectedText] = useState('');
     const cardRef = useRef<HTMLDivElement>(null)
-    const text = `Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя).`;
+    const text = `Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя). Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя). Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя).`;
     const [contenttext, setcontenttext] = useState<string[]>([text, text])
     const storecourse = useSelector((state: any) => state.answer.course);
 
@@ -132,8 +132,9 @@ export default function ModulePage() {
                 <Card ref={cardRef} className={styles.container}>
                     <h1>{moduledata.title}</h1>
                     {moduledata.parts.map((v, i) => (<div><h2>{v.title}</h2><span>
+                        <img src={v.pic} alt="" />
                         <DynamicTextRender text={contenttext[i]} setselectedwords={setselectedwords} />
-                        <img src={v.pic} alt="" /></span></div>))}
+                        </span></div>))}
                     <h2>{selectedText}</h2>
                 </Card>
 
@@ -161,7 +162,7 @@ export default function ModulePage() {
                                     <hr />
                                 </div>
                             </div>
-                        )) : selectedwords.map((v,i) => (<p key={i}>{v}</p>))}
+                        )) : selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
                     </div>
                 </div>
                 <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { selectasimp(); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(); !selectedwords.includes(selectedText) && setselectedwords(sw => [...sw, selectedText]); setShowMenu(false) }}>объяснить</button></div>

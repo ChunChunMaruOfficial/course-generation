@@ -18,16 +18,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setc
             async function getcourse() {
                 const response = await fetch('http://localhost:3000/course');
                 const data = await response.json();
-                const items = typeof data.result === 'string'
-                    ? data.result.split(/\n\s*\n/)
-                    : data.result;
-
-                const parsedCourses = items.map((item: string) => {
-                    const cleaned = item.trim().replaceAll('```', '').replaceAll('json', '').replaceAll('\n', '');
-                    return JSON.parse(cleaned);
-                });
-
-                dispatch(setcourse(parsedCourses));
+                dispatch(setcourse(data.result));
             }
 
             getcourse()

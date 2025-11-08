@@ -22,3 +22,8 @@ span:hover {
   cursor: pointer;
   background-position: 0 100%;
 }
+
+.partcontent {
+  text-align: justify;
+  line-height: 1.6;
+}

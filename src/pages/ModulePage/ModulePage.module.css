@@ -33,6 +33,7 @@
   flex-direction: column;
   width: 100%;
   min-width: 0;
+  display: flow-root;
 }
 
 .container>div>span {
@@ -46,6 +47,7 @@
   max-width: 170px;
   max-height: 170px;
   object-fit: contain;
+  margin: 0 auto;
 }
 
 .container>div>h2 {
@@ -154,7 +156,6 @@
   pointer-events: auto;
 }
 
-/* Адаптивная типографика (опционально) */
 .container h1,
 .container h2 {
   font-size: clamp(1.2rem, 2.5vw, 2rem);
@@ -172,8 +173,10 @@
   position: relative;
   flex-direction: row;
   gap: 30px;
-  align-items: center;
+  align-items: stretch;
+  /* меняем на stretch для растягивания */
   justify-content: end;
+
 }
 
 .roadmapitem>p {
@@ -185,17 +188,19 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  align-self: flex-end;
+  justify-content: space-between;
+  align-self: stretch;
+  position: relative;
+  flex-shrink: 0;
   gap: 5px;
 }
 
 .rightpart>hr {
-
-  height: 8.5em;
   width: 7px;
   background-color: var(--primary);
   border: none;
+  flex: 1;
+  min-height: 0;
 }
 
 .rightpart>span {
@@ -209,12 +214,9 @@
   align-items: center;
   justify-content: center;
   color: var(--primary-foreground);
-
-
-}
-
-.rightpart>hr:nth-of-type(2) {
-  bottom: 0;
+  flex-shrink: 0;
+  z-index: 2;
+  position: relative;
 }
 
 .leftpart {
@@ -227,6 +229,9 @@
   flex-direction: column;
   gap: 10px;
   transition: .3s ease-in-out;
+  align-self: center;
+  margin: 10px 0;
+  max-height: calc(100% - 20px);
 }
 
 .leftpart:hover {
@@ -236,22 +241,20 @@
 .leftpart::after {
   content: "";
   position: absolute;
-
   width: 30px;
   height: 3px;
   background: #ccc;
   top: 50%;
   transform: translateY(-50%);
   right: -30px;
-  color: #fff;
+  color: #ccc;
   text-align: center;
-  z-index: 1;
+  z-index: 10;
 }
 
 .leftpart>p {
   font-size: 0.875rem;
   font-weight: 600;
-
 }
 
 .leftpart>span {
@@ -260,6 +263,7 @@
   padding-left: 20px;
   border-left: 2px solid #ccc;
   gap: 5px;
+  overflow-y: auto;
 }
 
 .leftpart>span>p {

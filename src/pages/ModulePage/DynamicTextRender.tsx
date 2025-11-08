@@ -20,7 +20,7 @@ const DynamicTextRender = React.memo(({ text, setselectedwords }: { text: string
         })
     }
 
-    return <div>{formatText(text)}</div>;
+    return <div className={styles.partcontent}>{formatText(text)}</div>;
 }, (prevProps, nextProps) => prevProps.text === nextProps.text);
 
 export default DynamicTextRender;

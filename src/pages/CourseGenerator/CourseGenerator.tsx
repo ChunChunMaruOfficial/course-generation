@@ -32,14 +32,12 @@ const CourseGenerator = () => {
 
   useEffect(() => {
     async function start() {
-      const response = await fetch('http://localhost:3000/getexample', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ topic, answerQuestions })
-      });
+      console.log('getexample');
+      
+      const response = await fetch('http://localhost:3000/getexample');
       const data = await response.json();
+      console.log(data.result);
+      
       setexampleTexts(data.result)
     }
     start()
@@ -118,7 +116,7 @@ const CourseGenerator = () => {
 
         const body = JSON.stringify(bodyObj);
 
-        const response = await fetch('http://localhost:3000/api/generateCourse', {
+        const response = await fetch(`http://localhost:3000/api/${ activeIndex == 0 ? 'generateFastCourse' : 'generateDetailedCourse'}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -134,8 +132,7 @@ const CourseGenerator = () => {
         navigate("/course");
         setIsLoading(false);
 
-        dispatch(addcourse(JSON.parse(
-          data.result.trim().replaceAll('`', '').replace('json', '')))); //проверка на формат и блаблабла
+        dispatch(addcourse(data.result));
 
       } catch (error) {
         console.error('Ошибка при запросе к серверу:', error);
