@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronRight, ArrowRight, Check } from "lucide-react";
 import { Progress } from "@/components/Progress/Progress";
 import { AnimatePresence, motion } from 'framer-motion'
-import styles from "./CourseView.module.css";
+import styles from "./CourseView.module.scss";
 import { useSelector } from "react-redux";
 import type { Module } from "../../interfaces/Module";
 import type { Lesson } from "../../interfaces/Lesson";

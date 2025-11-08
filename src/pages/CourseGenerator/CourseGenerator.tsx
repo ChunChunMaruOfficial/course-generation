@@ -4,12 +4,12 @@ import { Sparkles } from "lucide-react";
 import { Button } from "@/components/Button/button";
 import { Label } from "@/components/Label/Label";
 import { Checkbox } from "@/components/Checkbox/Checkbox";
-import styles from "./CourseGenerator.module.css";
+import styles from "./CourseGenerator.module.scss";
 import loadgif from '../../assets/loading.gif';
 import { useDispatch } from 'react-redux';
 import { addcourse } from '../../counter/answerSlice'
 import type { Question } from "../../interfaces/Question";
-
+import axios from "axios"
 //import exampleQuestions from '../../examples/Questions.json'
 
 const CourseGenerator = () => {
@@ -32,27 +32,19 @@ const CourseGenerator = () => {
 
   useEffect(() => {
     async function start() {
-      console.log('getexample');
-      
-      const response = await fetch('http://localhost:3000/getexample');
-      const data = await response.json();
-      console.log(data.result);
-      
-      setexampleTexts(data.result)
+      const response = await axios.get('http://localhost:3000/getexample');
+      setexampleTexts(response.data.result);
     }
     start()
   }, [])
 
 
   async function handleGenerate() {
-    console.log(Answers[2]);
-    console.log('Answers.some(v => v == undefined): ', Answers.includes(undefined));
+
+    ///////////////////////////////////// ПРОВЕРКА НА ОТВЕЧЕННЫЕ ВОПРОСЫ /////////////////////////////////////
 
     if (Questions.length > 0 && (Answers.some(v => v != undefined && v.length == 0) || Answers.includes(undefined))) {
-
       const idx = Answers.findIndex((v: any) => v == undefined || v.length < 1)
-      console.log(idx);
-      console.log(QuestionRefs);
       const element = QuestionRefs.current[idx];
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
@@ -61,83 +53,69 @@ const CourseGenerator = () => {
           element.style.backgroundColor = 'transparent';
         }, 2000);
       }
-
       return 0;
     }
 
-
-    console.log(Questions.length);
-    console.log(Answers);
-
     setIsLoading(true);
+
     if (answerQuestions) {
-      try {
-        const response = await fetch('http://localhost:3000/api/generateQuestions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ topic, answerQuestions })
-        });
 
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
+      //////////////////////////////////// ГЕНЕРАЦИЯ ВОПРОСОВ /////////////////////////////////////
+
+      const response = await axios.post('http://localhost:3000/api/generateQuestions', {
+        topic,
+        answerQuestions
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
         }
-        const data = await response.json();
-        setIsLoading(false);
-        setAnswerQuestions(false)
-        const parsed = JSON.parse(data.result.trim().replaceAll('```', '').replace('json', '').trim());
-        console.log(parsed); ////////
-        setQuestions(parsed.questions)
-        setAnswers(v => {
-          const newAnswers = [...v];
-          newAnswers.length = parsed.questions.length;
-          return newAnswers;
-        });
+      });
 
 
-      } catch (error) {
-        console.error('Ошибка при запросе к серверу:', error);
-        setIsLoading(false);
-      }
+      setIsLoading(false);
+      setAnswerQuestions(false);
+
+
+      setQuestions(response.data.result.questions);
+
+      setAnswers(v => {
+        const newAnswers = [...v];
+        newAnswers.length = response.data.result.questions.length;
+        return newAnswers;
+      });
+
     } else {
-      try {
-        let beasnwrs: string[] = []
 
-        if (Answers.some(v => v != undefined && v.length > 0)) {
-          Questions.map((v, i) => beasnwrs.push(`${v.question} - ${Answers[i]!.join(', ')}`))
-        }
+      //////////////////////////////////// ГЕНЕРАЦИЯ КУРСА /////////////////////////////////////
 
-        const bodyObj: { topic: string, answers?: string[] } = { topic };
+      let beasnwrs: string[] = []
 
-        if (beasnwrs) {
-          bodyObj.answers = beasnwrs;
-        }
-
-        const body = JSON.stringify(bodyObj);
-
-        const response = await fetch(`http://localhost:3000/api/${ activeIndex == 0 ? 'generateFastCourse' : 'generateDetailedCourse'}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: body
-        });
-
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        navigate("/course");
-        setIsLoading(false);
-
-        dispatch(addcourse(data.result));
-
-      } catch (error) {
-        console.error('Ошибка при запросе к серверу:', error);
-        setIsLoading(false);
+      if (Answers.some(v => v != undefined && v.length > 0)) {
+        Questions.map((v, i) => beasnwrs.push(`${v.question} - ${Answers[i]!.join(', ')}`))
       }
+
+      const bodyObj: { topic: string, answers?: string[] } = { topic };
+
+      if (beasnwrs) {
+        bodyObj.answers = beasnwrs;
+      }
+
+      const body = JSON.stringify(bodyObj);
+      console.log(body);
+
+      const url = `http://localhost:3000/api/${activeIndex == 0 ? 'generateFastCourse' : 'generateDetailedCourse'}`;
+      console.log(url);
+      const response = await axios.post(url, body, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      dispatch(addcourse(response.data.result));
+
+      navigate("/course");
+      setIsLoading(false);
+
+
     }
   };
 

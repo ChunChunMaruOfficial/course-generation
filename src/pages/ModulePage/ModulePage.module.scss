@@ -1,0 +1,242 @@
+@use '../../mixin.scss' as mixin;
+
+.parent {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--background, #fff8e1);
+  padding: 1rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+}
+
+.container, .folder {
+  background: var(--card, #fff);
+  border-radius: 1.2rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  padding: 2rem;
+  @include mixin.flex(start, start, column, nowrap);
+  width: 100%;
+  min-width: 0;
+
+  @media (max-width: 1024px) {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+.folder {
+  padding: 0 1rem 1rem 1rem;
+}
+
+.container {
+  &>div {
+    &>span>img {
+      display: block;
+      max-width: 260px;
+      max-height: 260px;
+      object-fit: contain;
+      float: right;
+      margin-left: 20px;
+      height: auto;
+    }
+
+    &>h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+  }
+
+  h1, h2 {
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    color: #222;
+    margin-bottom: .8rem;
+  }
+}
+
+.tabs {
+  @include mixin.flex(center, start, row, nowrap);
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.tab {
+  background: var(--background, #f9d877);
+  border-radius: 6px 6px 0 0;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  color: #757575;
+  min-width: 6rem;
+  text-transform: uppercase;
+  border: none;
+  position: relative;
+  font-weight: 600;
+  transition: background .3s, color .3s;
+  z-index: 1;
+  font-size: clamp(.97rem, 2vw, 1.15rem);
+
+  &.active {
+    background: #fff;
+    color: #222;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .12);
+  }
+}
+
+.content {
+  @include mixin.flex(start, start, column, nowrap);
+  border-radius: 0 10px 10px 10px;
+  margin-top: -2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+  padding: 1.2rem 20px 0 20px;
+  background: #fff;
+  min-height: 16rem;
+}
+
+.content__inner {
+  padding: 1rem 1.5rem 1.5rem 1.5rem;
+  display: none;
+  color: #222;
+
+  &.active {
+    display: block;
+  }
+}
+
+.minimenu {
+  position: absolute;
+  overflow: hidden;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  @include mixin.flex(center, center);
+  border-radius: 5px;
+  border: 1px solid var(--primary);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.13);
+  z-index: 99;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+
+  &[style*='opacity: 1'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &>button {
+    padding: 5px 9px;
+    background: transparent;
+    border: none;
+    color: var(--primary);
+    font-size: 10px;
+
+    &:first-of-type {
+      border-right: 1px solid var(--primary);
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.roadmapitem {
+  @include mixin.flex(stretch, end, row, nowrap, 30px);
+  position: relative;
+
+  &>p {
+    font-size: 16px;
+    transform: translateY(-3px);
+  }
+}
+
+.rightpart {
+  @include mixin.flex(center, space-between, column, nowrap);
+  align-self: stretch;
+  position: relative;
+  flex-shrink: 0;
+  gap: 5px;
+
+  &>hr {
+    width: 7px;
+    background-color: var(--primary);
+    border: none;
+    flex: 1;
+    min-height: 0;
+  }
+
+  &>span {
+    @include mixin.flex(center, center);
+    background-color: var(--primary);
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    border-radius: 100%;
+    aspect-ratio: 1/1;
+    color: var(--primary-foreground);
+    flex-shrink: 0;
+    z-index: 2;
+    position: relative;
+  }
+}
+
+.leftpart {
+  @include mixin.flex(start, start, column, nowrap, 10px);
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .18);
+  border-radius: 7px;
+  padding: 10px;
+  opacity: 1;
+  align-self: center;
+  margin: 10px 0;
+  max-height: calc(100% - 20px);
+  transition: .3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 0 7px 0 #b3b3b3;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 3px;
+    background: #ccc;
+    top: 50%;
+    transform: translateY(-50%);
+    right: -30px;
+    z-index: 10;
+  }
+
+  &>p {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  &>span {
+    @include mixin.flex(start, start, column, nowrap, 5px);
+    padding-left: 20px;
+    border-left: 2px solid #ccc;
+    overflow-y: auto;
+
+    &>p {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+
+      &:nth-of-type(1),
+      &:nth-of-type(2) {
+        text-decoration: line-through;
+      }
+    }
+  }
+}

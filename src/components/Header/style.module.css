@@ -105,3 +105,87 @@
         transform: translateX(-100%);
     }
 }
+
+.popupmenu {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+}
+
+.popup {
+    padding: 50px;
+    background-color: var(--background);
+}
+
+.inputgroup {
+    position: relative;
+    margin-top: 40px;
+}
+
+.inputfield {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--background);
+    font-size: 24px;
+    border: 2px solid var(--primary);
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.inputfield2 {
+    border: 2px solid var(--foreground);
+}
+
+
+
+.inputlabel {
+    position: absolute;
+    left: 15px;
+    top: 11px;
+    font-size: 24px;
+    color: var(--primary);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    background-color: transparent;
+}
+
+.inputlabel2 {
+    color: var(--foreground);
+}
+
+.inputfield:focus {
+    border-color: var(--primary);
+}
+
+.inputfield2:focus {
+    border-color: var(--foreground);
+}
+
+.inputfield:focus+.inputlabel,
+.inputfield:not(:placeholder-shown)+.inputlabel {
+    top: -10px;
+    left: 10px;
+    font-size: 12px;
+    color: var(--primary);
+    background-color: var(--background);
+    padding: 0 5px;
+}
+
+.inputgroup::after {
+    content: attr(data-hint);
+    position: absolute;
+    left: 2px;
+    bottom: -18px;
+    font-size: 12px;
+    color: black;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.2s ease;
+}

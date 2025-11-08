@@ -3,13 +3,20 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/Button/button";
 import type { CourseData } from "../../interfaces/CourseData";
 import menu from '../../assets/svg/menu.svg'
-import { useEffect, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Bell } from "lucide-react";
 import { setcourse } from '../../counter/answerSlice'
 
+
 export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setcourseId, setsidebarispened }: { sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setcourseId: React.Dispatch<React.SetStateAction<number>>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
     const storecourse = useSelector((state: any) => state.answer.course);
+    const [ispopup, setispopup] = useState<boolean>(false)
+    const [email, setemail] = useState<string>('')
+    const [password, setpassword] = useState<string>('')
+    const popupRef = useRef<HTMLDivElement>(null)
+
+
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -42,8 +49,31 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setc
                         {/* <span className={styles.metaText}>{course.progress}% / 100% дневного лимита</span> */}
                         <Button variant="ghost" size="icon"><Bell className={styles.iconSmall} /></Button>
                         <Button variant="default" size="sm">Улучшить</Button>
+                        <Button variant="ghost" size="icon" onClick={() => setispopup(true)}>😇</Button>
                     </div>
                 </div>
-            </header></>
+            </header>
+            {ispopup && (
+                <div onClick={(e) => {
+                    if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
+                        setispopup(false)
+                    }
+                }} className={styles.popupmenu}>
+                    <div ref={popupRef} className={styles.popup}>
+                        <h2>Войти в аккаунт</h2>
+
+                        <div className={styles.inputgroup}>
+                            <input value={email} onChange={e => setemail(e.target.value)} type="email" className={styles.inputfield} id="email" placeholder=' ' />
+                            <label htmlFor="email" className={styles.inputlabel}>Введите ваш email</label>
+                        </div>
+
+                        <div className={styles.inputgroup}>
+                            <input value={password} onChange={e => setpassword(e.target.value)} type="password" className={styles.inputfield} id="password" placeholder=' ' />
+                            <label htmlFor="password" className={styles.inputlabel}>Введите пароль</label>
+                        </div>
+                        <Button>Войти</Button>
+                    </div>
+                </div>)}
+        </>
     )
 }

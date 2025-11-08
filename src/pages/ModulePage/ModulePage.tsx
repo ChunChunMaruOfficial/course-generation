@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import styles from './ModulePage.module.css'
+import styles from './ModulePage.module.scss'
 import { Card } from "@/components/Card/Card";
 import ka from '../../assets/pic/ka.jpg'
 import lh from '../../assets/pic/lh.jpg'
 import Header from "@/components/Header/header";
-import DynamicTextRender from "./DynamicTextRender";
+import DynamicTextRender from "../../components/DynamicTextRender/DynamicTextRender";
 import { Button } from "@/components/Button/button";
 import { useSelector } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
+import axios from "axios";
 
 
 
@@ -31,17 +32,17 @@ export default function ModulePage() {
 
     async function Getexplanation() {
         const target = selectedText
-        const response = await fetch('http://localhost:3000/api/generateexplanation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ topic: selectedText })
-        });
-        const data = await response.json();
+        const response = await axios.post('http://localhost:3000/api/generateexplanation',
+            { topic: selectedText },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
         setselectedwords(words =>
             words.map(str =>
-                str === target ? `${str} - ${data.result}` : str
+                str === target ? `${str} - ${response.data.result}` : str
             )
         );
 
@@ -134,8 +135,9 @@ export default function ModulePage() {
                     {moduledata.parts.map((v, i) => (<div><h2>{v.title}</h2><span>
                         <img src={v.pic} alt="" />
                         <DynamicTextRender text={contenttext[i]} setselectedwords={setselectedwords} />
-                        </span></div>))}
+                    </span></div>))}
                     <h2>{selectedText}</h2>
+                    <Button>Перейти к практике</Button>
                 </Card>
 
                 <div className={styles.folder}>

@@ -1,0 +1,303 @@
+@use '../../mixin.scss' as mixin;
+
+.root {
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.main {
+  grid-column: span 8 / span 8;
+}
+
+.aside {
+  grid-column: span 4 / span 4;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+}
+
+.pageInner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(12, 1fr);
+  }
+}
+
+.pageTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+  margin-bottom: 20px;
+}
+
+.lessonsList {
+  @include mixin.flex(start, start, column, nowrap, 0.5rem);
+}
+
+.lessonItem {
+  @include mixin.flex(start, start, column, nowrap, 0.5rem);
+  border-radius: 16px;
+  padding: 20px;
+  transition: 0.3s ease-in-out;
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.lessonRow {
+  @include mixin.flex(center, space-between);
+  width: 100%;
+}
+
+.lessonLeft {
+  @include mixin.flex(center, start, row, nowrap, 1rem);
+}
+
+.lessonStatus {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  @include mixin.flex(center, center);
+
+  &.number {
+    background: var(--muted);
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+  }
+
+  &.completed {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+.lessonTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--foreground);
+
+  &.muted {
+    color: var(--muted-foreground);
+  }
+}
+
+.lessonCompleted {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.lessonProgress {
+  padding: 3px 7px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+}
+
+.startButton {
+  @include mixin.flex(center, start, row, nowrap, 0.5rem);
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.theme {
+  @include mixin.flex(center, space-between);
+  width: 100%;
+  padding-block: 10px;
+  border-bottom: 1px solid #f1f1f1;
+
+  & > div {
+    @include mixin.flex(center, start, row, nowrap, 10px);
+  }
+}
+
+.right {
+  @include mixin.flex(center, end, row, nowrap, 8px);
+
+  & > p {
+    color: #5878c1;
+    background-color: rgba(88, 120, 193, 0.1);
+    padding: 3px 7px;
+    @include mixin.flex(center, center, row, nowrap, 5px);
+    border-radius: 12px;
+
+    & > img {
+      height: 22px;
+    }
+  }
+
+  &:nth-of-type(2) > p {
+    color: rgb(222, 166, 64);
+    background-color: rgba(222, 166, 64, 0.1);
+  }
+
+  &:nth-of-type(3) > p {
+    color: rgb(66, 165, 112);
+    background-color: rgb(66, 165, 112, 0.1);
+  }
+}
+
+.left {
+  @include mixin.flex(center, start, row, nowrap, 10px);
+}
+
+.complete {
+  width: 14px;
+  height: 14px;
+  border-radius: 99px;
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.sidebarHeader {
+  @include mixin.flex(start, start, column, nowrap, 6px);
+  margin-bottom: 0.75rem;
+}
+
+.sidebarTitle {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.sidebarMeta {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.sidebarProgress {
+  margin-top: 0.5rem;
+}
+
+.progressLabel {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.progressValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.progressBar {
+  height: 0.5rem;
+  border-radius: 99px;
+}
+
+.viewToggle {
+  margin: 0.75rem 0;
+  padding: 0.25rem;
+  background-color: var(--secondary);
+  border-radius: var(--radius);
+  @include mixin.flex(center, start, row, nowrap, 0.5rem);
+}
+
+.toggleBtn {
+  @include mixin.flex(center, center);
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 500;
+  width: 50%;
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+
+.modulesList {
+  @include mixin.flex(start, start, column, nowrap, 0.5rem);
+}
+
+.moduleItem,
+.moduleRow {
+  @include mixin.flex(center, space-between);
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+
+  &.active {
+    background: var(--primary-light);
+    border-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
+.moduleLeft {
+  @include mixin.flex(center, start, row, nowrap, 0.75rem);
+}
+
+.moduleBadge {
+  @include mixin.flex(center, center);
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  aspect-ratio: 1/1;
+
+  &.active {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+.moduleTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.moduleProgress {
+  margin-top: 0.5rem;
+}
+
+.moduleMeta {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.chev {
+  float: right;
+}
+
+.number {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.completed {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.muted {
+  color: var(--muted-foreground);
+}
+
+.active {
+  background: var(--primary-light);
+}
