@@ -60,7 +60,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setc
                     }
                 }} className={styles.popupmenu}>
                     <div ref={popupRef} className={styles.popup}>
-                        <h2>Войти в аккаунт</h2>
+                        <h1>Войти в аккаунт</h1>
 
                         <div className={styles.inputgroup}>
                             <input value={email} onChange={e => setemail(e.target.value)} type="email" className={styles.inputfield} id="email" placeholder=' ' />
@@ -72,6 +72,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setc
                             <label htmlFor="password" className={styles.inputlabel}>Введите пароль</label>
                         </div>
                         <Button>Войти</Button>
+                        <p>создать учетную запись</p>
                     </div>
                 </div>)}
         </>

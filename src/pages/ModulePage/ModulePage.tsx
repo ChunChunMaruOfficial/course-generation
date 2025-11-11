@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -18,6 +19,7 @@ export default function ModulePage() {
     const [selectedwords, setselectedwords] = useState<string[]>([])
     const [selectedText, setSelectedText] = useState('');
     const cardRef = useRef<HTMLDivElement>(null)
+    const navigate = useNavigate();
     const text = `Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя). Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя). Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя).`;
     const [contenttext, setcontenttext] = useState<string[]>([text, text])
     const storecourse = useSelector((state: any) => state.answer.course);
@@ -81,7 +83,7 @@ export default function ModulePage() {
                 console.log('Выделенный текст:', selection.toString());
                 if (menuRef.current) {
                     menuRef.current.style.left = `${event.clientX}px`;
-                    menuRef.current.style.top = `${event.clientY + 5}px`
+                    menuRef.current.style.top = `${event.clientY + 15}px`
                 }
                 setShowMenu(true)
             }
@@ -153,7 +155,7 @@ export default function ModulePage() {
                         ))}
                     </div>
                     <div className={styles.content}>
-                        {activeTab == "tab-1" ? storecourse.length > 0 && storecourse[0].modules.map((v: Module, i: number) => (
+                        {activeTab == "tab-1" ? storecourse.length > 0 ? storecourse[0].modules.map((v: Module, i: number) => (
                             <div className={styles.roadmapitem} key={i}>
                                 <div className={styles.leftpart}><p>{v.title}</p>
                                     <span>{v.lessons.map((v1: Lesson, i) => (<p key={i}>{v1.title}</p>))}</span>
@@ -164,7 +166,7 @@ export default function ModulePage() {
                                     <hr />
                                 </div>
                             </div>
-                        )) : selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
+                        )) : (<div className={styles.sorrymessage}><h2>У вас пока что нет курсов 😓</h2><Button onClick={() => navigate("../")}>Сгенерировать курс</Button></div>) : selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
                     </div>
                 </div>
                 <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { selectasimp(); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(); !selectedwords.includes(selectedText) && setselectedwords(sw => [...sw, selectedText]); setShowMenu(false) }}>объяснить</button></div>
