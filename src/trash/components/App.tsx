@@ -3,10 +3,10 @@ import { Toaster as Sonner } from "./sonner";
 import { TooltipProvider } from "./tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import CourseGenerator from "../pages/CourseGenerator/CourseGenerator";
-import CourseView from "../pages/CourseView/CourseView";
-import NotFound from "../pages/NotFound/NotFound";
-import ModulePage from '../pages/ModulePage/ModulePage'
+import CourseGenerator from "../../pages/CourseGenerator/CourseGenerator";
+import CourseView from "../../pages/CourseView/CourseView";
+import NotFound from "../../pages/NotFound/NotFound";
+import ModulePage from '../../pages/ModulePage/ModulePage'
 
 const queryClient = new QueryClient();
 

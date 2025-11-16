@@ -18,6 +18,7 @@
   border-radius: 1rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
+
 }
 
 .pageInner {
@@ -48,12 +49,13 @@
 }
 
 .lessonItem {
-  @include mixin.flex(start, start, column, nowrap, 0.5rem);
+  @include mixin.flex(start, start, column, nowrap, 10px);
   border-radius: 16px;
   padding: 20px;
   transition: 0.3s ease-in-out;
   border-bottom: 1px solid var(--border);
   width: 100%;
+  overflow: hidden;
 
   &:hover {
     cursor: pointer;
@@ -123,7 +125,7 @@
   padding-block: 10px;
   border-bottom: 1px solid #f1f1f1;
 
-  & > div {
+  &>div {
     @include mixin.flex(center, start, row, nowrap, 10px);
   }
 }
@@ -131,24 +133,24 @@
 .right {
   @include mixin.flex(center, end, row, nowrap, 8px);
 
-  & > p {
+  &>p {
     color: #5878c1;
     background-color: rgba(88, 120, 193, 0.1);
     padding: 3px 7px;
     @include mixin.flex(center, center, row, nowrap, 5px);
     border-radius: 12px;
 
-    & > img {
+    &>img {
       height: 22px;
     }
   }
 
-  &:nth-of-type(2) > p {
+  &:nth-of-type(2)>p {
     color: rgb(222, 166, 64);
     background-color: rgba(222, 166, 64, 0.1);
   }
 
-  &:nth-of-type(3) > p {
+  &:nth-of-type(3)>p {
     color: rgb(66, 165, 112);
     background-color: rgb(66, 165, 112, 0.1);
   }
@@ -182,7 +184,13 @@
 }
 
 .sidebarProgress {
+  width: 100%;
   margin-top: 0.5rem;
+  @include mixin.flex(start, start, column, nowrap, 0.2rem);
+
+  >.progressRoot{
+    width: 100%;
+  }
 }
 
 .progressLabel {
@@ -228,7 +236,7 @@
 
 .moduleItem,
 .moduleRow {
-  @include mixin.flex(center, space-between);
+  @include mixin.flex(center, space-between, row, nowrap, 9px);
   width: 100%;
   text-align: left;
   padding: 0.75rem;
@@ -277,6 +285,7 @@
 
 .moduleMeta {
   font-size: 0.75rem;
+  text-wrap: nowrap;
   color: var(--muted-foreground);
 }
 

@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import answerSlice from './counter/answerSlice';
+import answerSlice from './slices/answerSlice';
 
 export const store = configureStore({
   reducer: {

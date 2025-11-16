@@ -18,6 +18,11 @@
   }
 }
 
+.loadgif {
+  margin: auto;
+  height: 100px;
+}
+
 .container,
 .folder {
 
@@ -111,10 +116,11 @@
   min-height: 16rem;
   width: 100%;
 
-  >.sorrymessage{
+  >.sorrymessage {
     @include mixin.flex(center, center, column, nowrap, 20px);
     margin: auto;
-    >h2{
+
+    >h2 {
       text-align: center;
     }
   }
@@ -256,5 +262,89 @@
         text-decoration: line-through;
       }
     }
+  }
+}
+
+.questionContainer {
+  margin-block: 25px;
+  @include mixin.flex(start, start, column, nowrap, 15px);
+  animation: highlight 1s ease;
+  transition: 0.3s ease-in-out;
+  padding: 2px;
+  border-radius: 10px;
+
+  & > span {
+    @include mixin.flex(start, start, column, nowrap, 10px);
+
+    & > p {
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem;
+    }
+  }
+}
+
+input[type="checkbox"] {
+  position: absolute;
+  left: -100px;
+  opacity: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+  cursor: pointer;
+}
+
+label.customradio {
+  position: relative;
+  padding-left: 2rem;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1rem;
+  @include mixin.flex(center, start);
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 20%;
+    border: 2px solid var(--primary);
+    background-color: white;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0.3rem;
+    top: 50%;
+    transform: translateY(-50%) scale(0);
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 15%;
+    background-color: var(--primary);
+    transition: transform 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  &:hover::before {
+    border-color: var(--primary-dark);
+  }
+}
+
+input[type="checkbox"]:checked + label.customradio::after {
+  transform: translateY(-50%) scale(1);
+}
+
+@keyframes highlight {
+  0% {
+    background-color: rgba(255, 236, 179, 0.5);
+  }
+  100% {
+    background-color: transparent;
   }
 }

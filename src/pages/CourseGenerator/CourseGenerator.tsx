@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Sparkles } from "lucide-react";
-import { Button } from "@/components/Button/button";
-import { Label } from "@/components/Label/Label";
-import { Checkbox } from "@/components/Checkbox/Checkbox";
+import { Button } from "@/trash/components/Button/button";
+import { Label } from "@/trash/components/Label/Label";
+import { Checkbox } from "@/trash/components/Checkbox/Checkbox";
 import styles from "./CourseGenerator.module.scss";
 import loadgif from '../../assets/loading.gif';
-import { useDispatch } from 'react-redux';
-import { addcourse } from '../../counter/answerSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { addcourse, setactivecourse } from '../../slices/answerSlice'
 import type { Question } from "../../interfaces/Question";
 import axios from "axios"
 //import exampleQuestions from '../../examples/Questions.json'
@@ -15,7 +15,7 @@ import axios from "axios"
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [topic, setTopic] = useState<string>("как правильно играть в майнкрафт");
+  const [topic, setTopic] = useState<string>("");
   const [offtop, setofftop] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
@@ -28,7 +28,7 @@ const CourseGenerator = () => {
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
   const [activeIndex, setActiveIndex] = useState(0);
   const tabWidth = 100; // ширина одной вкладки в px
-
+  const storecourse = useSelector((state: any) => state.answer.course);
 
   useEffect(() => {
     async function start() {
@@ -74,8 +74,6 @@ const CourseGenerator = () => {
 
       setIsLoading(false);
       setAnswerQuestions(false);
-
-
       setQuestions(response.data.result.questions);
 
       setAnswers(v => {
@@ -89,16 +87,17 @@ const CourseGenerator = () => {
       //////////////////////////////////// ГЕНЕРАЦИЯ КУРСА /////////////////////////////////////
 
       let beasnwrs: string[] = []
+      const bodyObj: { topic: string, answers?: string[], notes?: string } = { topic };
 
       if (Answers.some(v => v != undefined && v.length > 0)) {
         Questions.map((v, i) => beasnwrs.push(`${v.question} - ${Answers[i]!.join(', ')}`))
       }
 
-      const bodyObj: { topic: string, answers?: string[] } = { topic };
-
       if (beasnwrs) {
         bodyObj.answers = beasnwrs;
       }
+
+      bodyObj.notes = offtop
 
       const body = JSON.stringify(bodyObj);
       console.log(body);
@@ -111,7 +110,7 @@ const CourseGenerator = () => {
         }
       });
       dispatch(addcourse(response.data.result));
-
+      dispatch(setactivecourse(storecourse.length - 1))
       navigate("/course");
       setIsLoading(false);
 

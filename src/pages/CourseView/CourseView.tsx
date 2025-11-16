@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronRight, ArrowRight, Check } from "lucide-react";
-import { Progress } from "@/components/Progress/Progress";
+import { Progress } from "@/trash/components/Progress/Progress";
 import { AnimatePresence, motion } from 'framer-motion'
 import styles from "./CourseView.module.scss";
 import { useSelector } from "react-redux";
@@ -12,7 +12,7 @@ import video from '../../assets/svg/video.svg'
 import code from '../../assets/svg/code.svg'
 import arrowmore from '../../assets/svg/arrowmore.svg'
 
-import Header from "@/components/Header/header";
+import Header from "@/trash/components/Header/header";
 import { useNavigate } from "react-router-dom";
 
 
@@ -56,6 +56,7 @@ const cardVariants = {
 
 const CourseView = () => {
   const storecourse = useSelector((state: any) => state.answer.course);
+  const activecourse = useSelector((state: any) => state.answer.activecourse);
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
   const [selectedModuleId, setSelectedModuleId] = useState(0);
@@ -111,7 +112,7 @@ const CourseView = () => {
               <h1 className={styles.pageTitle}>Модуль {storecourse[courseId].modules[selectedModuleId].id}: {storecourse[courseId].modules[selectedModuleId].title} </h1>
 
               <div className={styles.lessonsList}>
-                {storecourse[courseId].modules[selectedModuleId].lessons.map((lesson: Lesson) => (
+                {storecourse[activecourse].modules[selectedModuleId].lessons.map((lesson: Lesson) => (
                   <div className={styles.lessonItem}
                     style={{ boxShadow: expandedLessonId === lesson.id ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
                     onClick={() => {

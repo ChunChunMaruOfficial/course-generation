@@ -1,23 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from './ModulePage.module.scss'
-import { Card } from "@/components/Card/Card";
+import { Card } from "@/trash/components/Card/Card";
 import ka from '../../assets/pic/ka.jpg'
 import lh from '../../assets/pic/lh.jpg'
-import Header from "@/components/Header/header";
-import DynamicTextRender from "../../components/DynamicTextRender/DynamicTextRender";
-import { Button } from "@/components/Button/button";
+import Header from "@/trash/components/Header/header";
+// import DynamicTextRender from "../../components/DynamicTextRender/DynamicTextRender";
+import { Button } from "@/trash/components/Button/button";
 import { useSelector } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
+import loading from '../../assets/loading.gif'
 
 
 
 export default function ModulePage() {
     const [selectedwords, setselectedwords] = useState<string[]>([])
     const [selectedText, setSelectedText] = useState('');
+    const [practicetext, setpracticetext] = useState<any>([]);
+    const [serverText, estserverText] = useState<any>('');
     const cardRef = useRef<HTMLDivElement>(null)
     const navigate = useNavigate();
     const text = `Java — это хорошо [структурированный], {объектно-ориентированный язык}, который может показаться простым для начинающих. Вы можете справиться с ним довольно быстро, так как много различных процессов запускаются автоматически. В первое время не потребуется углубляться глубоко в «как там все работает». [Java] является кроссплатформенным языком. Это позволяет программисту создать приложение, которое можно развернуть на любом устройстве. Это [предпочтительный] язык для IoT(интернет вещей), отличный инструмент для создания enterprise приложений, мобильных приложений и т.д.
@@ -67,12 +69,13 @@ export default function ModulePage() {
 
 
     const [showmenu, setShowMenu] = useState<boolean>(false);
+    const [ispractice, setispractice] = useState<boolean>(false);
     const [searchParams] = useSearchParams();
     const menuRef = useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("tab-1");
+    const theme = decodeURIComponent(searchParams.get('theme')!)
 
     useEffect(() => {
-        const theme = decodeURIComponent(searchParams.get('theme')!)
         async function GetCourse() {
             const response = await axios.post('http://localhost:3000/api/generateLesson',
                 { topic: theme },
@@ -83,7 +86,7 @@ export default function ModulePage() {
                 }
             );
 
-            console.log(response.data.result);
+            estserverText(JSON.parse( JSON.stringify(response.data.result).replace('json', '').replaceAll('`', '')).lesson_text);
 
 
         }
@@ -129,6 +132,22 @@ export default function ModulePage() {
 
     }, []);
 
+    async function getpractice() {
+        setispractice(true)
+        const response = await axios.post('http://localhost:3000/api/generatePractice',
+            { topic: theme },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        console.log(response.data.result);
+
+        setpracticetext(response.data.result.questions)
+
+    }
+
     const selectasimp = () => {
         moduledata.parts.forEach(part => {
             part.content = part.content.replace(selectedText, `[${selectedText}]`);
@@ -153,7 +172,9 @@ export default function ModulePage() {
     const [courseId, setcourseId] = useState<number>(0);
 
 
-
+    const [Answers, setAnswers] = useState<(number[] | undefined)[]>(
+        Array.from({ length: practicetext.length }, () => [])
+    );
     return (
         <div onClick={(e) => {
             if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node) && menubuttonRef.current && !menubuttonRef.current.contains(e.target as Node)) {
@@ -166,13 +187,55 @@ export default function ModulePage() {
             <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setcourseId={setcourseId} setsidebarispened={setsidebarispened}></Header>
             <div className={styles.parent}>
                 <Card ref={cardRef} className={styles.container}>
-                    <h1>{moduledata.title}</h1>
-                    {moduledata.parts.map((v, i) => (<div><h2>{v.title}</h2><span>
-                        <img src="https://habrastorage.org/getpro/habr/post_images/f73/416/25c/f7341625caa1be576a7ae1aec7a8d55e.png" alt="" />
-                        <DynamicTextRender text={contenttext[i]} setselectedwords={setselectedwords} />
-                    </span></div>))}
+                    <h1>{theme}</h1>
+
+                    {serverText != '' ? ispractice ? (
+                        <div className={styles.questionContainer}>{practicetext.map((v: any, i: number) => (<div><h1>{v.question}</h1>
+                            <span>{v.options.map((v1: any, i1: number) => (<div>
+                                <input
+                                    type="checkbox"
+                                    id={`${i}-${i1}`}
+                                    checked={Answers[i]?.includes(i1) ?? false}
+                                    onChange={() => {
+                                        setAnswers(a => {
+                                            const newAnswers = [...a];
+                                            // Берем текущий массив отмеченных опций вопроса
+                                            const current = newAnswers[i] ? [...newAnswers[i]] : [];
+                                            const indexInCurrent = current.indexOf(i1);
+                                            if (indexInCurrent === -1) {
+                                                // Добавить выбранный
+                                                current.push(i1);
+                                            } else {
+                                                // Убрать, если уже выбран
+                                                current.splice(indexInCurrent, 1);
+                                            }
+                                            newAnswers[i] = current;
+                                            return newAnswers;
+                                        });
+                                        console.log(Answers);
+
+                                    }}
+                                    name={`${v.id}-${i1}`}
+                                />
+                                <label
+                                    className={`${styles.customradio} ${styles.label}`}
+                                    htmlFor={`${i}-${i1}`}
+                                >
+                                    {v1.text}
+                                </label>
+                            </div>))}</span>
+                        </div>))}</div>
+
+
+                    ) : (<span dangerouslySetInnerHTML={{ __html: serverText }}>
+
+                       
+                    </span>) : (<img src={loading} className={styles.loadgif} />)}
+
+
+
                     <h2>{selectedText}</h2>
-                    <Button>Перейти к практике</Button>
+                    <Button onClick={() => getpractice()} >{ispractice ? 'перейти к следующему уроку' : 'Перейти к практике'}</Button>
                 </Card>
 
                 <div className={styles.folder}>

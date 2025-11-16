@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { CourseData } from "../interfaces/CourseData";
 
 const initialState = {
-  course: [] as CourseData[]
+  course: [] as CourseData[],
+  activecourse: 0 as number
 };
 
 const answerSlice = createSlice({
@@ -12,11 +13,14 @@ const answerSlice = createSlice({
   reducers: {
     addcourse(state, action) {
       state.course = [...state.course, action.payload]
-      console.log('Redux course add:', state.course); 
+      console.log('Redux course add:', state.course);
+    },
+    setactivecourse(state, action) {
+      state.activecourse = action.payload
     },
     setcourse(state, action) {
       state.course = action.payload
-      console.log('Redux course add:', state.course); 
+      console.log('Redux course add:', state.course);
     },
     completingLesson(state, action) {
       const { courseId, moduleId, lessonId } = action.payload;
@@ -27,5 +31,5 @@ const answerSlice = createSlice({
 
 });
 
-export const { completingLesson, addcourse,setcourse } = answerSlice.actions;
+export const { completingLesson, addcourse, setcourse,setactivecourse } = answerSlice.actions;
 export default answerSlice.reducer;
