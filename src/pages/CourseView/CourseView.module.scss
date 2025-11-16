@@ -155,7 +155,7 @@
 }
 
 .left {
-  @include mixin.flex(center, start, row, nowrap, 10px);
+  @include mixin.flex(center, start, row, nowrap, 20px);
 }
 
 .complete {

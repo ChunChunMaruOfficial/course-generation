@@ -13,18 +13,14 @@ import code from '../../assets/svg/code.svg'
 import arrowmore from '../../assets/svg/arrowmore.svg'
 
 import Header from "@/components/Header/header";
+import { useNavigate } from "react-router-dom";
 
 
 const lessonscontent: Theme[] = [{
-  name: 'Создание и вызов функции',
   img: book,
   type: 'Теория'
 }, {
-  name: 'Стрелочные функции',
-  img: video,
-  type: 'Источник'
-}, {
-  name: 'Практика: калькулятор',
+
   img: code,
   type: 'Практика'
 }]
@@ -70,7 +66,7 @@ const CourseView = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
   const [isLoading, setisLoading] = useState<boolean>(true)
-
+ const navigate = useNavigate();
 
 
 
@@ -178,18 +174,18 @@ const CourseView = () => {
                           }}
                           transition={{ duration: .3 }}
                           className={styles.lessonMeta}>
-                          <p className={styles.sidebarMeta}>Здесь типо можно описание вставить</p>
+                          {/* <p className={styles.sidebarMeta}>Здесь типо можно описание вставить</p> */}
 
                           <div
                             className={styles.themeList}>
                             {lessonscontent.map((v, i) => (
-                              <div
+                              <div onClick={() => i == 0 ? navigate(`../theory?theme=${encodeURIComponent(lesson.title)}`) : navigate(`./practice?theme=${encodeURIComponent(lesson.title)}`)}
                                 className={styles.theme}
                                 key={i}>
                                 <div className={styles.left}>
                                   <div className={styles.complete} />
                                   <p className={styles.sidebarMeta}>1.{i + 1}</p>
-                                  <p className={styles.progressValue}>{v.name}</p>
+                            
                                 </div>
                                 <div className={styles.right}>
                                   <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>

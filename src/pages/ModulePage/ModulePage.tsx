@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 
 
@@ -20,7 +20,8 @@ export default function ModulePage() {
     const [selectedText, setSelectedText] = useState('');
     const cardRef = useRef<HTMLDivElement>(null)
     const navigate = useNavigate();
-    const text = `Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя). Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя). Если для Вас проблема установить данную утилиту, лень разбираться с ее настройкой, то Вы можете {установить} мое приложение под Android [HH Resume Automate]. Оно обладает минимальным функционалом: обновление резюме (одного) и рассылка откликов (чистить их и тп нельзя).`;
+    const text = `Java — это хорошо [структурированный], {объектно-ориентированный язык}, который может показаться простым для начинающих. Вы можете справиться с ним довольно быстро, так как много различных процессов запускаются автоматически. В первое время не потребуется углубляться глубоко в «как там все работает». [Java] является кроссплатформенным языком. Это позволяет программисту создать приложение, которое можно развернуть на любом устройстве. Это [предпочтительный] язык для IoT(интернет вещей), отличный инструмент для создания enterprise приложений, мобильных приложений и т.д.
+.`;
     const [contenttext, setcontenttext] = useState<string[]>([text, text])
     const storecourse = useSelector((state: any) => state.answer.course);
 
@@ -51,6 +52,10 @@ export default function ModulePage() {
     }
 
 
+
+
+
+
     const tabsData = [
         {
             id: "tab-1", label: "RoadMap", content: selectedwords
@@ -62,11 +67,34 @@ export default function ModulePage() {
 
 
     const [showmenu, setShowMenu] = useState<boolean>(false);
-
+    const [searchParams] = useSearchParams();
     const menuRef = useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("tab-1");
 
     useEffect(() => {
+        const theme = decodeURIComponent(searchParams.get('theme')!)
+        async function GetCourse() {
+            const response = await axios.post('http://localhost:3000/api/generateLesson',
+                { topic: theme },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+
+            console.log(response.data.result);
+
+
+        }
+
+
+        GetCourse()
+
+
+
+
+
         const handleSelectionChange = () => {
             const selection = window.getSelection();
             if (selection) {
@@ -96,6 +124,9 @@ export default function ModulePage() {
             document.removeEventListener('selectionchange', handleSelectionChange);
             document.removeEventListener('mouseup', handleMouseUp);
         };
+
+
+
     }, []);
 
     const selectasimp = () => {
@@ -121,6 +152,8 @@ export default function ModulePage() {
     const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
     const [courseId, setcourseId] = useState<number>(0);
 
+
+
     return (
         <div onClick={(e) => {
             if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node) && menubuttonRef.current && !menubuttonRef.current.contains(e.target as Node)) {
@@ -135,7 +168,7 @@ export default function ModulePage() {
                 <Card ref={cardRef} className={styles.container}>
                     <h1>{moduledata.title}</h1>
                     {moduledata.parts.map((v, i) => (<div><h2>{v.title}</h2><span>
-                        <img src={v.pic} alt="" />
+                        <img src="https://habrastorage.org/getpro/habr/post_images/f73/416/25c/f7341625caa1be576a7ae1aec7a8d55e.png" alt="" />
                         <DynamicTextRender text={contenttext[i]} setselectedwords={setselectedwords} />
                     </span></div>))}
                     <h2>{selectedText}</h2>
