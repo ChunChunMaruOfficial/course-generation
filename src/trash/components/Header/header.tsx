@@ -8,29 +8,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Bell } from "lucide-react";
 import { setcourse } from '../../../slices/answerSlice'
 import axios from 'axios';
+import { setactivecourse } from '../../../slices/answerSlice';
 
-
-export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setcourseId, setsidebarispened }: { sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setcourseId: React.Dispatch<React.SetStateAction<number>>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
+export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: { sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
     const storecourse = useSelector((state: any) => state.answer.course);
     const [ispopup, setispopup] = useState<boolean>(false)
     const [email, setemail] = useState<string>('')
     const [password, setpassword] = useState<string>('')
     const [isloging, setisloging] = useState<boolean>(true)
     const popupRef = useRef<HTMLDivElement>(null)
+    const dispatch = useDispatch();
+
 
     async function entering() {
-        const response = await axios.post('http://localhost:3000/login', { mail: email, password: password }, {
+        const response = await axios.post(`http://localhost:3000/${isloging ? 'login' : 'registration'}`, { email: email, password: password }, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
+        return console.log(response.data.answer);
 
-        response.data ? console.log('все гуд') : console.log("(((9");
-        
-        
     }
 
-    const dispatch = useDispatch();
     useEffect(() => {
         if (!storecourse[0] || !storecourse[0].modules || !storecourse[0].modules.length) {
             async function getcourse() {
@@ -38,7 +37,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setc
                 const data = await response.json();
                 dispatch(setcourse(data.result));
                 console.log(data);
-                
+
             }
             getcourse()
         }
@@ -49,7 +48,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setc
             <div ref={sidebarRef} className={`${styles.sidebar} ${sidebarispened ? styles.sidebaropen : sidebarispened === false ? styles.sidebarclosed : ''}`}>
                 <h2 className={styles.pageTitle}>Мои курсы</h2>
                 {storecourse.map((v: CourseData, i: number) => (
-                    <p key={i} onClick={() => { setcourseId(i); setsidebarispened(false); }}>{v.title}</p>))}
+                    <p key={i} onClick={() => { dispatch(setactivecourse(i)); setsidebarispened(false); }}>{v.title}</p>))}
             </div>
             <header className={styles.header}>
                 <div className={styles.headerInner}>
@@ -83,7 +82,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setc
                             <input value={password} onChange={e => setpassword(e.target.value)} type="password" className={styles.inputfield} id="password" placeholder=' ' />
                             <label htmlFor="password" className={styles.inputlabel}>Введите пароль</label>
                         </div>
-                        <Button onClick={() => entering()}>Войти</Button>
+                        <Button onClick={() =>  entering()}>{isloging ? 'создать учетную запись' : 'войти'}</Button>
                         <p onClick={() => setisloging(!isloging)}> {isloging ? 'создать учетную запись' : 'войти'} </p>
                     </div>
                 </div>)}

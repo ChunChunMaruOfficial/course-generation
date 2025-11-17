@@ -62,16 +62,18 @@ const CourseView = () => {
   const [selectedModuleId, setSelectedModuleId] = useState(0);
   const sidebarRef = useRef<HTMLDivElement>(null)
   const menubuttonRef = useRef<HTMLImageElement>(null)
-  const [courseId, setcourseId] = useState<number>(0);
   const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
   const [isLoading, setisLoading] = useState<boolean>(true)
  const navigate = useNavigate();
+ console.log('activecourse', activecourse);
+ 
 
 
 
-  useEffect(() => { storecourse.length > 0 && setisLoading(false) }, [storecourse])
+  useEffect(() => { storecourse.length > 0 && setisLoading(false); console.log(storecourse);
+   }, [storecourse])
 
   useEffect(() => {
     const container = containerRef.current;
@@ -96,7 +98,7 @@ const CourseView = () => {
         setsidebarispened((prev) => (prev === true ? false : null));
       }
     }} className={styles.root}>
-      <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setcourseId={setcourseId} setsidebarispened={setsidebarispened}></Header>
+      <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setsidebarispened={setsidebarispened}></Header>
 
       {!isLoading && (<div className={styles.pageInner}>
         <div className={styles.layoutGrid}>
@@ -109,7 +111,7 @@ const CourseView = () => {
               transition={{ duration: .5 }}
             >
 
-              <h1 className={styles.pageTitle}>Модуль {storecourse[courseId].modules[selectedModuleId].id}: {storecourse[courseId].modules[selectedModuleId].title} </h1>
+              <h1 className={styles.pageTitle}>Модуль {storecourse[activecourse].modules[selectedModuleId].id}: {storecourse[activecourse].modules[selectedModuleId].title} </h1>
 
               <div className={styles.lessonsList}>
                 {storecourse[activecourse].modules[selectedModuleId].lessons.map((lesson: Lesson) => (
@@ -208,13 +210,13 @@ const CourseView = () => {
           <aside className={styles.aside}>
             <div className={styles.card}>
               <div className={styles.sidebarHeader}>
-                <h3 className={styles.sidebarTitle}>{storecourse[courseId].title}</h3>
-                <p className={styles.sidebarMeta}>{storecourse[courseId].modulesCount} модулей • {storecourse[courseId].lessonsCount} урока</p>
+                <h3 className={styles.sidebarTitle}>{storecourse[activecourse].title}</h3>
+                <p className={styles.sidebarMeta}>{storecourse[activecourse].modulesCount} модулей • {storecourse[activecourse].lessonsCount} урока</p>
 
                 <div className={styles.sidebarProgress}>
                   <div className={styles.progressLabel}>Прогресс</div>
-                  <div className={styles.progressValue}>{storecourse[courseId].progress}% Завершено</div>
-                  <Progress value={storecourse[courseId].progress} className={styles.progressBar} />
+                  <div className={styles.progressValue}>{storecourse[activecourse].progress}% Завершено</div>
+                  <Progress value={storecourse[activecourse].progress} className={styles.progressBar} />
                 </div>
               </div>
 
@@ -254,7 +256,7 @@ const CourseView = () => {
               </div>
 
               <div className={styles.modulesList}>
-                {storecourse[courseId].modules.map((module: Module) => {
+                {storecourse[activecourse].modules.map((module: Module) => {
                   const progress = getModuleProgress(module);
                   const isActive = module.id === (selectedModuleId + 1);
 

@@ -109,9 +109,9 @@ const CourseGenerator = () => {
           'Content-Type': 'application/json'
         }
       });
-      dispatch(addcourse(response.data.result));
-      dispatch(setactivecourse(storecourse.length - 1))
       navigate("/course");
+      dispatch(addcourse(response.data.result));
+      dispatch(setactivecourse(storecourse.length))
       setIsLoading(false);
 
 
