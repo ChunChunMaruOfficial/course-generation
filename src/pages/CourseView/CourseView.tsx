@@ -3,15 +3,13 @@ import { ChevronRight, ArrowRight, Check } from "lucide-react";
 import { Progress } from "@/trash/components/Progress/Progress";
 import { AnimatePresence, motion } from 'framer-motion'
 import styles from "./CourseView.module.scss";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { Module } from "../../interfaces/Module";
 import type { Lesson } from "../../interfaces/Lesson";
 import type { Theme } from "../../interfaces/Theme";
 import book from '../../assets/svg/book.svg'
-import video from '../../assets/svg/video.svg'
 import code from '../../assets/svg/code.svg'
-import arrowmore from '../../assets/svg/arrowmore.svg'
-
+import { setactivemodule, setactivelesson } from '../../slices/answerSlice'
 import Header from "@/trash/components/Header/header";
 import { useNavigate } from "react-router-dom";
 
@@ -55,25 +53,23 @@ const cardVariants = {
 }
 
 const CourseView = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
   const storecourse = useSelector((state: any) => state.answer.course);
   const activecourse = useSelector((state: any) => state.answer.activecourse);
+  const activemodule = useSelector((state: any) => state.answer.activemodule);
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
-  const [selectedModuleId, setSelectedModuleId] = useState(0);
   const sidebarRef = useRef<HTMLDivElement>(null)
   const menubuttonRef = useRef<HTMLImageElement>(null)
   const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
   const [isLoading, setisLoading] = useState<boolean>(true)
- const navigate = useNavigate();
- console.log('activecourse', activecourse);
- 
 
-
-
-  useEffect(() => { storecourse.length > 0 && setisLoading(false); console.log(storecourse);
-   }, [storecourse])
+  useEffect(() => {
+    storecourse.length > 0 && setisLoading(false); console.log(storecourse);
+  }, [storecourse])
 
   useEffect(() => {
     const container = containerRef.current;
@@ -111,11 +107,11 @@ const CourseView = () => {
               transition={{ duration: .5 }}
             >
 
-              <h1 className={styles.pageTitle}>Модуль {storecourse[activecourse].modules[selectedModuleId].id}: {storecourse[activecourse].modules[selectedModuleId].title} </h1>
+              <h1 className={styles.pageTitle}>Модуль {storecourse[activecourse].modules[activemodule].id}: {storecourse[activecourse].modules[activemodule].title} </h1>
 
               <div className={styles.lessonsList}>
-                {storecourse[activecourse].modules[selectedModuleId].lessons.map((lesson: Lesson) => (
-                  <div className={styles.lessonItem}
+                {storecourse[activecourse].modules[activemodule].lessons.map((lesson: Lesson, id: number) => (
+                  <div className={styles.lessonItem} key={id}
                     style={{ boxShadow: expandedLessonId === lesson.id ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
                     onClick={() => {
                       setExpandedLessonId((prev) =>
@@ -127,7 +123,7 @@ const CourseView = () => {
 
 
                     }
-                    key={lesson.id}>
+                    >
                     <div key={lesson.id} className={styles.lessonRow}>
                       <div className={styles.lessonLeft}>
                         {lesson.completed ? (
@@ -182,19 +178,11 @@ const CourseView = () => {
                           <div
                             className={styles.themeList}>
                             {lessonscontent.map((v, i) => (
-                              <div onClick={() => i == 0 ? navigate(`../theory?theme=${encodeURIComponent(lesson.title)}`) : navigate(`./practice?theme=${encodeURIComponent(lesson.title)}`)}
-                                className={styles.theme}
-                                key={i}>
-                                <div className={styles.left}>
-                                  <div className={styles.complete} />
-                                  <p className={styles.sidebarMeta}>1.{i + 1}</p>
-                            
-                                </div>
-                                <div className={styles.right}>
-                                  <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>
-                                  <img src={arrowmore} alt="" />
-                                </div>
+
+                              <div onClick={() => i == 0 ? (navigate(`../theory?theme=${encodeURIComponent(lesson.title)}`), dispatch(setactivelesson(id))) : navigate(`./practice?theme=${encodeURIComponent(lesson.title)}`)} className={styles.right}>
+                                <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>
                               </div>
+
                             ))}
                           </div>
 
@@ -258,10 +246,10 @@ const CourseView = () => {
               <div className={styles.modulesList}>
                 {storecourse[activecourse].modules.map((module: Module) => {
                   const progress = getModuleProgress(module);
-                  const isActive = module.id === (selectedModuleId + 1);
+                  const isActive = module.id === (activemodule + 1);
 
                   return (
-                    <button key={module.id} onClick={() => { setSelectedModuleId(module.id - 1); setExpandedLessonId(null) }} className={`${styles.moduleRow} ${isActive ? styles.active : ''}`}>
+                    <button key={module.id} onClick={() => { dispatch(setactivemodule(module.id - 1)); setExpandedLessonId(null) }} className={`${styles.moduleRow} ${isActive ? styles.active : ''}`}>
                       <div className={styles.moduleLeft}>
                         <span className={`${styles.moduleBadge} ${isActive ? styles.active : ''}`}>{module.id}</span>
                         <span className={styles.moduleTitle}>{module.title}</span>

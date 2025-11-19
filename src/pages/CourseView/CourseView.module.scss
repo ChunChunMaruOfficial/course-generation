@@ -136,9 +136,10 @@
   &>p {
     color: #5878c1;
     background-color: rgba(88, 120, 193, 0.1);
-    padding: 3px 7px;
+    padding: 5px 9px;
     @include mixin.flex(center, center, row, nowrap, 5px);
-    border-radius: 12px;
+    border-radius: 20px;
+    font-size: 1.25rem;
 
     &>img {
       height: 22px;
@@ -188,7 +189,7 @@
   margin-top: 0.5rem;
   @include mixin.flex(start, start, column, nowrap, 0.2rem);
 
-  >.progressRoot{
+  >.progressRoot {
     width: 100%;
   }
 }
@@ -309,4 +310,9 @@
 
 .active {
   background: var(--primary-light);
+}
+
+.themeList {
+  @include mixin.flex(center, center, row, nowrap, 0.75rem);
+  padding-left: 2.5em;
 }

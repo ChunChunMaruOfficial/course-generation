@@ -4,7 +4,9 @@ import type { CourseData } from "../interfaces/CourseData";
 
 const initialState = {
   course: [] as CourseData[],
-  activecourse: 0 as number
+  activecourse: 0 as number,
+  activemodule: 0 as number,
+  activelesson: 0 as number
 };
 
 const answerSlice = createSlice({
@@ -17,6 +19,12 @@ const answerSlice = createSlice({
     },
     setactivecourse(state, action) {
       state.activecourse = action.payload
+    },
+    setactivemodule(state, action) {
+      state.activemodule = action.payload
+    },
+    setactivelesson(state, action) {
+      state.activelesson = action.payload
     },
     setcourse(state, action) {
       state.course = action.payload
@@ -31,5 +39,5 @@ const answerSlice = createSlice({
 
 });
 
-export const { completingLesson, addcourse, setcourse,setactivecourse } = answerSlice.actions;
+export const { completingLesson, addcourse, setcourse,setactivecourse, setactivemodule, setactivelesson  } = answerSlice.actions;
 export default answerSlice.reducer;
