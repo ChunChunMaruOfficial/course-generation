@@ -3,17 +3,20 @@ import styles from './ModulePage.module.scss'
 import { Card } from "@/trash/components/Card/Card";
 import Header from "@/trash/components/Header/header";
 // import DynamicTextRender from "../../components/DynamicTextRender/DynamicTextRender";
+import parse from 'html-react-parser';
 import { Button } from "@/trash/components/Button/button";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
+import { selectasimp, setactivelessoncontent } from '../../slices/answerSlice'
 import { useNavigate, useSearchParams } from "react-router-dom";
 import loading from '../../assets/loading.gif'
 
 
 
 export default function ModulePage() {
+    const dispatch = useDispatch()
     const navigate = useNavigate();
     const storecourse = useSelector((state: any) => state.answer.course);
     const activecourse = useSelector((state: any) => state.answer.activecourse);
@@ -22,7 +25,6 @@ export default function ModulePage() {
     const [selectedwords, setselectedwords] = useState<string[]>([])
     const [selectedText, setSelectedText] = useState('');
     const [practicetext, setpracticetext] = useState<any>([]);
-    const [serverText, estserverText] = useState<any>('');
     const cardRef = useRef<HTMLDivElement>(null)
 
 
@@ -68,6 +70,8 @@ export default function ModulePage() {
 
     useEffect(() => {
         async function GetCourse() {
+            console.log('GENERATING LESSON');
+
             const response = await axios.post('http://localhost:3000/api/generateLesson',
                 { topic: theme },
                 {
@@ -77,13 +81,14 @@ export default function ModulePage() {
                 }
             );
 
-            estserverText(JSON.parse( JSON.stringify(response.data.result).replace('json', '').replaceAll('`', '')).lesson_text);
+            dispatch(setactivelessoncontent(JSON.parse(JSON.stringify(response.data.result).replace('json', '').replaceAll('`', '')).lesson_text))
 
 
         }
 
 
-       storecourse[activecourse].modules[activemodule].lessons[activelesson].content == '' && GetCourse()
+        !storecourse[activecourse].modules[activemodule].lessons[activelesson].content ? GetCourse() : console.log(storecourse[activecourse].modules[activemodule].lessons[activelesson].content);
+
 
         const handleSelectionChange = () => {
             const selection = window.getSelection();
@@ -135,24 +140,6 @@ export default function ModulePage() {
 
     }
 
-    const selectasimp = () => {
-        moduledata.parts.forEach(part => {
-            part.content = part.content.replace(selectedText, `[${selectedText}]`);
-            console.log(part.content);
-
-        });
-
-        setcontenttext(partdata => {
-            const nwpd = partdata.map(part => {
-                return part.replace(selectedText, `[${selectedText}]`);
-            });
-            return nwpd;
-        });
-
-
-
-    }
-
     const sidebarRef = useRef<HTMLDivElement>(null)
     const menubuttonRef = useRef<HTMLImageElement>(null)
     const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
@@ -175,7 +162,7 @@ export default function ModulePage() {
                 <Card ref={cardRef} className={styles.container}>
                     <h1>{theme}</h1>
 
-                    {serverText != '' ? ispractice ? (
+                    {storecourse[activecourse].modules[activemodule].lessons[activelesson].content ? ispractice ? (
                         <div className={styles.questionContainer}>{practicetext.map((v: any, i: number) => (<div><h1>{v.question}</h1>
                             <span>{v.options.map((v1: any, i1: number) => (<div>
                                 <input
@@ -213,10 +200,10 @@ export default function ModulePage() {
                         </div>))}</div>
 
 
-                    ) : (<span dangerouslySetInnerHTML={{ __html: serverText }}>
+                    ) : (<div>
+                        { storecourse[activecourse].modules[activemodule].lessons[activelesson].content && parse(storecourse[activecourse].modules[activemodule].lessons[activelesson].content)}
 
-                       
-                    </span>) : (<img src={loading} className={styles.loadgif} />)}
+                    </div>) : (<img src={loading} className={styles.loadgif} />)}
 
 
 
@@ -251,7 +238,7 @@ export default function ModulePage() {
                         )) : (<div className={styles.sorrymessage}><h2>У вас пока что нет курсов 😓</h2><Button onClick={() => navigate("../")}>Сгенерировать курс</Button></div>) : selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
                     </div>
                 </div>
-                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { selectasimp(); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(); !selectedwords.includes(selectedText) && setselectedwords(sw => [...sw, selectedText]); setShowMenu(false) }}>объяснить</button></div>
+                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { dispatch(selectasimp(selectedText)); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(); !selectedwords.includes(selectedText) && setselectedwords(sw => [...sw, selectedText]); setShowMenu(false) }}>объяснить</button></div>
             </div>
 
         </div>

@@ -26,10 +26,18 @@ const answerSlice = createSlice({
     setactivelesson(state, action) {
       state.activelesson = action.payload
     },
+    setactivelessoncontent(state, action) {
+      state.course[state.activecourse].modules[state.activemodule].lessons[state.activelesson].content = action.payload
+    },
     setcourse(state, action) {
       state.course = action.payload
       console.log('Redux course add:', state.course);
     },
+
+    selectasimp(state, action) {
+      state.course[state.activecourse].modules[state.activemodule].lessons[state.activelesson].content.replace(action.payload, `[${action.payload}]`);
+    },
+
     completingLesson(state, action) {
       const { courseId, moduleId, lessonId } = action.payload;
       const module = state.course[courseId].modules.find(m => m.id === moduleId);
@@ -39,5 +47,5 @@ const answerSlice = createSlice({
 
 });
 
-export const { completingLesson, addcourse, setcourse,setactivecourse, setactivemodule, setactivelesson  } = answerSlice.actions;
+export const { completingLesson, addcourse, setcourse, setactivecourse, setactivemodule, setactivelesson, selectasimp, setactivelessoncontent } = answerSlice.actions;
 export default answerSlice.reducer;
