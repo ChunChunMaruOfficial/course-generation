@@ -3,4 +3,6 @@ export interface Lesson {
   title: string;
   completed: boolean;
   content: string;
+  theorycompl: number;
+  practicecompl: number;
 }

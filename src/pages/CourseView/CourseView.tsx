@@ -115,15 +115,9 @@ const CourseView = () => {
                     style={{ boxShadow: expandedLessonId === lesson.id ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
                     onClick={() => {
                       setExpandedLessonId((prev) =>
-                        prev === lesson.id ? null : lesson.id
-                      )
-                      console.log(expandedLessonId);
-
-                    }
-
-
-                    }
-                    >
+                        prev === lesson.id ? null : lesson.id)
+                      console.log(expandedLessonId);}}
+                  >
                     <div key={lesson.id} className={styles.lessonRow}>
                       <div className={styles.lessonLeft}>
                         {lesson.completed ? (

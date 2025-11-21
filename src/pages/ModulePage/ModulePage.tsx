@@ -78,7 +78,7 @@ export default function ModulePage() {
 
     useEffect(() => {
 
-        !storecourse[activecourse].modules[activemodule].lessons[activelesson].content ? GetCourse() : console.log(storecourse[activecourse].modules[activemodule].lessons[activelesson].content);
+        (storecourse && !storecourse[activecourse].modules[activemodule].lessons[activelesson].content) ? GetCourse() : console.log(storecourse[activecourse].modules[activemodule].lessons[activelesson].content);
 
 
         const handleSelectionChange = () => {
@@ -133,7 +133,9 @@ export default function ModulePage() {
 
     function getnewtheory() {
         dispatch(setactivelesson(activelesson + 1))
-        navigate(`../theory?theme=${encodeURIComponent(storecourse[activecourse].modules[activemodule].lessons[activelesson].title)}`)
+        console.log(activelesson);
+        
+        navigate(`../theory?theme=${encodeURIComponent(storecourse[activecourse + 1].modules[activemodule + 1].lessons[activelesson + 1].title)}`)
         setispractice(false)
         GetCourse()
     }
