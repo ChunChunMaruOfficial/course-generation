@@ -173,7 +173,7 @@ const CourseView = () => {
                             className={styles.themeList}>
                             {lessonscontent.map((v, i) => (
 
-                              <div onClick={() => i == 0 ? (navigate(`../theory?theme=${encodeURIComponent(lesson.title)}`), dispatch(setactivelesson(id))) : navigate(`./practice?theme=${encodeURIComponent(lesson.title)}`)} className={styles.right}>
+                              <div key={i} onClick={() => i == 0 ? (navigate(`../theory?theme=${encodeURIComponent(lesson.title)}`), dispatch(setactivelesson(id))) : navigate(`./practice?theme=${encodeURIComponent(lesson.title)}`)} className={styles.right}>
                                 <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>
                               </div>
 

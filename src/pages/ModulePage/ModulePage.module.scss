@@ -44,6 +44,8 @@
 }
 
 .container {
+  height: fit-content;
+
   &>div {
     &>span>img {
       display: block;
@@ -289,6 +291,25 @@
   transition: 0.3s ease-in-out;
   padding: 2px;
   border-radius: 10px;
+
+  >div>h1 {
+    font-weight: normal;
+
+    >span {
+      color: black;
+      text-decoration: none;
+      background: linear-gradient(to bottom, white 50%, gold 50%);
+      background-size: 100% 200%;
+      background-position: 0 0;
+      transition: background-position 400ms ease;
+      border-bottom: 2px solid gold;
+      font-weight: 500;
+
+      &:hover {
+        background-position: 0 100%;
+      }
+    }
+  }
 
   &>span {
     @include mixin.flex(start, start, column, nowrap, 10px);
