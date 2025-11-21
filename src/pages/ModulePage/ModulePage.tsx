@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
-import { selectasimp, setactivelessoncontent } from '../../slices/answerSlice'
+import { selectasimp, setactivelessoncontent, setactivelesson } from '../../slices/answerSlice'
 import { useNavigate, useSearchParams } from "react-router-dom";
 import loading from '../../assets/loading.gif'
 
@@ -46,11 +46,6 @@ export default function ModulePage() {
 
     }
 
-
-
-
-
-
     const tabsData = [
         {
             id: "tab-1", label: "RoadMap", content: selectedwords
@@ -66,26 +61,22 @@ export default function ModulePage() {
     const [searchParams] = useSearchParams();
     const menuRef = useRef<HTMLDivElement>(null)
     const [activeTab, setActiveTab] = useState("tab-1");
-    const theme = decodeURIComponent(searchParams.get('theme')!)
+
+    async function GetCourse() {
+        console.log('GENERATING LESSON');
+
+        const response = await axios.post('http://localhost:3000/api/generateLesson',
+            { topic: decodeURIComponent(searchParams.get('theme')!) },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        dispatch(setactivelessoncontent(JSON.parse(JSON.stringify(response.data.result).replace('json', '').replaceAll('`', '')).lesson_text))
+    }
 
     useEffect(() => {
-        async function GetCourse() {
-            console.log('GENERATING LESSON');
-
-            const response = await axios.post('http://localhost:3000/api/generateLesson',
-                { topic: theme },
-                {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-
-            dispatch(setactivelessoncontent(JSON.parse(JSON.stringify(response.data.result).replace('json', '').replaceAll('`', '')).lesson_text))
-
-
-        }
-
 
         !storecourse[activecourse].modules[activemodule].lessons[activelesson].content ? GetCourse() : console.log(storecourse[activecourse].modules[activemodule].lessons[activelesson].content);
 
@@ -127,7 +118,7 @@ export default function ModulePage() {
     async function getpractice() {
         setispractice(true)
         const response = await axios.post('http://localhost:3000/api/generatePractice',
-            { topic: theme },
+            { topic: decodeURIComponent(searchParams.get('theme')!) },
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -140,14 +131,21 @@ export default function ModulePage() {
 
     }
 
+    function getnewtheory() {
+        dispatch(setactivelesson(activelesson + 1))
+        navigate(`../theory?theme=${encodeURIComponent(storecourse[activecourse].modules[activemodule].lessons[activelesson].title)}`)
+        setispractice(false)
+        GetCourse()
+    }
+
     const sidebarRef = useRef<HTMLDivElement>(null)
     const menubuttonRef = useRef<HTMLImageElement>(null)
     const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
 
-
     const [Answers, setAnswers] = useState<(number[] | undefined)[]>(
         Array.from({ length: practicetext.length }, () => [])
     );
+
     return (
         <div onClick={(e) => {
             if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node) && menubuttonRef.current && !menubuttonRef.current.contains(e.target as Node)) {
@@ -160,9 +158,12 @@ export default function ModulePage() {
             <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setsidebarispened={setsidebarispened}></Header>
             <div className={styles.parent}>
                 <Card ref={cardRef} className={styles.container}>
-                    <h1>{theme}</h1>
+                    <h1>{decodeURIComponent(searchParams.get('theme')!)}</h1>
 
-                    {storecourse[activecourse].modules[activemodule].lessons[activelesson].content ? ispractice ? (
+                    {!ispractice ? (storecourse[activecourse] && storecourse[activecourse].modules[activemodule] && storecourse[activecourse].modules[activemodule].lessons[activelesson].content ? (<div className={styles.theory}>
+                        {storecourse[activecourse].modules[activemodule].lessons[activelesson].content && parse(storecourse[activecourse].modules[activemodule].lessons[activelesson].content)}
+
+                    </div>) : (<img src={loading} className={styles.loadgif} />)) : (practicetext ? (
                         <div className={styles.questionContainer}>{practicetext.map((v: any, i: number) => (<div><h1>{v.question}</h1>
                             <span>{v.options.map((v1: any, i1: number) => (<div>
                                 <input
@@ -198,17 +199,9 @@ export default function ModulePage() {
                                 </label>
                             </div>))}</span>
                         </div>))}</div>
-
-
-                    ) : (<div>
-                        { storecourse[activecourse].modules[activemodule].lessons[activelesson].content && parse(storecourse[activecourse].modules[activemodule].lessons[activelesson].content)}
-
-                    </div>) : (<img src={loading} className={styles.loadgif} />)}
-
-
-
+                    ) : (<img src={loading} className={styles.loadgif} />))}
                     <h2>{selectedText}</h2>
-                    <Button onClick={() => getpractice()} >{ispractice ? 'перейти к следующему уроку' : 'Перейти к практике'}</Button>
+                    <Button onClick={() => ispractice ? getnewtheory() : getpractice()} >{ispractice ? 'перейти к следующему уроку' : 'Перейти к практике'}</Button>
                 </Card>
 
                 <div className={styles.folder}>

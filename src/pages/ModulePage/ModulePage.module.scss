@@ -75,6 +75,23 @@
     text-stroke: 1.5px black;
     text-shadow: 2px 2px #6C757D;
   }
+
+  .theory {
+    span {
+      color: black;
+      text-decoration: none;
+      background: linear-gradient(to bottom, white 50%, gold 50%);
+      background-size: 100% 200%;
+      background-position: 0 0;
+      transition: background-position 400ms ease;
+      border-bottom: 2px solid gold;
+      font-weight: 500;
+
+      &:hover {
+        background-position: 0 100%;
+      }
+    }
+  }
 }
 
 .tabs {
@@ -273,10 +290,10 @@
   padding: 2px;
   border-radius: 10px;
 
-  & > span {
+  &>span {
     @include mixin.flex(start, start, column, nowrap, 10px);
 
-    & > p {
+    &>p {
       border: 1px solid var(--border);
       border-radius: 0.75rem;
       padding: 1rem;
@@ -336,7 +353,7 @@ label.customradio {
   }
 }
 
-input[type="checkbox"]:checked + label.customradio::after {
+input[type="checkbox"]:checked+label.customradio::after {
   transform: translateY(-50%) scale(1);
 }
 
@@ -344,6 +361,7 @@ input[type="checkbox"]:checked + label.customradio::after {
   0% {
     background-color: rgba(255, 236, 179, 0.5);
   }
+
   100% {
     background-color: transparent;
   }

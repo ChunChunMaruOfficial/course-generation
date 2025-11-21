@@ -35,7 +35,13 @@ const answerSlice = createSlice({
     },
 
     selectasimp(state, action) {
-      state.course[state.activecourse].modules[state.activemodule].lessons[state.activelesson].content.replace(action.payload, `[${action.payload}]`);
+      console.log(action.payload);
+      state.course[state.activecourse].modules[state.activemodule].lessons[state.activelesson].content =
+        state.course[state.activecourse].modules[state.activemodule].lessons[state.activelesson].content
+          .replace(action.payload, `<span>${action.payload}</span>`);
+
+      console.log(state.course[state.activecourse].modules[state.activemodule].lessons[state.activelesson].content);
+
     },
 
     completingLesson(state, action) {
