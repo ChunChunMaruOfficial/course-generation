@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from './ModulePage.module.scss'
 import { Card } from "@/trash/components/Card/Card";
 import Header from "@/trash/components/Header/header";
@@ -8,11 +8,12 @@ import { useSelector, useDispatch } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
-import { selectasimp, setactivelessoncontent, setactivelesson } from '../../slices/answerSlice'
+import { selectasimp, setactivelessoncontent, setactivelesson, setactivelessonlinks } from '../../slices/answerSlice'
 import { useNavigate, useSearchParams } from "react-router-dom";
 import loading from '../../assets/loading.gif'
-
-
+import { type RootState } from "@/store";
+import type { Link } from "../../interfaces/Link";
+import arrowlink from '../../assets/svg/arrowlink.svg'
 
 export default function ModulePage() {
     const dispatch = useDispatch()
@@ -21,16 +22,16 @@ export default function ModulePage() {
     const storecourse = useSelector((state: any) => state.answer.course);
     const activecourse = useSelector((state: any) => state.answer.activecourse);
     const activemodule = useSelector((state: any) => state.answer.activemodule);
-    const activelesson = useSelector((state: any) => state.answer.activelesson);
+    const activelesson = useSelector<RootState, number>((state) => state.answer.activelesson);
     const [selectedwords, setselectedwords] = useState<string[]>([])
     const [rightanswers, setrightanswers] = useState<number | undefined>(undefined)
     const [selectedText, setSelectedText] = useState<string>('');
-    const [isLoading, setisLoading] = useState<boolean>(false)
+    const [isLoading, setisLoading] = useState<boolean>(true)
     const [practicetext, setpracticetext] = useState<any>([]);
     const [showmenu, setShowMenu] = useState<boolean>(false);
     const [ispractice, setispractice] = useState<boolean>(false);
     const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
-    const [Answers, setAnswers] = useState<(number[] | undefined)[]>(
+    const [Answers, setAnswers] = useState<({ text: string, correct: boolean }[] | undefined)[]>(
         Array.from({ length: practicetext.length }, () => [])
     );
     const [activeTab, setActiveTab] = useState("tab-1");
@@ -71,20 +72,23 @@ export default function ModulePage() {
         console.log('GENERATING LESSON');
         setisLoading(true)
         const response = await axios.post('http://localhost:3000/api/generateLesson',
-            { topic: decodeURIComponent(searchParams.get('theme')!) },
+            { topic: decodeURIComponent(searchParams.get('theme')!), course_structure: JSON.stringify(storecourse[activecourse]), context: '' },
             {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }
         );
-        dispatch(setactivelessoncontent(JSON.parse(JSON.stringify(response.data.result).replace('json', '').replaceAll('`', '')).lesson_text))
+        console.log(response.data.result);
+        
+        dispatch(setactivelessoncontent(response.data.result.lesson_text))
+        dispatch(setactivelessonlinks(response.data.result.links))
         setisLoading(false)
     }
 
     useEffect(() => {
 
-        (storecourse && !storecourse[activecourse].modules[activemodule].lessons[activelesson].content) && GetCourse()
+        (storecourse.length > 0 && !storecourse[activecourse].modules[activemodule].lessons[activelesson].content) && GetCourse()
 
         const handleSelectionChange = () => {
             const selection = window.getSelection();
@@ -124,7 +128,7 @@ export default function ModulePage() {
         setispractice(true)
         setisLoading(true)
         const response = await axios.post('http://localhost:3000/api/generatePractice',
-            { topic: decodeURIComponent(searchParams.get('theme')!) },
+            { topic: storecourse[activecourse].modules[activemodule].lessons[activelesson].content, highlights: JSON.stringify(selectedwords), previous_practice: '' },
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -136,7 +140,30 @@ export default function ModulePage() {
 
     }
 
-    function getnewtheory() {
+    const retry = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        setrightanswers(undefined)
+        setpracticetext((prev: any) => {
+            const shuffleArray = (arr: any) => {
+                const arrayCopy = [...arr];
+                for (let i = arrayCopy.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]];
+                }
+                return arrayCopy;
+            };
+
+            const withShuffledOptions = prev.map((item: any) => ({
+                ...item,
+                options: Array.isArray(item.options) ? shuffleArray(item.options) : item.options,
+            }));
+
+            return shuffleArray(withShuffledOptions);
+        });
+
+    }
+
+    const rightcheck = () => {
 
         if (practicetext.length > 0 && (Answers.some(v => v != undefined && v.length == 0) || Answers.includes(undefined))) {
             const idx = Answers.findIndex((v: any) => v == undefined || v.length < 1)
@@ -151,17 +178,21 @@ export default function ModulePage() {
             return 0;
         }
 
-        //setrightanswers(Answers.filter(v => v!.correct == true).length)
-
-
-        // dispatch(setactivelesson(activelesson + 1))
-        // navigate(`../theory?theme=${encodeURIComponent(storecourse[activecourse].modules[activemodule].lessons[activelesson + 1].title)}`)
-        // setispractice(false)
-        // GetCourse()
+        setrightanswers(() => {
+            const result = Answers.flat().filter(v => v?.correct === true);
+            return result.length;
+        });
     }
 
-    console.log(practicetext);
+    function getnewtheory() {
 
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        dispatch(setactivelesson(activelesson + 1))
+        setispractice(false)
+        setrightanswers(undefined)
+        navigate(`../theory?theme=${encodeURIComponent(storecourse[activecourse].modules[activemodule].lessons[activelesson + 1].title)}`)
+        GetCourse()
+    }
 
     return (
         <div onClick={(e) => {
@@ -186,16 +217,17 @@ export default function ModulePage() {
                                 <input
                                     type="checkbox"
                                     id={`${i}-${i1}`}
-                                    checked={Answers[i]?.includes(i1) ?? false}
+                                    checked={Answers[i]?.includes(v1) ?? false}
                                     onChange={() => {
+
 
                                         setAnswers(a => {
                                             const newAnswers = [...a];
                                             const current = newAnswers[i] ? [...newAnswers[i]] : [];
-                                            if (current.indexOf(i1) === -1) {
-                                                current.push(i1);
+                                            if (current.indexOf(v1) === -1) {
+                                                current.push(v1);
                                             } else {
-                                                current.splice(current.indexOf(i1), 1);
+                                                current.splice(current.indexOf(v1), 1);
                                             }
                                             newAnswers[i] = current;
                                             return newAnswers;
@@ -205,6 +237,7 @@ export default function ModulePage() {
                                     name={`${v.id}-${i1}`}
                                 />
                                 <label
+                                    style={{ color: v1.correct ? 'red' : '' }}
                                     className={`${styles.customradio} ${styles.label}`}
                                     htmlFor={`${i}-${i1}`}
                                 >
@@ -213,9 +246,10 @@ export default function ModulePage() {
                             </div>))}</span>
                         </div>))}</div>
                     ))}
-                    <h2>{selectedText}</h2>
-                    {!isLoading && (<Button onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); ispractice ? getnewtheory() : getpractice() }} >{ispractice ? 'проверить тест' : 'Перейти к практике'}</Button>)}
-                    {rightanswers != undefined && (<div><Button>Пройти тест заново</Button> <p>?/{practicetext.length}</p> <Button>Перейти к следующему уроку</Button></div>)}
+                   { !isLoading && ( <><h2>Связанные</h2>
+                    <div className={styles.materials}>{storecourse[activecourse].modules[activemodule].lessons[activelesson].links.map((v: Link) => (<a href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
+                    {!isLoading && rightanswers == undefined && (<Button onClick={() => { ispractice ? rightcheck() : (getpractice(), window.scrollTo({ top: 0, behavior: 'smooth' }))}} >проверить тест</Button>)}
+                    {rightanswers != undefined && (<div className={styles.rightcheck}><Button onClick={() => retry()}>Пройти тест заново</Button> <p>{rightanswers}/{practicetext.length}</p> <Button onClick={() => getnewtheory()}>Перейти к следующему уроку</Button></div>)}
                 </Card>
 
                 <div className={styles.folder}>
@@ -234,7 +268,7 @@ export default function ModulePage() {
                         {activeTab == "tab-1" ? storecourse.length > 0 ? storecourse[activecourse].modules.map((v: Module, i: number) => (
                             <div className={styles.roadmapitem} key={i}>
                                 <div className={styles.leftpart}><p>{v.title}</p>
-                                    <span>{v.lessons.map((v1: Lesson, i) => (<p key={i}>{v1.title}</p>))}</span>
+                                    <span>{v.lessons.map((v1: Lesson, i) => (<p style={{textDecoration: v1.id == (activelesson + 1) ? 'underline' : ''}} key={i}>{v1.title}</p>))}</span>
                                 </div>
                                 <div className={styles.rightpart}>
                                     <hr />

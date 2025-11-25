@@ -1,3 +1,5 @@
+import type { Link } from "./Link";
+
 export interface Lesson {
   id: number;
   title: string;
@@ -5,4 +7,5 @@ export interface Lesson {
   content: string;
   theorycompl: number;
   practicecompl: number;
+  links: Link[]
 }

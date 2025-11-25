@@ -6,3 +6,4 @@ export const store = configureStore({
     answer: answerSlice,
   },
 });
+export type RootState = ReturnType<typeof store.getState>;

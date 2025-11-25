@@ -1,0 +1,6 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.000000" height="24.000000" fill="none" customFrame="#000000">
+	<rect id="thumb-up" width="24.000000" height="24.000000" x="0.000000" y="0.000000" />
+	<path id="Path" d="M0 0L24 0L24 24L0 24L0 0Z" fill-rule="evenodd" />
+	<path id="Path" d="M7 11L7 19C7 19.5523 6.55228 20 6 20L4 20C3.44772 20 3 19.5523 3 19L3 12C3 11.4477 3.44772 11 4 11L7 11C9.20914 11 11 9.20914 11 7L11 6C11 4.89543 11.8954 4 13 4C14.1046 4 15 4.89543 15 6L15 11L18 11C19.1046 11 20 11.8954 20 13L19 18C18.7046 19.2603 17.8892 20.0756 17 20L10 20C8.34315 20 7 18.6569 7 17" fill-rule="evenodd" stroke="rgb(0,0,0)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+	<path id="Path" d="M7 11L7 19C7 19.5523 6.55228 20 6 20L4 20C3.44772 20 3 19.5523 3 19L3 12C3 11.4477 3.44772 11 4 11L7 11C9.20914 11 11 9.20914 11 7L11 6C11 4.89543 11.8954 4 13 4C14.1046 4 15 4.89543 15 6L15 11L18 11C19.1046 11 20 11.8954 20 13L19 18C18.7046 19.2603 17.8892 20.0756 17 20L10 20C8.34315 20 7 18.6569 7 17" fill-rule="evenodd" stroke="rgb(255,255,255)" stroke-opacity="0" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+</svg>
