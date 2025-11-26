@@ -46,6 +46,16 @@
 .container {
   height: fit-content;
 
+  >h2{
+    margin-top: 30px;
+  }
+
+  >button {
+    font-size: clamp(1.2rem, 2.5vw, 2rem);  
+    padding: 1em;
+    border-radius: 0.5em;
+  }
+
   &>div {
     &>span>img {
       display: block;
@@ -99,17 +109,23 @@
     @include mixin.flex(center, start, row, nowrap, 30px);
   }
 
-  .materials{
+  .materials {
     @include mixin.flex(start, start, column, nowrap);
     width: 100%;
-    >a{
+
+    >a {
       padding: 10px;
       width: 100%;
       @include mixin.flex(start, start, row, nowrap, 10px);
       border-bottom: 1px solid hsl(0, 0%, 81.6%);
       text-decoration: none;
 
-      >p{
+      &:hover p{
+        color: var(--primary);
+      }
+
+      >p {
+        transition: .1s ease-in-out;
         color: var(--card-foreground);
       }
     }
@@ -150,7 +166,7 @@
   border-radius: 0 10px 10px 10px;
   margin-top: -2px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
-  padding: 1.2rem 20px 0 20px;
+  padding: 0 20px 0 20px;
   background: #fff;
   min-height: 16rem;
   width: 100%;
@@ -261,7 +277,7 @@
   padding: 10px;
   opacity: 1;
   align-self: center;
-  margin: 10px 0;
+  margin: 18px 0;
   max-height: calc(100% - 20px);
   transition: .3s ease-in-out;
 

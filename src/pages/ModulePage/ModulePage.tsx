@@ -14,14 +14,15 @@ import loading from '../../assets/loading.gif'
 import { type RootState } from "@/store";
 import type { Link } from "../../interfaces/Link";
 import arrowlink from '../../assets/svg/arrowlink.svg'
+import type { CourseData } from "../../interfaces/CourseData";
 
 export default function ModulePage() {
     const dispatch = useDispatch()
     const [searchParams] = useSearchParams();
     const navigate = useNavigate()
-    const storecourse = useSelector((state: any) => state.answer.course);
-    const activecourse = useSelector((state: any) => state.answer.activecourse);
-    const activemodule = useSelector((state: any) => state.answer.activemodule);
+    const storecourse = useSelector<RootState, CourseData[]>((state) => state.answer.course);
+    const activecourse = useSelector<RootState, number>((state) => state.answer.activecourse);
+    const activemodule = useSelector<RootState, number>((state) => state.answer.activemodule);
     const activelesson = useSelector<RootState, number>((state) => state.answer.activelesson);
     const [selectedwords, setselectedwords] = useState<string[]>([])
     const [rightanswers, setrightanswers] = useState<number | undefined>(undefined)
@@ -247,8 +248,8 @@ export default function ModulePage() {
                         </div>))}</div>
                     ))}
                    { !isLoading && ( <><h2>Связанные</h2>
-                    <div className={styles.materials}>{storecourse[activecourse].modules[activemodule].lessons[activelesson].links.map((v: Link) => (<a href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
-                    {!isLoading && rightanswers == undefined && (<Button onClick={() => { ispractice ? rightcheck() : (getpractice(), window.scrollTo({ top: 0, behavior: 'smooth' }))}} >проверить тест</Button>)}
+                    <div className={styles.materials}>{storecourse[activecourse].modules[activemodule].lessons[activelesson].links.map((v: Link) => (<a target="_blank" href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
+                    {!isLoading && rightanswers == undefined && (<Button onClick={() => { ispractice ? rightcheck() : (getpractice(), window.scrollTo({ top: 0, behavior: 'smooth' }))}} >{ispractice ? 'Проверить тест' : 'Перейти к тесту'}</Button>)}
                     {rightanswers != undefined && (<div className={styles.rightcheck}><Button onClick={() => retry()}>Пройти тест заново</Button> <p>{rightanswers}/{practicetext.length}</p> <Button onClick={() => getnewtheory()}>Перейти к следующему уроку</Button></div>)}
                 </Card>
 
@@ -268,7 +269,7 @@ export default function ModulePage() {
                         {activeTab == "tab-1" ? storecourse.length > 0 ? storecourse[activecourse].modules.map((v: Module, i: number) => (
                             <div className={styles.roadmapitem} key={i}>
                                 <div className={styles.leftpart}><p>{v.title}</p>
-                                    <span>{v.lessons.map((v1: Lesson, i) => (<p style={{textDecoration: v1.id == (activelesson + 1) ? 'underline' : ''}} key={i}>{v1.title}</p>))}</span>
+                                    <span>{v.lessons.map((v1: Lesson, i) => (<p style={{textDecoration: v1.id == (activelesson + 1) && v.id == (activemodule + 1) ? 'underline' : ''}} key={i}>{v1.title}</p>))}</span>
                                 </div>
                                 <div className={styles.rightpart}>
                                     <hr />
