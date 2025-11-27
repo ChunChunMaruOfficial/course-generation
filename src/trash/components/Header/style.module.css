@@ -16,7 +16,12 @@
     overflow: auto;
 }
 
+.genereatenewcourse{
+    width: 100%;
+}
+
 .sidebar>p {
+    margin-block: 5px;
     padding: 10px 15px;
     border-radius: 10px;
     transition: .3s ease-in-out;

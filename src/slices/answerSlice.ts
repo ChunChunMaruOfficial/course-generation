@@ -5,7 +5,7 @@ import type { CourseData } from "../interfaces/CourseData";
 const initialState = {
   courses: [] as CourseData[],
   activecourse: {} as CourseData,
-  activemodule: 0 as number,
+  activemodule: 1 as number,
   activelesson: 0 as number
 };
 
@@ -24,15 +24,18 @@ const answerSlice = createSlice({
     setactivemodule(state, action) {
       state.activemodule = action.payload
     },
+    setlessonstatus(state, action) {
+      state.activecourse.modules.find(v => v.id == state.activemodule)!.lessons.find(v => v.id == state.activelesson)!.status = action.payload
+    },
     setactivelesson(state, action) {
       state.activelesson = action.payload
     },
 
     setactivelessoncontent(state, action) {
-      state.activecourse.modules[state.activemodule].lessons[state.activelesson].content = action.payload
+      state.activecourse.modules.find(v => v.id == state.activemodule)!.lessons.find(v => v.id == state.activelesson)!.content = action.payload
     },
     setactivelessonlinks(state, action) {
-      state.activecourse.modules[state.activemodule].lessons[state.activelesson].links = action.payload
+      state.activecourse.modules.find(v => v.id == state.activemodule)!.lessons.find(v => v.id == state.activelesson)!.links = action.payload
     },
 
     setcourse(state, action) {
@@ -41,18 +44,14 @@ const answerSlice = createSlice({
     },
 
     selectasimp(state, action) {
-      console.log(action.payload);
-      state.activecourse.modules[state.activemodule].lessons[state.activelesson].content =
-        state.activecourse.modules[state.activemodule].lessons[state.activelesson].content
+      state.activecourse.modules.find(v => v.id == state.activemodule)!.lessons.find(v => v.id == state.activelesson)!.content =
+        state.activecourse.modules.find(v => v.id == state.activemodule)!.lessons.find(v => v.id == state.activelesson)!.content
           .replace(action.payload, `<span>${action.payload}</span>`);
-
-      console.log(state.activecourse.modules[state.activemodule].lessons[state.activelesson].content);
-
     },
 
   }
 
 });
 
-export const { addcourse, setcourse, setactivecourse, setactivemodule, setactivelesson, selectasimp, setactivelessoncontent, setactivelessonlinks } = answerSlice.actions;
+export const { addcourse,setlessonstatus, setcourse, setactivecourse, setactivemodule, setactivelesson, selectasimp, setactivelessoncontent, setactivelessonlinks } = answerSlice.actions;
 export default answerSlice.reducer;

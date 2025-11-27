@@ -57,17 +57,18 @@ const cardVariants = {
 const CourseView = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
-  const storecourse = useSelector((state: any) => state.answer.courses);
+  const storecourse = useSelector<RootState, CourseData[]>((state) => state.answer.courses);
   const activecourse = useSelector<RootState, CourseData>((state) => state.answer.activecourse);
-  const activemodule = useSelector((state: any) => state.answer.activemodule);
+  const activemodule = useSelector<RootState, number>((state) => state.answer.activemodule);
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
+  const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
+  const [isLoading, setisLoading] = useState<boolean>(true)
+
   const sidebarRef = useRef<HTMLDivElement>(null)
   const menubuttonRef = useRef<HTMLImageElement>(null)
   const [expandedLessonId, setExpandedLessonId] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
-  const [isLoading, setisLoading] = useState<boolean>(true)
 
   useEffect(() => {
     storecourse.length > 0 && setisLoading(false); console.log(storecourse);
@@ -110,16 +111,17 @@ const CourseView = () => {
               transition={{ duration: .5 }}
             >
 
-              <h1 className={styles.pageTitle}>Модуль {activecourse.modules[activemodule].id}: {activecourse.modules[activemodule].title} </h1>
+              <h1 className={styles.pageTitle}>{activemodule}. {activecourse.modules.find(v => v.id == activemodule)!.title} </h1>
 
               <div className={styles.lessonsList}>
-                {activecourse.modules[activemodule].lessons.map((lesson: Lesson, id: number) => (
+                {activecourse.modules.find(v => v.id == activemodule)!.lessons.map((lesson: Lesson, id: number) => (
                   <div className={styles.lessonItem} key={id}
                     style={{ boxShadow: expandedLessonId === lesson.id ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
                     onClick={() => {
                       setExpandedLessonId((prev) =>
                         prev === lesson.id ? null : lesson.id)
-                      console.log(expandedLessonId);}}
+                      console.log(expandedLessonId);
+                    }}
                   >
                     <div key={lesson.id} className={styles.lessonRow}>
                       <div className={styles.lessonLeft}>
@@ -176,7 +178,7 @@ const CourseView = () => {
                             className={styles.themeList}>
                             {lessonscontent.map((v, i) => (
 
-                              <div key={i} onClick={() => i == 0 ? (navigate(`../theory?theme=${encodeURIComponent(lesson.title)}`), dispatch(setactivelesson(id))) : navigate(`./practice?theme=${encodeURIComponent(lesson.title)}`)} className={styles.right}>
+                              <div key={i} onClick={() => i == 0 ? (navigate(`../theory?theme=${encodeURIComponent(lesson.title)}`), dispatch(setactivelesson(lesson.id))) : navigate(`./practice?theme=${encodeURIComponent(lesson.title)}`)} className={styles.right}>
                                 <p className={styles.progressValue}><img src={v.img} alt="" />{v.type}</p>
                               </div>
 
@@ -186,6 +188,8 @@ const CourseView = () => {
                         </motion.div>
                       )}
                     </AnimatePresence>
+                    <span style={{ width: `${lesson.theorycompl}%` }} className={styles.theoryprogress}></span>
+                    <span style={{ width: `${lesson.practicecompl}%` }} className={styles.practiceprogress}></span>
                   </div>
                 ))}
               </div>
@@ -243,10 +247,10 @@ const CourseView = () => {
               <div className={styles.modulesList}>
                 {activecourse.modules.map((module: Module) => {
                   const progress = getModuleProgress(module);
-                  const isActive = module.id === (activemodule + 1);
+                  const isActive = module.id === activemodule;
 
                   return (
-                    <button key={module.id} onClick={() => { dispatch(setactivemodule(module.id - 1)); setExpandedLessonId(null) }} className={`${styles.moduleRow} ${isActive ? styles.active : ''}`}>
+                    <button key={module.id} onClick={() => { dispatch(setactivemodule(module.id)); setExpandedLessonId(null) }} className={`${styles.moduleRow} ${isActive ? styles.active : ''}`}>
                       <div className={styles.moduleLeft}>
                         <span className={`${styles.moduleBadge} ${isActive ? styles.active : ''}`}>{module.id}</span>
                         <span className={styles.moduleTitle}>{module.title}</span>

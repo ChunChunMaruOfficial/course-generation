@@ -49,6 +49,7 @@
 }
 
 .lessonItem {
+  position: relative;
   @include mixin.flex(start, start, column, nowrap, 10px);
   border-radius: 16px;
   padding: 20px;
@@ -60,6 +61,24 @@
   &:hover {
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  >span {
+    position: absolute;
+    left: 0;
+    height: 50%;
+    z-index: -1;
+
+    &.theoryprogress {
+      background-color: rgba(88, 120, 193, .1);
+      top: 0;
+    }
+
+    &.practiceprogress {
+      background-color: rgba(66, 165, 112, .1);
+      top: 50%;
+
+    }
   }
 }
 
@@ -150,12 +169,7 @@
   }
 
   &:nth-of-type(2)>p {
-    color: rgb(222, 166, 64);
-  }
-
-  &:nth-of-type(3)>p {
     color: rgb(66, 165, 112);
-    background-color: rgb(66, 165, 112, 0.1);
   }
 }
 

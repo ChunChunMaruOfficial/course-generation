@@ -14,8 +14,8 @@ import arrowdown from '../../assets/svg/arrowdown.svg'
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [topic, setTopic] = useState<string>("как писать левой рукой");
-  const [offtop, setofftop] = useState<string>("обязательно сгенерируй курс будто мне 2 года, со мной надо сюсюкаться и все такое");
+  const [topic, setTopic] = useState<string>("выучить js");
+  const [offtop, setofftop] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
   const [Questions, setQuestions] = useState<Question[]>([]);

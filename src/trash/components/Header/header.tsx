@@ -35,9 +35,9 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, sets
             async function getcourse() {
                 const response = await fetch('http://localhost:3000/course');
                 const data = await response.json();
+                console.log(data.result);
                 dispatch(setcourse(data.result));
                 dispatch(setactivecourse(data.result[0].id))
-                console.log(data.result);
 
             }
             getcourse()
@@ -50,6 +50,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, sets
                 <h2 className={styles.pageTitle}>Мои курсы</h2>
                 {storecourse.map((v: CourseData, i: number) => (
                     <p key={i} onClick={() => { dispatch(setactivecourse(v.id)); setsidebarispened(false); }}>{v.title}</p>))}
+            <Link to="/" ><Button className={styles.genereatenewcourse}>Сгенерировать новый курс</Button></Link>
             </div>
             <header className={styles.header}>
                 <div className={styles.headerInner}>

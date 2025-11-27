@@ -9,4 +9,5 @@ export interface Lesson {
   practicecompl: number;
   links: Link[];
   practice: Practicequestion[]
+  status: number; // 0 - undefined; 1 - dislike; 2 - like
 }

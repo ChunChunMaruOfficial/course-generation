@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
-import { selectasimp, setactivelessoncontent, setactivelesson, setactivelessonlinks } from '../../slices/answerSlice'
+import { selectasimp, setactivelessoncontent, setactivelesson, setactivelessonlinks, setlessonstatus } from '../../slices/answerSlice'
 import { useNavigate, useSearchParams } from "react-router-dom";
 import loading from '../../assets/loading.gif'
 import { type RootState } from "@/store";
@@ -27,8 +27,8 @@ export default function ModulePage() {
     const navigate = useNavigate()
     const storecourse = useSelector<RootState, CourseData[]>((state) => state.answer.courses);
     const activecourse = useSelector<RootState, CourseData>((state) => state.answer.activecourse);
-    const activemodule = useSelector<RootState, number>((state) => state.answer.activemodule);
-    const activelesson = useSelector<RootState, number>((state) => state.answer.activelesson);
+    const activemoduleid = useSelector<RootState, number>((state) => state.answer.activemodule);
+    const activelessonid = useSelector<RootState, number>((state) => state.answer.activelesson);
     const [selectedwords, setselectedwords] = useState<string[]>([])
     const [rightanswers, setrightanswers] = useState<number | undefined>(undefined)
     const [selectedText, setSelectedText] = useState<string>('');
@@ -78,7 +78,7 @@ export default function ModulePage() {
         console.log('GENERATING LESSON');
         setisLoading(true)
         const response = await axios.post('http://localhost:3000/api/generateLesson',
-            { topic: decodeURIComponent(searchParams.get('theme')!), course_structure: JSON.stringify(activecourse), context: '' },
+            { topic: decodeURIComponent(searchParams.get('theme')!), course_structure: JSON.stringify(activecourse), context: '', moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -92,9 +92,28 @@ export default function ModulePage() {
         setisLoading(false)
     }
 
+    // async function GetCourse() {
+    //     console.log('REQUEST LESSON');
+    //     setisLoading(true)
+    //     const response = await axios.post('http://localhost:3000/api/getLesson',
+    //         { moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
+    //         {
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         }
+    //     );
+    //     if (typeof response.data.result == 'string' && response.data.result.includes('УПСС!')) {
+    //         GetNewCourse()
+    //     } else {
+    //         dispatch(setactivelessoncontent(response.data.result.lesson_text))
+    //         dispatch(setactivelessonlinks(response.data.result.links))
+    //     }
+    // }
+
     useEffect(() => {
 
-        (storecourse.length > 0 && !activecourse!.modules[activemodule].lessons[activelesson].content) && GetCourse()
+        (storecourse.length > 0 && !activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.content) && GetCourse()
 
         const handleSelectionChange = () => {
             const selection = window.getSelection();
@@ -111,8 +130,8 @@ export default function ModulePage() {
             } else {
                 console.log('Выделенный текст:', selection.toString());
                 if (menuRef.current) {
-                    menuRef.current.style.left = `${event.clientX}px`;
-                    menuRef.current.style.top = `${event.clientY + 15}px`
+                    menuRef.current.style.left = `${event.pageX}px`;
+                    menuRef.current.style.top = `${event.pageY + 15}px`
                 }
                 setShowMenu(true)
             }
@@ -125,16 +144,13 @@ export default function ModulePage() {
             document.removeEventListener('selectionchange', handleSelectionChange);
             document.removeEventListener('mouseup', handleMouseUp);
         };
-
-
-
     }, []);
 
     async function getpractice() {
         setispractice(true)
         setisLoading(true)
         const response = await axios.post('http://localhost:3000/api/generatePractice',
-            { topic: activecourse!.modules[activemodule].lessons[activelesson].content, highlights: JSON.stringify(selectedwords), previous_practice: '' },
+            { topic: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content, highlights: JSON.stringify(selectedwords), moduleid: activemoduleid, courseid: activecourse, previous_practice: '' },
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -193,10 +209,10 @@ export default function ModulePage() {
     function getnewtheory() {
 
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        dispatch(setactivelesson(activelesson + 1))
+        dispatch(setactivelesson(activelessonid + 1))
         setispractice(false)
         setrightanswers(undefined)
-        navigate(`../theory?theme=${encodeURIComponent(activecourse!.modules[activemodule].lessons[activelesson + 1].title)}`)
+        navigate(`../theory?theme=${encodeURIComponent(activecourse!.modules[activemoduleid].lessons[activelessonid + 1].title)}`)
         GetCourse()
     }
 
@@ -215,14 +231,14 @@ export default function ModulePage() {
                     <h1>{decodeURIComponent(searchParams.get('theme')!)}</h1>
 
                     {isLoading ? (<img src={loading} className={styles.loadgif} />) : (!ispractice ? (<div className={styles.theory}>
-                        {activecourse!.modules[activemodule].lessons[activelesson].content && parse(activecourse!.modules[activemodule].lessons[activelesson].content)}
-                        <span className={styles.bottompanel}>
-                            <span className={styles.leftpart}>
-                                <img src={like} alt="" /> 
+                        {activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content && parse(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content)}
+                        <div className={styles.bottompanel}>
+                            <div className={styles.leftside}>
+                                <img src={like} alt="" />
                                 <img src={dislike} alt="" />
-                            </span>
+                            </div>
                             <img src={remakecourse} alt="" />
-                        </span>
+                        </div>
                     </div>) : (
                         <div className={styles.questionContainer}>{practicetext.map((v: Practicequestion, i: number) => (<div ref={el => { QuestionRefs.current[i] = el }} key={i}><h1 >{parse(v.question)}</h1>
                             <span>{v.options.map((v1: Practiceoption, i1: number) => (<div>
@@ -256,7 +272,7 @@ export default function ModulePage() {
                         </div>))}</div>
                     ))}
                     {!isLoading && (<><h2>Связанные</h2>
-                        <div className={styles.materials}>{activecourse!.modules[activemodule].lessons[activelesson].links.map((v: Link) => (<a target="_blank" href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
+                        <div className={styles.materials}>{activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.links.map((v: Link) => (<a target="_blank" href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
                     {!isLoading && rightanswers == undefined && (<Button onClick={() => { ispractice ? rightcheck() : (getpractice(), window.scrollTo({ top: 0, behavior: 'smooth' })) }} >{ispractice ? 'Проверить тест' : 'Перейти к тесту'}</Button>)}
                     {rightanswers != undefined && (<div className={styles.rightcheck}><Button onClick={() => retry()}>Пройти тест заново</Button> <p>{rightanswers}/{practicetext.length}</p> <Button onClick={() => getnewtheory()}>Перейти к следующему уроку</Button></div>)}
                 </Card>
@@ -277,7 +293,7 @@ export default function ModulePage() {
                         {activeTab == "tab-1" ? storecourse.length > 0 ? activecourse!.modules.map((v: Module, i: number) => (
                             <div className={styles.roadmapitem} key={i}>
                                 <div className={styles.leftpart}><p>{v.title}</p>
-                                    <span>{v.lessons.map((v1: Lesson, i) => (<p style={{ textDecoration: v1.id == (activelesson + 1) && v.id == (activemodule + 1) ? 'underline' : '' }} key={i}>{v1.title}</p>))}</span>
+                                    <span>{v.lessons.map((v1: Lesson, i) => (<p style={{ textDecoration: v1.id == (activelessonid + 1) && v.id == (activemoduleid + 1) ? 'underline' : '' }} key={i}>{v1.title}</p>))}</span>
                                 </div>
                                 <div className={styles.rightpart}>
                                     <hr />

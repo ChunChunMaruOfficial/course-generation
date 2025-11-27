@@ -513,13 +513,13 @@ input[type="checkbox"]:checked+label.customradio::after {
   }
 
   to {
-    transform: translate(-50%, -120%);
+    transform: translate(-50%, -100%);
   }
 }
 
 @keyframes sorrymsghide {
   from {
-    transform: translate(-50%, -120%);
+    transform: translate(-50%, -100%);
   }
 
   to {
