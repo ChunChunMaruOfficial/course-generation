@@ -10,26 +10,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addcourse, setactivecourse } from '../../slices/answerSlice'
 import type { Question } from "../../interfaces/Question";
 import axios from "axios"
-//import exampleQuestions from '../../examples/Questions.json'
-
+import arrowdown from '../../assets/svg/arrowdown.svg'
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [topic, setTopic] = useState<string>("");
-  const [offtop, setofftop] = useState<string>("");
+  const [topic, setTopic] = useState<string>("как писать левой рукой");
+  const [offtop, setofftop] = useState<string>("обязательно сгенерируй курс будто мне 2 года, со мной надо сюсюкаться и все такое");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
   const [Questions, setQuestions] = useState<Question[]>([]);
-  const [Answers, setAnswers] = useState<(number[] | undefined)[]>(
-    Array.from({ length: Questions.length }, () => [])
-  );
+  const [Answers, setAnswers] = useState<(number[] | undefined)[]>([]);
 
   const [exampleTexts, setexampleTexts] = useState<string[]>([])
-  const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [sorrymsg, setsorrymsg] = useState<string>('');
+  const [showsorrymsg, setshowsorrymsg] = useState<boolean>(false);
   const tabWidth = 100; // ширина одной вкладки в px
-  const storecourse = useSelector((state: any) => state.answer.course);
-
+  const storecourse = useSelector((state: any) => state.answer.courses);
+  const TopicRef = useRef<HTMLInputElement>(null)
+  const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
   useEffect(() => {
     async function start() {
       const response = await axios.get('http://localhost:3000/getexample');
@@ -72,15 +71,11 @@ const CourseGenerator = () => {
       });
 
 
-      setIsLoading(false);
       setAnswerQuestions(false);
       setQuestions(response.data.result.questions);
+      setAnswers(Array.from({ length: Questions.length }, () => []))
+      setIsLoading(false);
 
-      setAnswers(v => {
-        const newAnswers = [...v];
-        newAnswers.length = response.data.result.questions.length;
-        return newAnswers;
-      });
 
     } else {
 
@@ -90,7 +85,7 @@ const CourseGenerator = () => {
       const bodyObj: { topic: string, answers?: string[], notes?: string } = { topic };
 
       if (Answers.some(v => v != undefined && v.length > 0)) {
-        Questions.map((v, i) => beasnwrs.push(`${v.question} - ${Answers[i]!.join(', ')}`))
+        beasnwrs = Questions.map((q, i) => `${q.question} - ${Answers[i]!.map(j => q.options[j]).join(', ')}`);
       }
 
       if (beasnwrs) {
@@ -108,13 +103,17 @@ const CourseGenerator = () => {
         headers: {
           'Content-Type': 'application/json'
         }
-      });
-      navigate("/course");
-      dispatch(addcourse(response.data.result));
-      dispatch(setactivecourse(storecourse.length))
-      setIsLoading(false);
+      })
 
-
+      if (typeof response.data.result == 'string' && response.data.result.includes('УПСС!')) {
+        setshowsorrymsg(true)
+        setsorrymsg(response.data.result)
+      } else {
+        navigate("/course");
+        dispatch(addcourse(response.data.result));
+        dispatch(setactivecourse(response.data.result.id))
+        setIsLoading(false);
+      }
     }
   };
 
@@ -156,7 +155,7 @@ const CourseGenerator = () => {
           </div>
           <div className={styles.inputContainer}>
             <div className={styles.inputgroup}>
-              <input value={topic} onChange={e => setTopic(e.target.value)} type="text" className={styles.inputfield} id="name" placeholder=' ' />
+              <input value={topic} ref={TopicRef} onChange={e => setTopic(e.target.value)} type="text" className={styles.inputfield} id="name" placeholder=' ' />
               <label htmlFor="name" className={styles.inputlabel}>Введите {Questions.length > 0 && 'другую'} тему</label>
             </div>
           </div>
@@ -179,6 +178,7 @@ const CourseGenerator = () => {
                 {v.options.map((v1, i1) => (
                   <>
                     <input
+                      key={i1}
                       type="checkbox"
                       id={`${i}-${i1}`}
                       checked={Answers[i]?.includes(i1) ?? false}
@@ -228,6 +228,7 @@ const CourseGenerator = () => {
             Сгенерировать {answerQuestions ? 'вопросы' : 'курс'}
           </Button>}
         </div>
+        <div className={styles.sorrymsg + ' ' + (showsorrymsg ? styles.sorrymsgshow : styles.sorrymsghide)}><p>{sorrymsg}</p><span><img onClick={() => setshowsorrymsg(false)} src={arrowdown} alt="" /><Button onClick={() => { TopicRef.current!.focus(); setTopic(''); setshowsorrymsg(false) }}>Ввести другую тему</Button></span></div>
       </div>
     </div>
   );

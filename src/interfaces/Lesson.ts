@@ -1,11 +1,12 @@
 import type { Link } from "./Link";
+import type { Practicequestion } from "./Practicequestion";
 
 export interface Lesson {
   id: number;
   title: string;
-  completed: boolean;
   content: string;
   theorycompl: number;
   practicecompl: number;
-  links: Link[]
+  links: Link[];
+  practice: Practicequestion[]
 }

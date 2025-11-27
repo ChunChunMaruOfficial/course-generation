@@ -1,8 +1,8 @@
 import type { Module } from "./Module";
 
 export interface CourseData {
+  id: number;
   title: string;
-  modulesCount: number;
   lessonsCount: number;
   progress: number;
   modules: Module[];

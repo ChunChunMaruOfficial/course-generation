@@ -12,6 +12,8 @@ import code from '../../assets/svg/code.svg'
 import { setactivemodule, setactivelesson } from '../../slices/answerSlice'
 import Header from "@/trash/components/Header/header";
 import { useNavigate } from "react-router-dom";
+import type { CourseData } from "@/interfaces/CourseData";
+import type { RootState } from "@/store";
 
 
 const lessonscontent: Theme[] = [{
@@ -55,8 +57,8 @@ const cardVariants = {
 const CourseView = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
-  const storecourse = useSelector((state: any) => state.answer.course);
-  const activecourse = useSelector((state: any) => state.answer.activecourse);
+  const storecourse = useSelector((state: any) => state.answer.courses);
+  const activecourse = useSelector<RootState, CourseData>((state) => state.answer.activecourse);
   const activemodule = useSelector((state: any) => state.answer.activemodule);
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
@@ -84,10 +86,11 @@ const CourseView = () => {
   }, [viewMode]);
 
   const getModuleProgress = (module: Module) => {
-    const completed = module.lessons.filter((l: Lesson) => l.completed).length;
+    const completed = module.lessons.filter((l: Lesson) => l.theorycompl == 100).length;
     const total = module.lessons.length;
     return { completed, total, percentage: (completed / total) * 100 };
   };
+
   return (
     <div onClick={(e) => {
       if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node) && menubuttonRef.current && !menubuttonRef.current.contains(e.target as Node)) {
@@ -107,10 +110,10 @@ const CourseView = () => {
               transition={{ duration: .5 }}
             >
 
-              <h1 className={styles.pageTitle}>Модуль {storecourse[activecourse].modules[activemodule].id}: {storecourse[activecourse].modules[activemodule].title} </h1>
+              <h1 className={styles.pageTitle}>Модуль {activecourse.modules[activemodule].id}: {activecourse.modules[activemodule].title} </h1>
 
               <div className={styles.lessonsList}>
-                {storecourse[activecourse].modules[activemodule].lessons.map((lesson: Lesson, id: number) => (
+                {activecourse.modules[activemodule].lessons.map((lesson: Lesson, id: number) => (
                   <div className={styles.lessonItem} key={id}
                     style={{ boxShadow: expandedLessonId === lesson.id ? '0 4px 10px rgba(0, 0, 0, 0.15)' : '' }}
                     onClick={() => {
@@ -120,13 +123,13 @@ const CourseView = () => {
                   >
                     <div key={lesson.id} className={styles.lessonRow}>
                       <div className={styles.lessonLeft}>
-                        {lesson.completed ? (
+                        {lesson.practicecompl == 100 && lesson.theorycompl == 100 ? (
                           <div className={`${styles.lessonStatus} ${styles.completed}`}><Check className={styles.iconSmall} /></div>
                         ) : (
                           <div className={`${styles.lessonStatus} ${styles.number}`}>{lesson.id}</div>
                         )}
 
-                        <span className={`${styles.lessonTitle} ${lesson.completed ? styles.muted : ''}`}>{lesson.title}</span>
+                        <span className={`${styles.lessonTitle} ${lesson.theorycompl == 100 ? styles.muted : ''}`}>{lesson.title}</span>
                       </div>
 
                       {expandedLessonId === lesson.id ? (<motion.p
@@ -135,7 +138,7 @@ const CourseView = () => {
                         initial={'initial'}
                         animate={'animate'}
                         exit={'exit'}
-                        className={styles.lessonProgress + " " + styles.progressValue}>0/{lessonscontent.length}</motion.p>) : lesson.completed ? (
+                        className={styles.lessonProgress + " " + styles.progressValue}>0/{lessonscontent.length}</motion.p>) : lesson.theorycompl == 100 ? (
                           <motion.span
                             variants={pageVariants}
                             initial={'initial'}
@@ -192,13 +195,13 @@ const CourseView = () => {
           <aside className={styles.aside}>
             <div className={styles.card}>
               <div className={styles.sidebarHeader}>
-                <h3 className={styles.sidebarTitle}>{storecourse[activecourse].title}</h3>
-                <p className={styles.sidebarMeta}>{storecourse[activecourse].modulesCount} модулей • {storecourse[activecourse].lessonsCount} урока</p>
+                <h3 className={styles.sidebarTitle}>{activecourse.title}</h3>
+                <p className={styles.sidebarMeta}>{activecourse.modules.length} модулей • {activecourse.lessonsCount} урока</p>
 
                 <div className={styles.sidebarProgress}>
                   <div className={styles.progressLabel}>Прогресс</div>
-                  <div className={styles.progressValue}>{storecourse[activecourse].progress}% Завершено</div>
-                  <Progress value={storecourse[activecourse].progress} className={styles.progressBar} />
+                  <div className={styles.progressValue}>{activecourse.progress}% Завершено</div>
+                  <Progress value={activecourse.progress} className={styles.progressBar} />
                 </div>
               </div>
 
@@ -238,7 +241,7 @@ const CourseView = () => {
               </div>
 
               <div className={styles.modulesList}>
-                {storecourse[activecourse].modules.map((module: Module) => {
+                {activecourse.modules.map((module: Module) => {
                   const progress = getModuleProgress(module);
                   const isActive = module.id === (activemodule + 1);
 

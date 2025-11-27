@@ -11,7 +11,7 @@ import axios from 'axios';
 import { setactivecourse } from '../../../slices/answerSlice';
 
 export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: { sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
-    const storecourse = useSelector((state: any) => state.answer.course);
+    const storecourse = useSelector((state: any) => state.answer.courses);
     const [ispopup, setispopup] = useState<boolean>(false)
     const [email, setemail] = useState<string>('')
     const [password, setpassword] = useState<string>('')
@@ -36,7 +36,8 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, sets
                 const response = await fetch('http://localhost:3000/course');
                 const data = await response.json();
                 dispatch(setcourse(data.result));
-                console.log(data);
+                dispatch(setactivecourse(data.result[0].id))
+                console.log(data.result);
 
             }
             getcourse()
@@ -48,7 +49,7 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, sets
             <div ref={sidebarRef} className={`${styles.sidebar} ${sidebarispened ? styles.sidebaropen : sidebarispened === false ? styles.sidebarclosed : ''}`}>
                 <h2 className={styles.pageTitle}>Мои курсы</h2>
                 {storecourse.map((v: CourseData, i: number) => (
-                    <p key={i} onClick={() => { dispatch(setactivecourse(i)); setsidebarispened(false); }}>{v.title}</p>))}
+                    <p key={i} onClick={() => { dispatch(setactivecourse(v.id)); setsidebarispened(false); }}>{v.title}</p>))}
             </div>
             <header className={styles.header}>
                 <div className={styles.headerInner}>

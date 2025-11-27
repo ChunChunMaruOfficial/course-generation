@@ -1,13 +1,15 @@
 @use '../../mixin.scss' as mixin;
 
 .root {
-	min-height: 100vh;
-	background: var(--background);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 1rem;
+  min-height: 100vh;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow: hidden;
 }
+
 .container {
   width: 100%;
   max-width: 72rem;
@@ -133,8 +135,8 @@
 
   &:focus {
     border-color: var(--primary);
-    
-    & + .inputlabel {
+
+    &+.inputlabel {
       top: -10px;
       left: 10px;
       font-size: 12px;
@@ -144,7 +146,7 @@
     }
   }
 
-  &:not(:placeholder-shown) + .inputlabel {
+  &:not(:placeholder-shown)+.inputlabel {
     top: -10px;
     left: 10px;
     font-size: 12px;
@@ -182,7 +184,7 @@
   height: 60px;
   line-height: 60px;
 
-  & > span {
+  &>span {
     display: block;
     height: 60px;
     animation: animate 150s infinite;
@@ -216,10 +218,10 @@
   padding: 2px;
   border-radius: 10px;
 
-  & > span {
+  &>span {
     @include mixin.flex(start, start, column, nowrap, 10px);
 
-    & > p {
+    &>p {
       border: 1px solid var(--border);
       border-radius: 0.75rem;
       padding: 1rem;
@@ -279,7 +281,7 @@ label.customradio {
   }
 }
 
-input[type="checkbox"]:checked + label.customradio::after {
+input[type="checkbox"]:checked+label.customradio::after {
   transform: translateY(-50%) scale(1);
 }
 
@@ -287,6 +289,7 @@ input[type="checkbox"]:checked + label.customradio::after {
   0% {
     background-color: rgba(255, 236, 179, 0.5);
   }
+
   100% {
     background-color: transparent;
   }
@@ -343,133 +346,183 @@ input[type="checkbox"]:checked + label.customradio::after {
   @include mixin.flex(flex-end, space-between, row, nowrap);
   width: 100%;
 
-  & > .lefttop {
+  &>.lefttop {
     @include mixin.flex(start, start, column, nowrap);
   }
 }
 
 @keyframes animate {
-	0% {
-		transform: translateY(0);
-	}
+  0% {
+    transform: translateY(0);
+  }
 
-	3.33% {
-		transform: translateY(-100%);
-	}
+  3.33% {
+    transform: translateY(-100%);
+  }
 
-	6.66% {
-		transform: translateY(-200%);
-	}
+  6.66% {
+    transform: translateY(-200%);
+  }
 
-	9.99% {
-		transform: translateY(-300%);
-	}
+  9.99% {
+    transform: translateY(-300%);
+  }
 
-	13.32% {
-		transform: translateY(-400%);
-	}
+  13.32% {
+    transform: translateY(-400%);
+  }
 
-	16.65% {
-		transform: translateY(-500%);
-	}
+  16.65% {
+    transform: translateY(-500%);
+  }
 
-	19.98% {
-		transform: translateY(-600%);
-	}
+  19.98% {
+    transform: translateY(-600%);
+  }
 
-	23.31% {
-		transform: translateY(-700%);
-	}
+  23.31% {
+    transform: translateY(-700%);
+  }
 
-	26.64% {
-		transform: translateY(-800%);
-	}
+  26.64% {
+    transform: translateY(-800%);
+  }
 
-	29.97% {
-		transform: translateY(-900%);
-	}
+  29.97% {
+    transform: translateY(-900%);
+  }
 
-	33.3% {
-		transform: translateY(-1000%);
-	}
+  33.3% {
+    transform: translateY(-1000%);
+  }
 
-	36.63% {
-		transform: translateY(-1100%);
-	}
+  36.63% {
+    transform: translateY(-1100%);
+  }
 
-	39.96% {
-		transform: translateY(-1200%);
-	}
+  39.96% {
+    transform: translateY(-1200%);
+  }
 
-	43.29% {
-		transform: translateY(-1300%);
-	}
+  43.29% {
+    transform: translateY(-1300%);
+  }
 
-	46.62% {
-		transform: translateY(-1400%);
-	}
+  46.62% {
+    transform: translateY(-1400%);
+  }
 
-	49.95% {
-		transform: translateY(-1500%);
-	}
+  49.95% {
+    transform: translateY(-1500%);
+  }
 
-	53.28% {
-		transform: translateY(-1600%);
-	}
+  53.28% {
+    transform: translateY(-1600%);
+  }
 
-	56.61% {
-		transform: translateY(-1700%);
-	}
+  56.61% {
+    transform: translateY(-1700%);
+  }
 
-	59.94% {
-		transform: translateY(-1800%);
-	}
+  59.94% {
+    transform: translateY(-1800%);
+  }
 
-	63.27% {
-		transform: translateY(-1900%);
-	}
+  63.27% {
+    transform: translateY(-1900%);
+  }
 
-	66.6% {
-		transform: translateY(-2000%);
-	}
+  66.6% {
+    transform: translateY(-2000%);
+  }
 
-	69.93% {
-		transform: translateY(-2100%);
-	}
+  69.93% {
+    transform: translateY(-2100%);
+  }
 
-	73.26% {
-		transform: translateY(-2200%);
-	}
+  73.26% {
+    transform: translateY(-2200%);
+  }
 
-	76.59% {
-		transform: translateY(-2300%);
-	}
+  76.59% {
+    transform: translateY(-2300%);
+  }
 
-	79.92% {
-		transform: translateY(-2400%);
-	}
+  79.92% {
+    transform: translateY(-2400%);
+  }
 
-	83.25% {
-		transform: translateY(-2500%);
-	}
+  83.25% {
+    transform: translateY(-2500%);
+  }
 
-	86.58% {
-		transform: translateY(-2600%);
-	}
+  86.58% {
+    transform: translateY(-2600%);
+  }
 
-	89.91% {
-		transform: translateY(-2700%);
-	}
+  89.91% {
+    transform: translateY(-2700%);
+  }
 
-	93.24% {
-		transform: translateY(-2800%);
-	}
+  93.24% {
+    transform: translateY(-2800%);
+  }
 
-	96.57% {
-		transform: translateY(-2900%);
-	}
+  96.57% {
+    transform: translateY(-2900%);
+  }
 
-	100% {
-		transform: translateY(-3000%);
-	}
+  100% {
+    transform: translateY(-3000%);
+  }
+}
+
+.sorrymsg {
+  position: fixed;
+  bottom: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 1px solid var(--border);
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  @include mixin.flex(center, center, column, nowrap, 10px);
+
+  >span {
+    width: 100%;
+    @include mixin.flex(center, space-between, row, nowrap);
+
+    >img {
+      cursor: pointer;
+    }
+  }
+}
+
+.sorrymsgshow {
+  animation: sorrymsgshow .3s ease-in-out forwards;
+}
+
+.sorrymsghide {
+  animation: sorrymsghide .3s ease-in-out forwards;
+}
+
+@keyframes sorrymsgshow {
+  from {
+    transform: translate(-50%, 0);
+  }
+
+  to {
+    transform: translate(-50%, -120%);
+  }
+}
+
+@keyframes sorrymsghide {
+  from {
+    transform: translate(-50%, -120%);
+  }
+
+  to {
+    transform: translate(-50%, 0);
+  }
 }
