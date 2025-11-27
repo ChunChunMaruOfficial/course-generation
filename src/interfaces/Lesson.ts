@@ -5,6 +5,7 @@ export interface Lesson {
   id: number;
   title: string;
   content: string;
+  selectedwords: string[];
   theorycompl: number;
   practicecompl: number;
   links: Link[];

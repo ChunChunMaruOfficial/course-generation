@@ -6,11 +6,11 @@ import menu from '../../../assets/svg/menu.svg'
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Bell } from "lucide-react";
-import { setcourse } from '../../../slices/answerSlice'
+import { setcourses } from '../../../slices/answerSlice'
 import axios from 'axios';
 import { setactivecourse } from '../../../slices/answerSlice';
 
-export default function Header({ sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: { sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
+export default function Header({setisLoading, sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: {setisLoading?: React.Dispatch<React.SetStateAction<boolean>>, sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
     const storecourse = useSelector((state: any) => state.answer.courses);
     const [ispopup, setispopup] = useState<boolean>(false)
     const [email, setemail] = useState<string>('')
@@ -36,8 +36,9 @@ export default function Header({ sidebarispened, sidebarRef, menubuttonRef, sets
                 const response = await fetch('http://localhost:3000/course');
                 const data = await response.json();
                 console.log(data.result);
-                dispatch(setcourse(data.result));
+                dispatch(setcourses(data.result));
                 dispatch(setactivecourse(data.result[0].id))
+                setisLoading != undefined && setisLoading(false)
 
             }
             getcourse()

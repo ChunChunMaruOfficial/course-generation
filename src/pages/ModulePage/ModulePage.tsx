@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import type { Lesson } from "@/interfaces/Lesson";
 import type { Module } from "@/interfaces/Module";
 import axios from "axios";
-import { selectasimp, setactivelessoncontent, setactivelesson, setactivelessonlinks, setlessonstatus } from '../../slices/answerSlice'
+import { selectasimp, setactivelessoncontent, setactivelesson, setactivelessonlinks, setlessonstatus, addselectedword } from '../../slices/answerSlice'
 import { useNavigate, useSearchParams } from "react-router-dom";
 import loading from '../../assets/loading.gif'
 import { type RootState } from "@/store";
@@ -27,9 +27,8 @@ export default function ModulePage() {
     const navigate = useNavigate()
     const storecourse = useSelector<RootState, CourseData[]>((state) => state.answer.courses);
     const activecourse = useSelector<RootState, CourseData>((state) => state.answer.activecourse);
-    const activemoduleid = useSelector<RootState, number>((state) => state.answer.activemodule);
-    const activelessonid = useSelector<RootState, number>((state) => state.answer.activelesson);
-    const [selectedwords, setselectedwords] = useState<string[]>([])
+    const activemoduleid = useSelector<RootState, number>((state) => state.answer.activemoduleid);
+    const activelessonid = useSelector<RootState, number>((state) => state.answer.activelessonid);
     const [rightanswers, setrightanswers] = useState<number | undefined>(undefined)
     const [selectedText, setSelectedText] = useState<string>('');
     const [isLoading, setisLoading] = useState<boolean>(true)
@@ -48,7 +47,7 @@ export default function ModulePage() {
     const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
     const tabsData = [
         {
-            id: "tab-1", label: "RoadMap", content: selectedwords
+            id: "tab-1", label: "RoadMap", content: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords
         },
         {
             id: "tab-2", label: "Notes", content: []
@@ -56,22 +55,16 @@ export default function ModulePage() {
     ];
 
 
-    async function Getexplanation() {
-        const target = selectedText
+    async function Getexplanation(target: string) {
         const response = await axios.post('http://localhost:3000/api/generateexplanation',
-            { topic: selectedText },
+            { topic: target, moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
             {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }
         );
-        setselectedwords(words =>
-            words.map(str =>
-                str === target ? `${str} - ${response.data.result}` : str
-            )
-        );
-
+        dispatch(addselectedword(`${target} - ${response.data.result}`))
     }
 
     async function GetCourse() {
@@ -92,28 +85,12 @@ export default function ModulePage() {
         setisLoading(false)
     }
 
-    // async function GetCourse() {
-    //     console.log('REQUEST LESSON');
-    //     setisLoading(true)
-    //     const response = await axios.post('http://localhost:3000/api/getLesson',
-    //         { moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
-    //         {
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         }
-    //     );
-    //     if (typeof response.data.result == 'string' && response.data.result.includes('УПСС!')) {
-    //         GetNewCourse()
-    //     } else {
-    //         dispatch(setactivelessoncontent(response.data.result.lesson_text))
-    //         dispatch(setactivelessonlinks(response.data.result.links))
-    //     }
-    // }
-
     useEffect(() => {
-
-        (storecourse.length > 0 && !activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.content) && GetCourse()
+        if (storecourse.length > 0 && activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.content == '') {
+            GetCourse()
+        } else if (storecourse.length > 0) {
+            setisLoading(false)
+        }
 
         const handleSelectionChange = () => {
             const selection = window.getSelection();
@@ -146,25 +123,8 @@ export default function ModulePage() {
         };
     }, []);
 
-    async function getpractice() {
-        setispractice(true)
-        setisLoading(true)
-        const response = await axios.post('http://localhost:3000/api/generatePractice',
-            { topic: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content, highlights: JSON.stringify(selectedwords), moduleid: activemoduleid, courseid: activecourse, previous_practice: '' },
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-        setpracticetext(response.data.result.questions)
-        setisLoading(false)
+    const mixpractice = () => {
 
-    }
-
-    const retry = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' })
-        setrightanswers(undefined)
         setpracticetext((prev: any) => {
             const shuffleArray = (arr: any) => {
                 const arrayCopy = [...arr];
@@ -182,6 +142,31 @@ export default function ModulePage() {
 
             return shuffleArray(withShuffledOptions);
         });
+
+    }
+
+    async function getpractice() {
+        setispractice(true)
+        setisLoading(true)
+
+        if (storecourse.length > 0 && activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.practice.length == 0) {
+            const response = await axios.post('http://localhost:3000/api/generatePractice',
+                { topic: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content, highlights: JSON.stringify(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords), moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid, previous_practice: '' },
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            setpracticetext(response.data.result.questions)
+            setisLoading(false)
+            mixpractice()
+
+        } else if (storecourse.length > 0) {
+            setpracticetext(activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.practice)
+            setisLoading(false)
+        }
+
 
     }
 
@@ -209,10 +194,11 @@ export default function ModulePage() {
     function getnewtheory() {
 
         window.scrollTo({ top: 0, behavior: 'smooth' })
-        dispatch(setactivelesson(activelessonid + 1))
+        const nextLessonId = activelessonid + 1;
+        dispatch(setactivelesson(nextLessonId))
         setispractice(false)
         setrightanswers(undefined)
-        navigate(`../theory?theme=${encodeURIComponent(activecourse!.modules[activemoduleid].lessons[activelessonid + 1].title)}`)
+        navigate(`../theory?theme=${encodeURIComponent(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == nextLessonId)!.title)}`)
         GetCourse()
     }
 
@@ -225,7 +211,7 @@ export default function ModulePage() {
                 setShowMenu(false)
             }
         }}>
-            <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setsidebarispened={setsidebarispened}></Header>
+            <Header setisLoading={setisLoading} sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setsidebarispened={setsidebarispened}></Header>
             <div className={styles.parent}>
                 <Card ref={cardRef} className={styles.container}>
                     <h1>{decodeURIComponent(searchParams.get('theme')!)}</h1>
@@ -234,14 +220,14 @@ export default function ModulePage() {
                         {activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content && parse(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content)}
                         <div className={styles.bottompanel}>
                             <div className={styles.leftside}>
-                                <img src={like} alt="" />
-                                <img src={dislike} alt="" />
+                                <img onClick={() => dispatch(setlessonstatus(2))} title="нравится" src={like} alt="" />
+                                <img onClick={() => dispatch(setlessonstatus(1))} title="не нравится" src={dislike} alt="" />
                             </div>
-                            <img src={remakecourse} alt="" />
+                            <img title="сгенерировать урок заново" src={remakecourse} alt="" />
                         </div>
                     </div>) : (
                         <div className={styles.questionContainer}>{practicetext.map((v: Practicequestion, i: number) => (<div ref={el => { QuestionRefs.current[i] = el }} key={i}><h1 >{parse(v.question)}</h1>
-                            <span>{v.options.map((v1: Practiceoption, i1: number) => (<div>
+                            <span>{v.options.map((v1: Practiceoption, i1: number) => (<div key={i1}>
                                 <input
                                     type="checkbox"
                                     id={`${i}-${i1}`}
@@ -266,15 +252,19 @@ export default function ModulePage() {
                                     className={`${styles.customradio} ${styles.label}`}
                                     htmlFor={`${i}-${i1}`}
                                 >
-                                    {v1.text}
+                                    {parse(v1.text)}
                                 </label>
                             </div>))}</span>
                         </div>))}</div>
                     ))}
-                    {!isLoading && (<><h2>Связанные</h2>
-                        <div className={styles.materials}>{activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.links.map((v: Link) => (<a target="_blank" href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
+                    {!isLoading && !ispractice && (<><h2>Связанные</h2>
+                        <div className={styles.materials}>{activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.links.map((v: Link, i: number) => (<a key={i} target="_blank" href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
                     {!isLoading && rightanswers == undefined && (<Button onClick={() => { ispractice ? rightcheck() : (getpractice(), window.scrollTo({ top: 0, behavior: 'smooth' })) }} >{ispractice ? 'Проверить тест' : 'Перейти к тесту'}</Button>)}
-                    {rightanswers != undefined && (<div className={styles.rightcheck}><Button onClick={() => retry()}>Пройти тест заново</Button> <p>{rightanswers}/{practicetext.length}</p> <Button onClick={() => getnewtheory()}>Перейти к следующему уроку</Button></div>)}
+                    {rightanswers != undefined && (<div className={styles.rightcheck}><Button onClick={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        setrightanswers(undefined);
+                        mixpractice()
+                    }}>Пройти тест заново</Button> <p>{rightanswers}/{practicetext.length}</p> <Button onClick={() => getnewtheory()}>Перейти к следующему уроку</Button></div>)}
                 </Card>
 
                 <div className={styles.folder}>
@@ -293,7 +283,7 @@ export default function ModulePage() {
                         {activeTab == "tab-1" ? storecourse.length > 0 ? activecourse!.modules.map((v: Module, i: number) => (
                             <div className={styles.roadmapitem} key={i}>
                                 <div className={styles.leftpart}><p>{v.title}</p>
-                                    <span>{v.lessons.map((v1: Lesson, i) => (<p style={{ textDecoration: v1.id == (activelessonid + 1) && v.id == (activemoduleid + 1) ? 'underline' : '' }} key={i}>{v1.title}</p>))}</span>
+                                    <span>{v.lessons.map((v1: Lesson, i) => (<p style={{ textDecoration: v1.id == activelessonid && v.id == activemoduleid ? 'underline' : '' }} key={i}>{v1.title}</p>))}</span>
                                 </div>
                                 <div className={styles.rightpart}>
                                     <hr />
@@ -301,10 +291,10 @@ export default function ModulePage() {
                                     <hr />
                                 </div>
                             </div>
-                        )) : (<div className={styles.sorrymessage}><h2>У вас пока что нет курсов 😓</h2><Button onClick={() => navigate("../")}>Сгенерировать курс</Button></div>) : selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
+                        )) : (<div className={styles.sorrymessage}><h2>У вас пока что нет курсов 😓</h2><Button onClick={() => navigate("../")}>Сгенерировать курс</Button></div>) : activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
                     </div>
                 </div>
-                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { dispatch(selectasimp(selectedText)); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(); !selectedwords.includes(selectedText) && setselectedwords(sw => [...sw, selectedText]); setShowMenu(false) }}>объяснить</button></div>
+                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { dispatch(selectasimp(selectedText)); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(selectedText); setShowMenu(false) }}>объяснить</button></div>
             </div>
 
         </div>

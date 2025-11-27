@@ -59,7 +59,7 @@ const CourseView = () => {
   const dispatch = useDispatch()
   const storecourse = useSelector<RootState, CourseData[]>((state) => state.answer.courses);
   const activecourse = useSelector<RootState, CourseData>((state) => state.answer.activecourse);
-  const activemodule = useSelector<RootState, number>((state) => state.answer.activemodule);
+  const activemodule = useSelector<RootState, number>((state) => state.answer.activemoduleid);
   const [viewMode, setViewMode] = useState<ViewMode>("outline");
   const [sidebarispened, setsidebarispened] = useState<boolean | null>(null);
   const [highlightProps, setHighlightProps] = useState({ left: 0, width: 0 });
