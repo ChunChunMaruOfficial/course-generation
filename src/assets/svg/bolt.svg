@@ -1,0 +1,6 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.000000" height="24.000000" fill="none" customFrame="#000000">
+	<rect id="bolt" width="24.000000" height="24.000000" x="0.000000" y="0.000000" />
+	<path id="Path" d="M0 0L24 0L24 24L0 24L0 0Z" fill-rule="evenodd" />
+	<path id="Path" d="M13 10L19 10L11 21L11 14L5 14L13 3L13 10Z" fill-rule="evenodd" stroke="rgb(0,0,0)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+	<path id="Path" d="M13 10L19 10L11 21L11 14L5 14L13 3L13 10Z" fill-rule="evenodd" stroke="rgb(255,255,255)" stroke-opacity="0" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+</svg>

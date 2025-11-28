@@ -20,12 +20,11 @@ const CourseGenerator = () => {
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
   const [Questions, setQuestions] = useState<Question[]>([]);
   const [Answers, setAnswers] = useState<(number[] | undefined)[]>([]);
-
+  const [ismobile, setismobile] = useState<boolean>(false)
   const [exampleTexts, setexampleTexts] = useState<string[]>([])
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [sorrymsg, setsorrymsg] = useState<string>('');
   const [showsorrymsg, setshowsorrymsg] = useState<boolean>(false);
-  const tabWidth = 100; // ширина одной вкладки в px
   const storecourse = useSelector((state: any) => state.answer.courses);
   const TopicRef = useRef<HTMLInputElement>(null)
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
@@ -128,7 +127,7 @@ const CourseGenerator = () => {
                 Что я могу помочь вам изучить?
               </Label>
             </div>
-            <div className={styles.tabs}>
+            {!ismobile && (<div className={styles.tabs}>
               <button
                 className={`${styles.tabButton} ${activeIndex === 0 ? styles.active : ""}`}
                 onClick={() => setActiveIndex(0)}
@@ -146,12 +145,12 @@ const CourseGenerator = () => {
               <span
                 className={styles.glider}
                 style={{
-                  width: activeIndex ? (tabWidth + 50) : tabWidth,
-                  transform: `translateX(${activeIndex * tabWidth}px)`,
+                  width: activeIndex ? '55%' : '50%',
+                  transform: `translateX(${activeIndex ? 'calc(100% - 10px)' : '-5px'})`,
 
                 }}
               ></span>
-            </div>
+            </div>)}
           </div>
           <div className={styles.inputContainer}>
             <div className={styles.inputgroup}>
@@ -159,6 +158,30 @@ const CourseGenerator = () => {
               <label htmlFor="name" className={styles.inputlabel}>Введите {Questions.length > 0 && 'другую'} тему</label>
             </div>
           </div>
+          {ismobile && (<div className={styles.tabs}>
+            <button
+              className={`${styles.tabButton} ${activeIndex === 0 ? styles.active : ""}`}
+              onClick={() => setActiveIndex(0)}
+            >
+              Быстро
+            </button>
+            <button
+              className={`${styles.tabButton} ${activeIndex === 1 ? styles.active : ""}`}
+              onClick={() => setActiveIndex(1)}
+            >
+              Подробно
+            </button>
+
+            {/* Глайдер */}
+            <span
+              className={styles.glider}
+              style={{
+                width: activeIndex ? '55%' : '50%',
+                transform: `translateX(${activeIndex ? 'calc(100% - 10px)' : '-5px'})`,
+
+              }}
+            ></span>
+          </div>)}
           <p className={styles.subtitle}>Пользователи часто интересуются: <span className={styles.exampleTexts}>{exampleTexts.map((v, i) => (<span key={i}>{v}</span>))}</span></p>
 
           {(Questions.length == 0 && <div className={styles.checkboxContainer}>

@@ -53,7 +53,7 @@ export default function ModulePage() {
     const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
     const tabsData = [
         {
-            id: "tab-1", label: "RoadMap", content: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords
+            id: "tab-1", label: "RoadMap", content: storecourse.length > 0 && activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords
         },
         {
             id: "tab-2", label: "Notes", content: []
@@ -227,7 +227,7 @@ export default function ModulePage() {
                                     name={`${v.id}-${i1}`}
                                 />
                                 <label
-                                    style={{ color: v1.correct ? 'red' : '' }}
+                                    style={{ color: v1.correct ? '' : '' }}
                                     className={`${styles.customradio} ${styles.label}`}
                                     htmlFor={`${i}-${i1}`}
                                 >
@@ -236,7 +236,7 @@ export default function ModulePage() {
                             </div>))}</span>
                         </div>))}</div>
                     ))}
-                    {!isLoading && !ispractice && (<><h2>Связанные</h2>
+                    {!isLoading && !ispractice && (<><h3>Связанные</h3>
                         <div className={styles.materials}>{activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.links.map((v: Link, i: number) => (<a key={i} target="_blank" href={v.url}><img src={arrowlink} /><p>{v.description}</p></a>))}</div></>)}
                     {!isLoading && rightanswers == undefined && (<Button onClick={() => { ispractice ? rightcheck() : (getpractice(), window.scrollTo({ top: 0, behavior: 'smooth' })) }} >{ispractice ? 'Проверить тест' : 'Перейти к тесту'}</Button>)}
                     {rightanswers != undefined && (<div className={styles.rightcheck}><Button onClick={() => {

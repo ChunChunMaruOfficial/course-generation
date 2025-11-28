@@ -1,0 +1,8 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.000000" height="24.000000" fill="none" customFrame="#000000">
+	<rect id="user" width="24.000000" height="24.000000" x="0.000000" y="0.000000" />
+	<path id="Path" d="M0 0L24 0L24 24L0 24L0 0Z" fill-rule="evenodd" />
+	<circle id="Oval" cx="12" cy="7" r="4" stroke="rgb(0,0,0)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+	<circle id="Oval" cx="12" cy="7" r="4" stroke="rgb(255,255,255)" stroke-opacity="0" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+	<path id="Path" d="M6 21L6 19C6 16.7909 7.79086 15 10 15L14 15C16.2091 15 18 16.7909 18 19L18 21" fill-rule="evenodd" stroke="rgb(0,0,0)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+	<path id="Path" d="M6 21L6 19C6 16.7909 7.79086 15 10 15L14 15C16.2091 15 18 16.7909 18 19L18 21" fill-rule="evenodd" stroke="rgb(255,255,255)" stroke-opacity="0" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+</svg>

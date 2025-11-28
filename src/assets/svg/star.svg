@@ -1,0 +1,6 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24.000000" height="24.000000" fill="none" customFrame="#000000">
+	<rect id="star" width="24.000000" height="24.000000" x="0.000000" y="0.000000" />
+	<path id="Path" d="M0 0L24 0L24 24L0 24L0 0Z" fill-rule="evenodd" />
+	<path id="Path" d="M5.82808 20.995L7.00708 14.122L2.00708 9.25495L8.90708 8.25495L11.9931 2.00195L15.0791 8.25495L21.9791 9.25495L16.9791 14.122L18.1581 20.995L12.0001 17.75L5.82808 20.995Z" fill-rule="evenodd" stroke="rgb(0,0,0)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+	<path id="Path" d="M5.82808 20.995L7.00708 14.122L2.00708 9.25495L8.90708 8.25495L11.9931 2.00195L15.0791 8.25495L21.9791 9.25495L16.9791 14.122L18.1581 20.995L12.0001 17.75L5.82808 20.995Z" fill-rule="evenodd" stroke="rgb(255,255,255)" stroke-opacity="0" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" />
+</svg>
