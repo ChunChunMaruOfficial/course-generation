@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronRight, ArrowRight, Check } from "lucide-react";
+import { ChevronRight, Check } from "lucide-react";
 import { Progress } from "@/trash/components/Progress/Progress";
 import { AnimatePresence, motion } from 'framer-motion'
 import styles from "./CourseView.module.scss";
