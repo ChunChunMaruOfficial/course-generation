@@ -193,7 +193,7 @@ export default function ModulePage() {
             <Header setisLoading={setisLoading} sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setsidebarispened={setsidebarispened}></Header>
             <div className={styles.parent}>
                 <Card ref={cardRef} className={styles.container}>
-                    <h1>{decodeURIComponent(searchParams.get('theme')!)}</h1>
+                    <h1 className={styles.theme}>{decodeURIComponent(searchParams.get('theme')!)}</h1>
 
                     {isLoading ? (<img src={loading} className={styles.loadgif} />) : (!ispractice ? (<div className={styles.theory}>
                         {activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content && parse(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content)}

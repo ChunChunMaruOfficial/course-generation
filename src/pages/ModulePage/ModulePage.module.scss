@@ -46,6 +46,19 @@
 .container {
   height: fit-content;
 
+  >.theme{
+  background: linear-gradient(135deg, 
+  #1a1a1a 0%,    /* угольно-черный */
+  #2d2d2d 25%,   /* темно-графитовый */
+  #404040 60%,   /* средне-темно-серый */
+  #3c3c3c 100%   /* светло-темно-серый */
+);
+  background-size: 200% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: glide 2s linear infinite alternate;
+  }
+
   h2 {
     display: none;
   }
@@ -526,4 +539,9 @@ input[type="checkbox"]:checked+label.customradio::after {
   100% {
     background-color: transparent;
   }
+}
+
+@keyframes glide {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }

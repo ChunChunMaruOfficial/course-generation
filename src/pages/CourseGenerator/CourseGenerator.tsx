@@ -148,30 +148,6 @@ setismobile(window.innerWidth <= 768 ? true : false)
                 Что я могу помочь вам изучить?
               </Label>
             </div>
-            {!ismobile && (<div className={styles.tabs}>
-              <button
-                className={`${styles.tabButton} ${activeIndex === 0 ? styles.active : ""}`}
-                onClick={() => setActiveIndex(0)}
-              >
-                Быстро
-              </button>
-              <button
-                className={`${styles.tabButton} ${activeIndex === 1 ? styles.active : ""}`}
-                onClick={() => setActiveIndex(1)}
-              >
-                Подробно
-              </button>
-
-              {/* Глайдер */}
-              <span
-                className={styles.glider}
-                style={{
-                  width: activeIndex ? '55%' : '50%',
-                  transform: `translateX(${activeIndex ? 'calc(100% - 10px)' : '-5px'})`,
-
-                }}
-              ></span>
-            </div>)}
           </div>
           <div className={styles.inputContainer}>
             <div className={styles.inputgroup}>
