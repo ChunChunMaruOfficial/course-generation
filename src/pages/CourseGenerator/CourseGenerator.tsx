@@ -6,7 +6,7 @@ import { Label } from "@/trash/components/Label/Label";
 import { Checkbox } from "@/trash/components/Checkbox/Checkbox";
 import styles from "./CourseGenerator.module.scss";
 import loadgif from '../../assets/loading.gif';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { addcourse, setactivecourse } from '../../slices/answerSlice'
 import type { Question } from "../../interfaces/Question";
 import axios from "axios"
