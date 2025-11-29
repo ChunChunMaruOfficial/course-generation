@@ -16,9 +16,12 @@ import array from '../../../assets/array'
 import getRandom from '@/methods/getRandom';
 import type { RootState } from '@/store';
 import isuserimg from '../../../assets/svg/isuser.svg'
+import starfill from '../../../assets/svg/starfill.svg'
+
 
 export default function Header({isLoading, setisLoading, sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: {isLoading?: boolean, setisLoading?: React.Dispatch<React.SetStateAction<boolean>>, sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
     const storecourses = useSelector<RootState, CourseData[]>((state) => state.answer.courses);
+    const usertokens = useSelector<RootState, number>((state) => state.user.tokens);
     const userid = useSelector((state: any) => state.user.id);
         const usermail = useSelector<RootState, string>((state) => state.user.mail);
             const date = useSelector<RootState, string>((state) => state.user.date);
@@ -85,9 +88,8 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
                         <Link to="/" className={styles.navLink}>SelfSpark</Link>
                     </div>
                     <div className={styles.headerUtility}>
-                        {/* <span className={styles.metaText}>{course.progress}% / 100% дневного лимита</span> */}
-                        <Button variant="ghost" size="icon"><Bell className={styles.iconSmall} /></Button>
-                        <Button variant="default" size="sm">Улучшить план</Button>
+                        <span><img src={starfill} alt="" /><p>{usertokens}</p></span>
+                        <Button variant="default" size="sm">Купить токены</Button>
                         <Button variant="ghost" size="icon" onClick={() => setispopup(true)}><img src={ userid == '' ? userimg : isuserimg} /></Button>
                     </div>
                 </div>

@@ -74,6 +74,19 @@
     gap: 0.75rem;
 }
 
+.headerUtility>span{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 5px;
+}
+
+.headerUtility>span>p{
+    color: hsl(23, 98%, 44%);
+    font-weight: 600;
+}
+
 .metaText {
     font-size: 0.875rem;
     color: var(--muted-foreground);

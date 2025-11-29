@@ -11,12 +11,12 @@ import { addcourse, setactivecourse } from '../../slices/answerSlice'
 import type { Question } from "../../interfaces/Question";
 import axios from "axios"
 import arrowdown from '../../assets/svg/arrowdown.svg'
-
+import { minustoken } from "@/slices/userSlice";
 
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [topic, setTopic] = useState<string>("выучить js");
+  const [topic, setTopic] = useState<string>("");
   const [offtop, setofftop] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [answerQuestions, setAnswerQuestions] = useState<boolean>(false);
@@ -117,7 +117,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
       console.log(body);
 
 
-      const url = `https://course-generation-server-production.up.railway.app/api/${activeIndex == 0 ? 'generateFastCourse' : 'generateDetailedCourse'}`;
+      const url = `https://course-generation-server-production.up.railway.app/api/generateFastCourse'}`;
       console.log(url);
       const response = await axios.post(url, body, {
         headers: {
@@ -129,6 +129,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
         setshowsorrymsg(true)
         setsorrymsg(response.data.result)
       } else {
+        dispatch(minustoken(10))
         navigate("/course");
         dispatch(addcourse(response.data.result));
         dispatch(setactivecourse(response.data.result.id))

@@ -17,10 +17,13 @@ state.id = id
 state.id = mail
 state.id = tokens
 state.id = date
+    },
+    minustoken(state, action) {
+state.tokens = state.tokens - action.payload
     }
   }
 
 });
 
-export const { setuser } = userSlice.actions;
+export const { setuser,minustoken } = userSlice.actions;
 export default userSlice.reducer;
