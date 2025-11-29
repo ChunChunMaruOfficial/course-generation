@@ -128,6 +128,8 @@ setismobile(window.innerWidth <= 768 ? true : false)
       if (typeof response.data.result == 'string' && response.data.result.includes('УПСС!')) {
         setshowsorrymsg(true)
         setsorrymsg(response.data.result)
+        console.log('OOOPSSS');
+        
       } else {
         dispatch(minustoken(10))
         navigate("/course");
