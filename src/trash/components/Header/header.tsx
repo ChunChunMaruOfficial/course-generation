@@ -17,7 +17,7 @@ import getRandom from '@/methods/getRandom';
 import type { RootState } from '@/store';
 import isuserimg from '../../../assets/svg/isuser.svg'
 
-export default function Header({isLoading, setisLoading, sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: {isLoading: boolean, setisLoading?: React.Dispatch<React.SetStateAction<boolean>>, sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
+export default function Header({isLoading, setisLoading, sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: {isLoading?: boolean, setisLoading?: React.Dispatch<React.SetStateAction<boolean>>, sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
     const storecourses = useSelector<RootState, CourseData[]>((state) => state.answer.courses);
     const userid = useSelector((state: any) => state.user.id);
         const usermail = useSelector<RootState, string>((state) => state.user.mail);

@@ -27,7 +27,6 @@ const CourseGenerator = () => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [sorrymsg, setsorrymsg] = useState<string>('');
   const [showsorrymsg, setshowsorrymsg] = useState<boolean>(false);
-  const storecourse = useSelector((state: any) => state.answer.courses);
   const TopicRef = useRef<HTMLInputElement>(null)
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
   useEffect(() => {
