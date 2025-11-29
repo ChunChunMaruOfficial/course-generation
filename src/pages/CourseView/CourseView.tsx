@@ -98,7 +98,7 @@ const CourseView = () => {
         setsidebarispened((prev) => (prev === true ? false : null));
       }
     }} className={styles.root}>
-      <Header sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setsidebarispened={setsidebarispened}></Header>
+      <Header isLoading={isLoading} sidebarispened={sidebarispened} sidebarRef={sidebarRef} menubuttonRef={menubuttonRef} setsidebarispened={setsidebarispened}></Header>
 
       {!isLoading && (<div className={styles.pageInner}>
         <div className={styles.layoutGrid}>

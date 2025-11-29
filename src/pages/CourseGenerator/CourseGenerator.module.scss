@@ -503,9 +503,14 @@ input[type="checkbox"]:checked+label.customradio::after {
   .tabs{
     padding-block: 0;
     width: 100%;
+    margin-block: 20px;
     >button{
       width: 50%;
     }
+  }
+
+  .questionContainer>h1{
+    font-size: 1.5rem;
   }
 
   .subtitle {

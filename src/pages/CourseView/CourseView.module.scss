@@ -332,3 +332,14 @@
   @include mixin.flex(center, center, row, nowrap, 0.75rem);
   padding-left: 2.5em;
 }
+
+  @media (max-width: 768px) {
+    .layoutGrid{
+display: flex;
+gap: 20px;
+flex-direction: column;
+      .main, aside{
+        grid-column: none;
+      }
+    }
+  }

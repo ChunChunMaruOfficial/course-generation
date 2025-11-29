@@ -11,6 +11,8 @@ import { addcourse, setactivecourse } from '../../slices/answerSlice'
 import type { Question } from "../../interfaces/Question";
 import axios from "axios"
 import arrowdown from '../../assets/svg/arrowdown.svg'
+
+
 const CourseGenerator = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -34,6 +36,14 @@ const CourseGenerator = () => {
       setexampleTexts(response.data.result);
     }
     start()
+
+     const handleResize = () => {
+      setismobile(window.innerWidth <= 768 ? true : false)
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [])
 
 
@@ -81,7 +91,14 @@ const CourseGenerator = () => {
       //////////////////////////////////// ГЕНЕРАЦИЯ КУРСА /////////////////////////////////////
 
       let beasnwrs: string[] = []
-      const bodyObj: { topic: string, answers?: string[], notes?: string } = { topic };
+
+      let guestId = localStorage.getItem('guestId');
+      if (!guestId) {
+        guestId = self.crypto.randomUUID();
+        localStorage.setItem('guestId', guestId);
+      }
+
+      const bodyObj: { topic: string, guestId: string, answers?: string[], notes?: string } = { topic, guestId };
 
       if (Answers.some(v => v != undefined && v.length > 0)) {
         beasnwrs = Questions.map((q, i) => `${q.question} - ${Answers[i]!.map(j => q.options[j]).join(', ')}`);
@@ -95,6 +112,7 @@ const CourseGenerator = () => {
 
       const body = JSON.stringify(bodyObj);
       console.log(body);
+
 
       const url = `http://localhost:3000/api/${activeIndex == 0 ? 'generateFastCourse' : 'generateDetailedCourse'}`;
       console.log(url);
