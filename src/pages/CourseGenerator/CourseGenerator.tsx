@@ -29,6 +29,8 @@ const CourseGenerator = () => {
   const [showsorrymsg, setshowsorrymsg] = useState<boolean>(false);
   const TopicRef = useRef<HTMLInputElement>(null)
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  
   useEffect(() => {
     async function start() {
       const response = await axios.get('https://course-generation-server-production.up.railway.app/getexample');

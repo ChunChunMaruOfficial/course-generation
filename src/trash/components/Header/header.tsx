@@ -87,7 +87,7 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
                     <div className={styles.headerUtility}>
                         {/* <span className={styles.metaText}>{course.progress}% / 100% дневного лимита</span> */}
                         <Button variant="ghost" size="icon"><Bell className={styles.iconSmall} /></Button>
-                        <Button variant="default" size="sm">Улучшить</Button>
+                        <Button variant="default" size="sm">Улучшить план</Button>
                         <Button variant="ghost" size="icon" onClick={() => setispopup(true)}><img src={ userid == '' ? userimg : isuserimg} /></Button>
                     </div>
                 </div>
