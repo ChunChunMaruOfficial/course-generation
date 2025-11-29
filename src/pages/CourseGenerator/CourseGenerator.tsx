@@ -32,6 +32,8 @@ const CourseGenerator = () => {
   useEffect(() => {
     async function start() {
       const response = await axios.get('http://course-generation-server-production.up.railway.app/getexample');
+      console.log(response);
+      
       setexampleTexts(response.data.result);
     }
     start()
