@@ -181,7 +181,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
           </div>)}
           <p className={styles.subtitle}>Пользователи часто интересуются: <span className={styles.exampleTexts}>{exampleTexts.map((v, i) => (<span key={i}>{v}</span>))}</span></p>
 
-          {(Questions.length == 0 && <div className={styles.checkboxContainer}>
+          {(!isLoading && Questions.length == 0 && <div className={styles.checkboxContainer}>
             <div className={styles.checkboxRow}>
               <Checkbox id="questions" checked={answerQuestions} onCheckedChange={checked => setAnswerQuestions(checked as boolean)} />
               <label htmlFor="questions" className={styles.checkboxLabel}>
