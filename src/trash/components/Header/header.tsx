@@ -36,7 +36,7 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
         let body:{mail: string, password: string, id: string} = {mail: mail, password: password, id: guestId!};      
         console.log(body);
         setisLoading != undefined && setisLoading(true)
-        const response = await axios.post(`http://localhost:3000/${isloging ? 'login' : 'registration'}`, body, {
+        const response = await axios.post(`http://course-generation-server-production.up.railway.app/${isloging ? 'login' : 'registration'}`, body, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -55,7 +55,7 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
             setisLoading != undefined && setisLoading(true)
             let guestId = localStorage.getItem('guestId');
             async function getcourse() {
-                const response = await axios.post(`http://localhost:3000/getGuestCourses`, { guestId: guestId }, {
+                const response = await axios.post(`http://course-generation-server-production.up.railway.app/getGuestCourses`, { guestId: guestId }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
