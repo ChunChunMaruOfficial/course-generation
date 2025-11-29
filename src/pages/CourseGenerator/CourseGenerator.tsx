@@ -30,7 +30,7 @@ const CourseGenerator = () => {
   const TopicRef = useRef<HTMLInputElement>(null)
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  
+
   useEffect(() => {
     async function start() {
       const response = await axios.get('https://course-generation-server-production.up.railway.app/getexample');
@@ -39,7 +39,7 @@ const CourseGenerator = () => {
       setexampleTexts(response.data.result);
     }
     start()
-
+setismobile(window.innerWidth <= 768 ? true : false)
      const handleResize = () => {
       setismobile(window.innerWidth <= 768 ? true : false)
     };

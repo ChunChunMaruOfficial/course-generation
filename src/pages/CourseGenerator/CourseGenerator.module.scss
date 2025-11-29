@@ -519,6 +519,7 @@ input[type="checkbox"]:checked+label.customradio::after {
     @include mixin.flex(center, start, column, nowrap, 0);
     border: 1px solid var(--border);
     padding-block: 15px;
+    width: 100%;
   }
 
   .exampleTexts>span {
