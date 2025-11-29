@@ -520,6 +520,7 @@ input[type="checkbox"]:checked+label.customradio::after {
     border: 1px solid var(--border);
     padding-block: 15px;
     width: 100%;
+    text-align: center;
   }
 
   .exampleTexts>span {

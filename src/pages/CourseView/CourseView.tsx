@@ -153,7 +153,7 @@ const CourseView = () => {
                           initial={'initial'}
                           animate={'animate'}
                           exit={'exit'}
-                          className={styles.startButton}>Начать<ArrowRight className={styles.iconSmall} /></motion.button>
+                          className={styles.startButton}></motion.button>
                       )
                       }
 

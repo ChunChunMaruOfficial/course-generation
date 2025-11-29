@@ -94,8 +94,9 @@
 .lessonStatus {
   width: 2rem;
   height: 2rem;
-  border-radius: 9999px;
+  border-radius: 100px;
   @include mixin.flex(center, center);
+  aspect-ratio: 1/1;
 
   &.number {
     background: var(--muted);
@@ -334,6 +335,13 @@
 }
 
   @media (max-width: 768px) {
+    .themeList{
+      padding-left: 0;
+
+      >div>p{
+        font-size: 1.1rem;
+      }
+    }
     .layoutGrid{
 display: flex;
 gap: 20px;
