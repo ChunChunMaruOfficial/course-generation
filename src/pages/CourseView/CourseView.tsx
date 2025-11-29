@@ -27,18 +27,6 @@ const lessonscontent: Theme[] = [{
 
 type ViewMode = "outline" | "map";
 
-const pageVariants = {
-  initial: {
-    opacity: 0
-  },
-  animate: {
-    opacity: 1
-  },
-  exit: {
-    opacity: 0
-  }
-};
-
 const cardVariants = {
   initial: {
     opacity: 0,
@@ -133,30 +121,6 @@ const CourseView = () => {
 
                         <span className={`${styles.lessonTitle} ${lesson.theorycompl == 100 ? styles.muted : ''}`}>{lesson.title}</span>
                       </div>
-
-                      {expandedLessonId === lesson.id ? (<motion.p
-
-                        variants={pageVariants}
-                        initial={'initial'}
-                        animate={'animate'}
-                        exit={'exit'}
-                        className={styles.lessonProgress + " " + styles.progressValue}>0/{lessonscontent.length}</motion.p>) : lesson.theorycompl == 100 ? (
-                          <motion.span
-                            variants={pageVariants}
-                            initial={'initial'}
-                            animate={'animate'}
-                            exit={'exit'}
-                            className={styles.lessonCompleted}>Завершено</motion.span>
-                        ) : (
-                        <motion.button
-                          variants={pageVariants}
-                          initial={'initial'}
-                          animate={'animate'}
-                          exit={'exit'}
-                          className={styles.startButton}></motion.button>
-                      )
-                      }
-
                     </div>
                     <AnimatePresence>
                       {expandedLessonId === lesson.id && (
@@ -172,7 +136,6 @@ const CourseView = () => {
                           }}
                           transition={{ duration: .3 }}
                           className={styles.lessonMeta}>
-                          {/* <p className={styles.sidebarMeta}>Здесь типо можно описание вставить</p> */}
 
                           <div
                             className={styles.themeList}>

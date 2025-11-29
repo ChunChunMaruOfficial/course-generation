@@ -46,19 +46,6 @@
 .container {
   height: fit-content;
 
-  >.theme{
-  background: linear-gradient(135deg, 
-  #1a1a1a 0%,    /* угольно-черный */
-  #2d2d2d 25%,   /* темно-графитовый */
-  #404040 60%,   /* средне-темно-серый */
-  #3c3c3c 100%   /* светло-темно-серый */
-);
-  background-size: 200% 100%;
-  background-clip: text;
-  color: transparent;
-  animation: glide 2s linear infinite alternate;
-  }
-
   h2 {
     display: none;
   }
@@ -143,10 +130,16 @@
   }
 
   >h1 {
-    color: transparent;
-    -webkit-text-stroke: 1.5px black;
-    text-stroke: 1.5px black;
-    text-shadow: 2px 2px #6C757D;
+    background: linear-gradient(135deg, 
+  #1a1a1a 0%,    /* угольно-черный */
+  #2d2d2d 25%,   /* темно-графитовый */
+  #404040 60%,   /* средне-темно-серый */
+  #3c3c3c 100%   /* светло-темно-серый */
+);
+  background-size: 200% 100%;
+  background-clip: text;
+  color: transparent;
+  animation: glide 2s linear infinite alternate;
     margin-bottom: 1.8rem;
   }
 
