@@ -6,7 +6,6 @@ import menu from '../../../assets/svg/menu.svg'
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setuser } from '@/slices/userSlice';
-import { Bell } from "lucide-react";
 import { setcourses } from '../../../slices/answerSlice'
 import axios from 'axios';
 import { setactivecourse } from '../../../slices/answerSlice';
