@@ -5,7 +5,7 @@ export interface Lesson {
   id: number;
   title: string;
   content: string;
-  selectedwords: string[];
+  selectedwords: { word: string, explanation: string }[];
   theorycompl: number;
   practicecompl: number;
   links: Link[];

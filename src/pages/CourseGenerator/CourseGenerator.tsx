@@ -33,7 +33,7 @@ const CourseGenerator = () => {
 
   useEffect(() => {
     async function start() {
-      const response = await axios.get('http://localhost:3000/getexample');
+      const response = await axios.get('https://course-generation-server-production.up.railway.app/getexample');
       console.log(response);
       
       setexampleTexts(response.data.result);
@@ -73,7 +73,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
 
       //////////////////////////////////// ГЕНЕРАЦИЯ ВОПРОСОВ /////////////////////////////////////
 
-      const response = await axios.post('http://localhost:3000/api/generateQuestions', {
+      const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateQuestions', {
         topic,
         answerQuestions
       }, {
@@ -117,7 +117,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
       console.log(body);
 
 
-      const url = `http://localhost:3000/api/generateFastCourse`;
+      const url = `https://course-generation-server-production.up.railway.app/api/generateFastCourse`;
       console.log(url);
       const response = await axios.post(url, body, {
         headers: {
@@ -208,14 +208,11 @@ setismobile(window.innerWidth <= 768 ? true : false)
                       onChange={() => {
                         setAnswers(a => {
                           const newAnswers = [...a];
-                          // Берем текущий массив отмеченных опций вопроса
                           const current = newAnswers[i] ? [...newAnswers[i]] : [];
                           const indexInCurrent = current.indexOf(i1);
                           if (indexInCurrent === -1) {
-                            // Добавить выбранный
                             current.push(i1);
                           } else {
-                            // Убрать, если уже выбран
                             current.splice(indexInCurrent, 1);
                           }
                           newAnswers[i] = current;
@@ -242,7 +239,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
           {(Questions.length > 0 && <div style={{ marginBottom: 40 }} className={styles.inputContainer}>
             <div className={styles.inputgroup}>
               <input value={offtop} onChange={e => setofftop(e.target.value)} type="text" className={styles.inputfield + " " + styles.inputfield2} id="name" placeholder=' ' />
-              <label htmlFor="name" className={styles.inputlabel + " " + styles.inputlabel2}>У вас есть примечания для курса?</label>
+              <label htmlFor="name" className={styles.inputlabel + " " + styles.inputlabel2}>Ваши примечания для курса</label>
             </div>
           </div>)}
 

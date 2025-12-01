@@ -96,7 +96,7 @@
 .loadgif {
   position: absolute;
   left: 50%;
-  bottom: 0; 
+  bottom: 0;
   transform: translateX(-50%);
   height: 100px;
 }
@@ -463,19 +463,24 @@ input[type="checkbox"]:checked+label.customradio::after {
 
 .sorrymsg {
   position: fixed;
-  bottom: -10%;
+  bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 110%);
   border: 1px solid var(--border);
   background-color: white;
   border-radius: 0.75rem;
   padding: 1rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   @include mixin.flex(center, center, column, nowrap, 10px);
+  width: 82%;
+
+  >p{
+    word-wrap: anywhere;
+  }
 
   >span {
     width: 100%;
-    @include mixin.flex(center, space-between, row, nowrap);
+    @include mixin.flex(center, space-between, row, nowrap, 20px);
 
     >img {
       cursor: pointer;
@@ -493,24 +498,40 @@ input[type="checkbox"]:checked+label.customradio::after {
 
 @media (max-width: 768px) {
 
+  .inputgroup {
+    >.inputfield {
+      font-size: 18px;
+    }
+
+    >.inputlabel {
+      font-size: 18px;
+      top: 12px;
+    }
+  }
+
   .title {
     font-size: 2.25rem;
   }
 
-  .top{
+  .card {
+    padding: 1em;
+  }
+
+  .top {
     @include mixin.flex(start, space-between, column, nowrap, 20px);
   }
 
-  .tabs{
+  .tabs {
     padding-block: 0;
     width: 100%;
     margin-block: 20px;
-    >button{
+
+    >button {
       width: 50%;
     }
   }
 
-  .questionContainer>h1{
+  .questionContainer>h1 {
     font-size: 1.5rem;
   }
 
@@ -518,7 +539,7 @@ input[type="checkbox"]:checked+label.customradio::after {
     margin-top: 15px;
     @include mixin.flex(center, start, column, nowrap, 0);
     border: 1px solid var(--border);
-    padding-block: 15px;
+    padding: 15px 5px;
     width: 100%;
     text-align: center;
   }
@@ -535,20 +556,20 @@ input[type="checkbox"]:checked+label.customradio::after {
 
 @keyframes sorrymsgshow {
   from {
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 110%);
   }
 
   to {
-    transform: translate(-50%, -100%);
+    transform: translate(-50%, -10%);
   }
 }
 
 @keyframes sorrymsghide {
   from {
-    transform: translate(-50%, -100%);
+    transform: translate(-50%, -10%);
   }
 
   to {
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 110%);
   }
 }

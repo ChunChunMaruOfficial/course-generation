@@ -37,6 +37,12 @@
     width: 100% !important;
     min-width: 0 !important;
   }
+
+  >.content{
+    >p{
+      padding-block: 20px;
+    }
+  }
 }
 
 .folder {

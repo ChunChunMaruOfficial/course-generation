@@ -20,12 +20,11 @@ import type { Practicequestion } from "@/interfaces/Practicequestion";
 import like from '../../assets/svg/like.svg'
 import dislike from '../../assets/svg/dislike.svg'
 import remakecourse from '../../assets/svg/remake.svg'
-import Getexplanation from "@/methods/Getexplanation";
 import selectedlike from '../../assets/svg/selectedlike.svg'
 import selecteddislike from '../../assets/svg/selecteddislike.svg'
 import mixpractice from "@/methods/Mixpractice";
 import { minustoken } from "@/slices/userSlice";
-
+import { addselectedword } from "@/slices/answerSlice";
 
 export default function ModulePage() {
     const dispatch = useDispatch()
@@ -45,27 +44,19 @@ export default function ModulePage() {
     const [Answers, setAnswers] = useState<(Practiceoption[] | undefined)[]>(
         Array.from({ length: practicetext.length }, () => [])
     );
-    const [activeTab, setActiveTab] = useState("tab-1");
+    const [activeTab, setActiveTab] = useState<number>(0);
     const cardRef = useRef<HTMLDivElement>(null)
     const menuRef = useRef<HTMLDivElement>(null)
     const sidebarRef = useRef<HTMLDivElement>(null)
     const menubuttonRef = useRef<HTMLImageElement>(null)
     const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
-    const tabsData = [
-        {
-            id: "tab-1", label: "RoadMap", content: storecourse.length > 0 && activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords
-        },
-        {
-            id: "tab-2", label: "Notes", content: []
-        }
-    ];
 
     async function GetCourse() {
         const guestId = localStorage.getItem('guestId');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         console.log('GENERATING LESSON');
         setisLoading(true)
-        const response = await axios.post('http://localhost:3000/api/generateLesson',
+        const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateLesson',
             { topic: decodeURIComponent(searchParams.get('theme')!), course_structure: JSON.stringify(activecourse), context: '', moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid, guestId: guestId },
             {
                 headers: {
@@ -79,6 +70,21 @@ export default function ModulePage() {
 
         dispatch(setactivelessonlinks(response.data.result.links))
         setisLoading(false)
+    }
+
+    async function Getexplanation(target: string) {
+        const guestId = localStorage.getItem('guestId');
+        setActiveTab(1)
+        const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateExplanation',
+            { topic: target, context: activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.content, moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid, guestId: guestId },
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        
+        dispatch(addselectedword({ word: target, explanation: response.data.explanation }))
     }
 
     useEffect(() => {
@@ -126,7 +132,7 @@ export default function ModulePage() {
         setisLoading(true)
 
         if (storecourse.length > 0 && activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.practice.length == 0) {
-            const response = await axios.post('http://localhost:3000/api/generatePractice',
+            const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generatePractice',
                 { topic: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content, highlights: JSON.stringify(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords), moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid, previous_practice: '' },
                 {
                     headers: {
@@ -254,18 +260,15 @@ export default function ModulePage() {
 
                 <div className={styles.folder}>
                     <div className={styles.tabs}>
-                        {tabsData.map(({ id, label }) => (
-                            <button
-                                key={id}
-                                className={`${styles.tab} ${activeTab === id ? styles.active : ""}`}
-                                onClick={() => setActiveTab(id)}
-                            >
-                                {label}
-                            </button>
-                        ))}
+                        <button className={`${styles.tab} ${activeTab === 0 ? styles.active : ""}`} onClick={() => setActiveTab(0)}>
+                            RoadMap
+                        </button>
+                        <button className={`${styles.tab} ${activeTab === 1 ? styles.active : ""}`} onClick={() => setActiveTab(1)}>
+                            Notes
+                        </button>
                     </div>
                     <div className={styles.content}>
-                        {activeTab == "tab-1" ? storecourse.length > 0 ? activecourse!.modules.map((v: Module, i: number) => (
+                        {activeTab == 0 ? storecourse.length > 0 ? activecourse!.modules.map((v: Module, i: number) => (
                             <div className={styles.roadmapitem} key={i}>
                                 <div className={styles.leftpart}><p>{v.title}</p>
                                     <span>{v.lessons.map((v1: Lesson, i) => (<p style={{ textDecoration: v1.id == activelessonid && v.id == activemoduleid ? 'underline' : '' }} key={i}>{v1.title}</p>))}</span>
@@ -276,10 +279,10 @@ export default function ModulePage() {
                                     <hr />
                                 </div>
                             </div>
-                        )) : (<div className={styles.sorrymessage}><h2>У вас пока что нет курсов 😓</h2><Button onClick={() => navigate("../")}>Сгенерировать курс</Button></div>) : activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
+                        )) : (<div className={styles.sorrymessage}><h2>У вас пока что нет курсов 😓</h2><Button onClick={() => navigate("../")}>Сгенерировать курс</Button></div>) : activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords.map((v, i) => (<p key={i}><b>{v.word}</b> - {v.explanation}</p>))}
                     </div>
                 </div>
-                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { dispatch(selectasimp(selectedText)); setShowMenu(false) }}>Выделить как важное</button> <button onClick={ async () => { await Getexplanation(selectedText, decodeURIComponent(searchParams.get('theme')!)); setShowMenu(false) }}>объяснить</button></div>
+                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { dispatch(selectasimp(selectedText)); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(selectedText); setShowMenu(false) }}>объяснить</button></div>
             </div>
 
         </div>
