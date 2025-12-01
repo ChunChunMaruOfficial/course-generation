@@ -243,7 +243,7 @@ const CourseGenerator = () => {
             </div>
           </div>)}
 
-          {1 ==1  ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim() || Questions.length < 0} size="lg" className={styles.generateButton}>
+          {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim() || Questions.length < 0} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />
             Сгенерировать {answerQuestions ? 'вопросы' : 'курс'}
           </Button>}
