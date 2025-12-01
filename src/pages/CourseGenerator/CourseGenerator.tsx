@@ -33,7 +33,7 @@ const CourseGenerator = () => {
 
   useEffect(() => {
     async function start() {
-      const response = await axios.get('http://localhost:3000/getexample');
+      const response = await axios.get('https://course-generation-server-production.up.railway.app/getexample');
       console.log(response);
       
       setexampleTexts(response.data.result);
@@ -73,7 +73,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
 
       //////////////////////////////////// ГЕНЕРАЦИЯ ВОПРОСОВ /////////////////////////////////////
 
-      const response = await axios.post('http://localhost:3000/api/generateQuestions', {
+      const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateQuestions', {
         topic,
         answerQuestions
       }, {
@@ -117,7 +117,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
       console.log(body);
 
 
-      const url = `http://localhost:3000/api/generateFastCourse`;
+      const url = `https://course-generation-server-production.up.railway.app/api/generateFastCourse`;
       console.log(url);
       const response = await axios.post(url, body, {
         headers: {
