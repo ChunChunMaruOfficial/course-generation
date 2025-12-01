@@ -18,13 +18,13 @@ import isuserimg from '../../../assets/svg/isuser.svg'
 import starfill from '../../../assets/svg/starfill.svg'
 
 
-export default function Header({isLoading, setisLoading, sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: {isLoading?: boolean, setisLoading?: React.Dispatch<React.SetStateAction<boolean>>, sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
+export default function Header({ isLoading, setisLoading, sidebarispened, sidebarRef, menubuttonRef, setsidebarispened }: { isLoading?: boolean, setisLoading?: React.Dispatch<React.SetStateAction<boolean>>, sidebarispened: boolean | null, sidebarRef: RefObject<HTMLDivElement | null>, menubuttonRef: RefObject<HTMLImageElement | null>, setsidebarispened: React.Dispatch<React.SetStateAction<boolean | null>> }) {
     const storecourses = useSelector<RootState, CourseData[]>((state) => state.answer.courses);
     const usertokens = useSelector<RootState, number>((state) => state.user.tokens);
     const userid = useSelector((state: any) => state.user.id);
-        const usermail = useSelector<RootState, string>((state) => state.user.mail);
-            const date = useSelector<RootState, string>((state) => state.user.date);
-            const tokens = useSelector<RootState, number>((state) => state.user.tokens);
+    const usermail = useSelector<RootState, string>((state) => state.user.mail);
+    const date = useSelector<RootState, string>((state) => state.user.date);
+    const tokens = useSelector<RootState, number>((state) => state.user.tokens);
     const [ispopup, setispopup] = useState<boolean>(false)
     const [mail, setmail] = useState<string>('')
     const [password, setpassword] = useState<string>('')
@@ -34,11 +34,11 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
 
 
     async function entering() {
-        let guestId = localStorage.getItem('guestId');
-        let body:{mail: string, password: string, id: string} = {mail: mail, password: password, id: guestId!};      
+        const guestId = localStorage.getItem('guestId');
+        let body: { mail: string, password: string, id: string } = { mail: mail, password: password, id: guestId! };
         console.log(body);
         setisLoading != undefined && setisLoading(true)
-        const response = await axios.post(`https://course-generation-server-production.up.railway.app/${isloging ? 'login' : 'registration'}`, body, {
+        const response = await axios.post(`http://localhost:3000/${isloging ? 'login' : 'registration'}`, body, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -46,8 +46,8 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
         setispopup(false)
         console.log(response.data);
         dispatch(setuser(response.data.user))
-                        dispatch(setcourses(response.data.user.courses));
-                dispatch(setactivecourse(response.data.user.courses[0].id))
+        dispatch(setcourses(response.data.user.courses));
+        dispatch(setactivecourse(response.data.user.courses[0].id))
         setisLoading != undefined && setisLoading(false)
 
     }
@@ -57,7 +57,7 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
             setisLoading != undefined && setisLoading(true)
             let guestId = localStorage.getItem('guestId');
             async function getcourse() {
-                const response = await axios.post(`https://course-generation-server-production.up.railway.app/getGuestCourses`, { guestId: guestId }, {
+                const response = await axios.post(`http://localhost:3000/getGuestCourses`, { guestId: guestId }, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -89,7 +89,7 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
                     <div className={styles.headerUtility}>
                         <span><img src={starfill} alt="" /><p>{usertokens}</p></span>
                         <Button variant="default" size="sm">Купить токены</Button>
-                        <Button variant="ghost" size="icon" onClick={() => setispopup(true)}><img src={ userid == '' ? userimg : isuserimg} /></Button>
+                        <Button variant="ghost" size="icon" onClick={() => setispopup(true)}><img src={userid == '' ? userimg : isuserimg} /></Button>
                     </div>
                 </div>
             </header>
@@ -101,34 +101,34 @@ export default function Header({isLoading, setisLoading, sidebarispened, sidebar
                 }} className={styles.popupmenu}>
                     <div ref={popupRef} className={styles.popup}>
 
-                       {userid == '' && ( <>
-                        <h1>{isloging ? "Войти в аккаунт" : 'Регистрация'}</h1>
-                        <span><p>📫</p>
-                            <div className={styles.inputgroup}>
-                                <input value={mail} onChange={e => setmail(e.target.value)} type="email" className={styles.inputfield} id="email" placeholder=' ' />
-                                <label htmlFor="email" className={styles.inputlabel}>Введите ваш email</label>
-                            </div>
-                        </span>
-                        <span><p>🔐</p>
-                            <div className={styles.inputgroup}>
-                                <input value={password} onChange={e => setpassword(e.target.value)} type="password" className={styles.inputfield} id="password" placeholder=' ' />
-                                <label htmlFor="password" className={styles.inputlabel}>Введите пароль</label>
-                            </div>
-                        </span>
-                        <Button onClick={() => entering()}>{!isloging ? 'создать учетную запись' : 'войти'}</Button>
-                        <p onClick={() => setisloging(!isloging)}> {isloging ? 'создать учетную запись' : 'войти'} </p>
+                        {userid == '' && (<>
+                            <h1>{isloging ? "Войти в аккаунт" : 'Регистрация'}</h1>
+                            <span><p>📫</p>
+                                <div className={styles.inputgroup}>
+                                    <input value={mail} onChange={e => setmail(e.target.value)} type="email" className={styles.inputfield} id="email" placeholder=' ' />
+                                    <label htmlFor="email" className={styles.inputlabel}>Введите ваш email</label>
+                                </div>
+                            </span>
+                            <span><p>🔐</p>
+                                <div className={styles.inputgroup}>
+                                    <input value={password} onChange={e => setpassword(e.target.value)} type="password" className={styles.inputfield} id="password" placeholder=' ' />
+                                    <label htmlFor="password" className={styles.inputlabel}>Введите пароль</label>
+                                </div>
+                            </span>
+                            <Button onClick={() => entering()}>{!isloging ? 'создать учетную запись' : 'войти'}</Button>
+                            <p onClick={() => setisloging(!isloging)}> {isloging ? 'создать учетную запись' : 'войти'} </p>
                         </>)}
-{ userid != '' && (<div className={styles.userdata}>
-    <h2>{array[getRandom(0,array.length)]}</h2>
-    <div>
-        <p>{userid}</p>
-        <p><img src={stars} alt="" />{tokens}</p>
-        <p>{usermail}</p>
-        <p>{date}</p>
-        <div>{storecourses.map(v => (<p onClick={() => {setactivecourse(v.id); setispopup( false)}}>{v.title}</p>))}</div>
-        <Button>Выйти из учетной записи</Button>
-        </div>
-</div>)}
+                        {userid != '' && (<div className={styles.userdata}>
+                            <h2>{array[getRandom(0, array.length)]}</h2>
+                            <div>
+                                <p>{userid}</p>
+                                <p><img src={stars} alt="" />{tokens}</p>
+                                <p>{usermail}</p>
+                                <p>{date}</p>
+                                <div>{storecourses.map(v => (<p onClick={() => { setactivecourse(v.id); setispopup(false) }}>{v.title}</p>))}</div>
+                                <Button>Выйти из учетной записи</Button>
+                            </div>
+                        </div>)}
                     </div>
                 </div>)}
         </>

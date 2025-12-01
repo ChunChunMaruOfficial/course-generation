@@ -4,19 +4,20 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { type RootState } from "@/store";
 
-export default async function Getexplanation(target: string) {
+export default async function Getexplanation(target: string, context: string) {
+    const guestId = localStorage.getItem('guestId');
     const dispatch = useDispatch()
     const activecourse = useSelector<RootState, CourseData>((state) => state.answer.activecourse);
     const activemoduleid = useSelector<RootState, number>((state) => state.answer.activemoduleid);
     const activelessonid = useSelector<RootState, number>((state) => state.answer.activelessonid);
 
-    const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateexplanation',
-        { topic: target, moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
+    const response = await axios.post('http://localhost:3000/api/generateexplanation',
+        { topic: target, context: context, moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid,guestId: guestId },
         {
             headers: {
                 'Content-Type': 'application/json'
             }
         }
     );
-    dispatch(addselectedword(`${target} - ${response.data.result}`))
+    dispatch(addselectedword(response.data.result))
 }

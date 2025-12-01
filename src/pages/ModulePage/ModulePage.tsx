@@ -61,11 +61,12 @@ export default function ModulePage() {
     ];
 
     async function GetCourse() {
+        const guestId = localStorage.getItem('guestId');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         console.log('GENERATING LESSON');
         setisLoading(true)
-        const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateLesson',
-            { topic: decodeURIComponent(searchParams.get('theme')!), course_structure: JSON.stringify(activecourse), context: '', moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
+        const response = await axios.post('http://localhost:3000/api/generateLesson',
+            { topic: decodeURIComponent(searchParams.get('theme')!), course_structure: JSON.stringify(activecourse), context: '', moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid, guestId: guestId },
             {
                 headers: {
                     'Content-Type': 'application/json'
@@ -73,12 +74,8 @@ export default function ModulePage() {
             }
         );
         console.log(response.data.result);
-dispatch(minustoken(20))
-let updatedtext = ''
-removeBrokenImages(response.data.result.lesson_text).then(cleanText => {
-updatedtext = cleanText
-});
-dispatch(setactivelessoncontent(updatedtext))
+        dispatch(minustoken(20))
+        dispatch(setactivelessoncontent(response.data.result.lesson_text))
 
         dispatch(setactivelessonlinks(response.data.result.links))
         setisLoading(false)
@@ -129,7 +126,7 @@ dispatch(setactivelessoncontent(updatedtext))
         setisLoading(true)
 
         if (storecourse.length > 0 && activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.practice.length == 0) {
-            const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generatePractice',
+            const response = await axios.post('http://localhost:3000/api/generatePractice',
                 { topic: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content, highlights: JSON.stringify(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords), moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid, previous_practice: '' },
                 {
                     headers: {
@@ -174,7 +171,7 @@ dispatch(setactivelessoncontent(updatedtext))
 
         window.scrollTo({ top: 0, behavior: 'smooth' })
         const nextLessonId = activelessonid + 1;
-        dispatch(setactivelesson(nextLessonId)); 
+        dispatch(setactivelesson(nextLessonId));
 
         const activeModule = activecourse!.modules.find(v => v.id == activemoduleid)!;
         const nextLesson = activeModule.lessons.find(v => v.id == nextLessonId)!;
@@ -185,89 +182,6 @@ dispatch(setactivelessoncontent(updatedtext))
         setrightanswers(undefined);
         GetCourse()
     }
-
-
-function checkImage(url:any, timeout = 5000) {
-    return new Promise((resolve) => {
-        const img = new Image();
-        let timer: any;
-        img.onload = () => {
-            clearTimeout(timer);
-            if (img.naturalWidth > 0) resolve(true);
-            else resolve(false);
-        };
-        img.onerror = () => {
-            clearTimeout(timer);
-            resolve(false);
-        };
-        timer = setTimeout(() => {
-            img.src = "";
-            resolve(false);
-        }, timeout);
-        img.src = url;
-    });
-}
-
-/**
- * Принимает текст (Markdown/HTML), проверяет картинки и удаляет теги с битыми ссылками.
- * @param {string} markup - Исходный текст урока
- * @returns {Promise<string>} - Очищенный текст без битых картинок
- */
-async function removeBrokenImages(markup: any) {
-    // Регулярки с захватом URL в группу
-    // Markdown: ![alt](url) -> url в 2-й группе (индекс 1 в match массиве regex.exec, но аргументы replace другие)
-    const mdRegex = /!\[.*?\]\((.*?)\)/g;
-    
-    // HTML: <img ... src="url" ...> -> url в 1-й группе
-    const htmlRegex = /<img\b[^>]*\bsrc=["'](.*?)["'][^>]*>/g;
-
-    // 1. Собираем все уникальные URL
-    const urlsToCheck = new Set();
-    let match;
-    
-    // Копируем регулярки для поиска, чтобы не сбить lastIndex (хотя matchAll или replace безопаснее)
-    const mdSearch = new RegExp(mdRegex);
-    const htmlSearch = new RegExp(htmlRegex);
-
-    // Находим все URL в Markdown
-    while ((match = mdSearch.exec(markup)) !== null) {
-        urlsToCheck.add(match[1]); // match[1] - это URL
-    }
-    // Находим все URL в HTML
-    while ((match = htmlSearch.exec(markup)) !== null) {
-        urlsToCheck.add(match[1]);
-    }
-
-    if (urlsToCheck.size === 0) return markup;
-
-    // 2. Параллельно проверяем статус каждой картинки
-    const urlStatuses = new Map();
-    await Promise.all(
-        Array.from(urlsToCheck).map(async (url) => {
-            const isValid = await checkImage(url);
-            urlStatuses.set(url, isValid);
-        })
-    );
-
-    // 3. Заменяем битые картинки на пустую строку
-    // Используем replace с колбэком. Если статус false -> удаляем.
-    
-    let cleanedMarkup = markup;
-
-    // Удаляем битые Markdown изображения
-    cleanedMarkup = cleanedMarkup.replace(mdRegex, (fullMatch:any, url:any) => {
-        return urlStatuses.get(url) === false ? '' : fullMatch;
-    });
-
-    // Удаляем битые HTML изображения
-    cleanedMarkup = cleanedMarkup.replace(htmlRegex, (fullMatch:any, url:any) => {
-        return urlStatuses.get(url) === false ? '' : fullMatch;
-    });
-
-    return cleanedMarkup;
-}
-
-
 
     return (
         <div onClick={(e) => {
@@ -284,11 +198,11 @@ async function removeBrokenImages(markup: any) {
                     <h1 className={styles.theme}>{decodeURIComponent(searchParams.get('theme')!)}</h1>
 
                     {isLoading ? (<img src={loading} className={styles.loadgif} />) : (!ispractice ? (<div className={styles.theory}>
-                        {activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content && 
-                        
+                        {activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content &&
 
-                        
-                        parse(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content)}
+
+
+                            parse(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content)}
                         <div className={styles.bottompanel}>
                             <div className={styles.leftside}>
                                 <img onClick={() => dispatch(setlessonstatus(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.status == 2 ? 0 : 2))} title="нравится" src={activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.status == 2 ? selectedlike : like} alt="" />
@@ -365,7 +279,7 @@ async function removeBrokenImages(markup: any) {
                         )) : (<div className={styles.sorrymessage}><h2>У вас пока что нет курсов 😓</h2><Button onClick={() => navigate("../")}>Сгенерировать курс</Button></div>) : activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords.map((v, i) => (<p key={i}>{v}</p>))}
                     </div>
                 </div>
-                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { dispatch(selectasimp(selectedText)); setShowMenu(false) }}>Выделить как важное</button> <button onClick={() => { Getexplanation(selectedText); setShowMenu(false) }}>объяснить</button></div>
+                <div style={{ opacity: showmenu ? '1' : '0' }} ref={menuRef} className={styles.minimenu}><button onClick={() => { dispatch(selectasimp(selectedText)); setShowMenu(false) }}>Выделить как важное</button> <button onClick={ async () => { await Getexplanation(selectedText, decodeURIComponent(searchParams.get('theme')!)); setShowMenu(false) }}>объяснить</button></div>
             </div>
 
         </div>
