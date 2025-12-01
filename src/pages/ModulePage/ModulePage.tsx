@@ -64,7 +64,7 @@ export default function ModulePage() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         console.log('GENERATING LESSON');
         setisLoading(true)
-        const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateLesson',
+        const response = await axios.post('http://localhost:3000/api/generateLesson',
             { topic: decodeURIComponent(searchParams.get('theme')!), course_structure: JSON.stringify(activecourse), context: '', moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
             {
                 headers: {
@@ -129,7 +129,7 @@ dispatch(setactivelessoncontent(updatedtext))
         setisLoading(true)
 
         if (storecourse.length > 0 && activecourse!.modules.find(v => v.id === activemoduleid)!.lessons.find(v => v.id === activelessonid)!.practice.length == 0) {
-            const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generatePractice',
+            const response = await axios.post('http://localhost:3000/api/generatePractice',
                 { topic: activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.content, highlights: JSON.stringify(activecourse!.modules.find(v => v.id == activemoduleid)!.lessons.find(v => v.id == activelessonid)!.selectedwords), moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid, previous_practice: '' },
                 {
                     headers: {

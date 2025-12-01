@@ -10,7 +10,7 @@ export default async function Getexplanation(target: string) {
     const activemoduleid = useSelector<RootState, number>((state) => state.answer.activemoduleid);
     const activelessonid = useSelector<RootState, number>((state) => state.answer.activelessonid);
 
-    const response = await axios.post('https://course-generation-server-production.up.railway.app/api/generateexplanation',
+    const response = await axios.post('http://localhost:3000/api/generateexplanation',
         { topic: target, moduleid: activemoduleid, courseid: activecourse.id, lessonid: activelessonid },
         {
             headers: {
