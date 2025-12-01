@@ -87,7 +87,7 @@ export default function Header({ isLoading, setisLoading, sidebarispened, sideba
                         <Link to="/" className={styles.navLink}>SelfSpark</Link>
                     </div>
                     <div className={styles.headerUtility}>
-                        <span><img src={starfill} alt="" /><p>{usertokens}</p></span>
+                        {/* <span><img src={starfill} alt="" /><p>{usertokens}</p></span> */}
                         <Button variant="default" size="sm">Купить токены</Button>
                         <Button variant="ghost" size="icon" onClick={() => setispopup(true)}><img src={userid == '' ? userimg : isuserimg} /></Button>
                     </div>

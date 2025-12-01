@@ -26,7 +26,7 @@ const CourseGenerator = () => {
   const [exampleTexts, setexampleTexts] = useState<string[]>([])
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [sorrymsg, setsorrymsg] = useState<string>('');
-  const [showsorrymsg, setshowsorrymsg] = useState<boolean>(false);
+  const [showsorrymsg, setshowsorrymsg] = useState<boolean | undefined>(undefined);
   const TopicRef = useRef<HTMLInputElement>(null)
   const QuestionRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -35,12 +35,12 @@ const CourseGenerator = () => {
     async function start() {
       const response = await axios.get('https://course-generation-server-production.up.railway.app/getexample');
       console.log(response);
-      
+
       setexampleTexts(response.data.result);
     }
     start()
-setismobile(window.innerWidth <= 768 ? true : false)
-     const handleResize = () => {
+    setismobile(window.innerWidth <= 768 ? true : false)
+    const handleResize = () => {
       setismobile(window.innerWidth <= 768 ? true : false)
     };
     window.addEventListener('resize', handleResize);
@@ -129,7 +129,7 @@ setismobile(window.innerWidth <= 768 ? true : false)
         setshowsorrymsg(true)
         setsorrymsg(response.data.result)
         console.log('OOOPSSS');
-        
+
       } else {
         dispatch(minustoken(10))
         navigate("/course");
@@ -243,12 +243,12 @@ setismobile(window.innerWidth <= 768 ? true : false)
             </div>
           </div>)}
 
-          {isLoading ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim() || Questions.length < 0} size="lg" className={styles.generateButton}>
+          {1 ==1  ? <img src={loadgif} alt="Loading..." className={styles.loadgif} /> : <Button onClick={handleGenerate} disabled={!topic.trim() || Questions.length < 0} size="lg" className={styles.generateButton}>
             <Sparkles className={styles.icon} />
             Сгенерировать {answerQuestions ? 'вопросы' : 'курс'}
           </Button>}
         </div>
-        <div className={styles.sorrymsg + ' ' + (showsorrymsg ? styles.sorrymsgshow : styles.sorrymsghide)}><p>{sorrymsg}</p><span><img onClick={() => setshowsorrymsg(false)} src={arrowdown} alt="" /><Button onClick={() => { TopicRef.current!.focus(); setTopic(''); setshowsorrymsg(false) }}>Ввести другую тему</Button></span></div>
+        <div className={styles.sorrymsg + ' ' + (showsorrymsg == true ? styles.sorrymsgshow : showsorrymsg == false ? styles.sorrymsghide : '')}><p>{sorrymsg}</p><span><img onClick={() => setshowsorrymsg(false)} src={arrowdown} alt="" /><Button onClick={() => { TopicRef.current!.focus(); setTopic(''); setshowsorrymsg(false) }}>Ввести другую тему</Button></span></div>
       </div>
     </div>
   );

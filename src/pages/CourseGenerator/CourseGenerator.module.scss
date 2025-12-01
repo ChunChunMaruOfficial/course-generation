@@ -94,11 +94,8 @@
 }
 
 .loadgif {
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
   height: 100px;
+  margin: auto;
 }
 
 .inputgroup {
@@ -474,7 +471,7 @@ input[type="checkbox"]:checked+label.customradio::after {
   @include mixin.flex(center, center, column, nowrap, 10px);
   width: 82%;
 
-  >p{
+  >p {
     word-wrap: anywhere;
   }
 
@@ -514,7 +511,7 @@ input[type="checkbox"]:checked+label.customradio::after {
   }
 
   .card {
-    padding: 1em;
+    padding: 0 1em;
   }
 
   .top {
